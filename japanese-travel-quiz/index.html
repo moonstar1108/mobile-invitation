@@ -163,9 +163,30 @@ main{
   letter-spacing:.03em;
   margin-bottom:4px;
 }
-.jp-text{font-size:22px; font-weight:700; line-height:1.5;}
+.jp-text{font-size:22px; font-weight:700; line-height:2.1;}
+.jp-text ruby{ruby-position:over;}
+.jp-text rt{font-size:11px; font-weight:600; color:var(--blue); user-select:none;}
 .kana-text{font-size:16px; color:var(--sub); margin-top:2px;}
 .pron-text{font-size:15px; color:var(--text); margin-top:2px;}
+.kanji-breakdown{
+  display:flex;
+  flex-wrap:wrap;
+  gap:8px;
+}
+.kanji-chip{
+  display:flex;
+  align-items:baseline;
+  gap:6px;
+  background:var(--bg);
+  border:1px solid var(--border);
+  border-radius:10px;
+  padding:6px 10px;
+  font-size:12.5px;
+  line-height:1.4;
+}
+.kanji-chip .kanji-char{font-size:18px; font-weight:700; color:var(--text);}
+.kanji-chip .kanji-readings{color:var(--blue); font-weight:600; white-space:nowrap;}
+.kanji-chip .kanji-mean{color:var(--sub);}
 .grammar-box{
   background:var(--grammar-bg);
   border-radius:14px;
@@ -269,16 +290,20 @@ nav.tabbar{
 
         <div class="answer-block" id="answerBlock">
           <div class="answer-row">
-            <div class="answer-label">① 일본어 원문</div>
+            <div class="answer-label">① 일본어 원문 (단어별 읽기 포함)</div>
             <div class="jp-text" id="jpText"></div>
           </div>
           <div class="answer-row">
-            <div class="answer-label">② 히라가나 읽기</div>
+            <div class="answer-label">② 문장 전체 히라가나 읽기</div>
             <div class="kana-text" id="kanaText"></div>
           </div>
           <div class="answer-row">
             <div class="answer-label">③ 한글 발음</div>
             <div class="pron-text" id="pronText"></div>
+          </div>
+          <div class="answer-row" id="kanjiRow">
+            <div class="answer-label">④ 한자 훈·음 풀이</div>
+            <div class="kanji-breakdown" id="kanjiBreakdown"></div>
           </div>
           <div class="answer-row" style="margin-bottom:0;">
             <div class="grammar-box">
@@ -517,6 +542,309 @@ var DATA = [
 {id:200,category:"관광/기타",kr:"여러 가지로 감사했습니다",jp:"いろいろとありがとうございました",kana:"いろいろとありがとうございました",pronunciation:"이로이로토 아리가토- 고자이마시타",grammar:"いろいろと는 '여러 가지로'라는 부사로, 작별 인사에 자주 쓰입니다."}
 ];
 
+/* ===================== 한자 훈/음 사전 (210자) ===================== */
+var KANJI_INFO = {
+"一":{on:"イチ・イツ",kun:"ひと(つ)",mean:"하나"},
+"丈":{on:"ジョウ",kun:"たけ",mean:"길이(大丈夫=괜찮다)"},
+"下":{on:"カ・ゲ",kun:"した・さ(がる)",mean:"아래"},
+"両":{on:"リョウ",kun:"-",mean:"양쪽/량(단위)"},
+"中":{on:"チュウ",kun:"なか",mean:"가운데/중"},
+"乗":{on:"ジョウ",kun:"の(る)",mean:"타다"},
+"乾":{on:"カン",kun:"かわ(く)",mean:"마르다(乾杯=건배)"},
+"予":{on:"ヨ",kun:"あらかじ(め)",mean:"미리"},
+"事":{on:"ジ",kun:"こと",mean:"일"},
+"二":{on:"ニ",kun:"ふた(つ)",mean:"둘"},
+"交":{on:"コウ",kun:"ま(じる)",mean:"사귀다/교환"},
+"人":{on:"ジン・ニン",kun:"ひと",mean:"사람"},
+"今":{on:"コン",kun:"いま",mean:"지금"},
+"他":{on:"タ",kun:"ほか",mean:"다른"},
+"休":{on:"キュウ",kun:"やす(む)",mean:"쉬다"},
+"会":{on:"カイ",kun:"あ(う)",mean:"만나다"},
+"体":{on:"タイ",kun:"からだ",mean:"몸"},
+"何":{on:"カ",kun:"なに・なん",mean:"무엇"},
+"作":{on:"サク",kun:"つく(る)",mean:"만들다"},
+"使":{on:"シ",kun:"つか(う)",mean:"사용하다"},
+"供":{on:"キョウ",kun:"そな(える)",mean:"제공하다(子供=아이)"},
+"借":{on:"シャク",kun:"か(りる)",mean:"빌리다"},
+"停":{on:"テイ",kun:"-",mean:"멈추다(停車)"},
+"傘":{on:"サン",kun:"かさ",mean:"우산"},
+"光":{on:"コウ",kun:"ひかり",mean:"빛(観光=관광)"},
+"免":{on:"メン",kun:"まぬか(れる)",mean:"면하다(免税)"},
+"入":{on:"ニュウ",kun:"い(る)・はい(る)",mean:"들어가다"},
+"具":{on:"グ",kun:"-",mean:"도구"},
+"内":{on:"ナイ",kun:"うち",mean:"안"},
+"写":{on:"シャ",kun:"うつ(す)",mean:"베끼다/찍다(写真)"},
+"冷":{on:"レイ",kun:"つめ(たい)",mean:"차갑다"},
+"出":{on:"シュツ",kun:"で(る)・だ(す)",mean:"나가다"},
+"分":{on:"ブン・フン",kun:"わ(ける)",mean:"나누다/분(시간)"},
+"切":{on:"セツ",kun:"き(る)",mean:"자르다(切符=표)"},
+"初":{on:"ショ",kun:"はじ(めて)",mean:"처음"},
+"別":{on:"ベツ",kun:"わか(れる)",mean:"다르다/헤어지다"},
+"前":{on:"ゼン",kun:"まえ",mean:"앞"},
+"割":{on:"カツ",kun:"わ(る)",mean:"나누다/할인"},
+"助":{on:"ジョ",kun:"たす(ける)",mean:"돕다"},
+"勘":{on:"カン",kun:"-",mean:"셈/직감(割り勘)"},
+"包":{on:"ホウ",kun:"つつ(む)",mean:"싸다/포장"},
+"反":{on:"ハン",kun:"そ(る)",mean:"반대"},
+"口":{on:"コウ",kun:"くち",mean:"입/입구"},
+"右":{on:"ウ",kun:"みぎ",mean:"오른쪽"},
+"各":{on:"カク",kun:"おのおの",mean:"각각"},
+"合":{on:"ゴウ",kun:"あ(う)",mean:"맞다/합치다"},
+"名":{on:"メイ",kun:"な",mean:"이름"},
+"味":{on:"ミ",kun:"あじ",mean:"맛"},
+"呼":{on:"コ",kun:"よ(ぶ)",mean:"부르다"},
+"品":{on:"ヒン",kun:"しな",mean:"물건"},
+"喫":{on:"キツ",kun:"-",mean:"마시다/피우다(喫煙)"},
+"営":{on:"エイ",kun:"いとな(む)",mean:"영업하다"},
+"回":{on:"カイ",kun:"まわ(る)",mean:"돌다/회(횟수)"},
+"図":{on:"ズ",kun:"はか(る)",mean:"그림/도표"},
+"国":{on:"コク",kun:"くに",mean:"나라"},
+"土":{on:"ド",kun:"つち",mean:"흙(お土産)"},
+"在":{on:"ザイ",kun:"あ(る)",mean:"있다/재류"},
+"地":{on:"チ",kun:"-",mean:"땅"},
+"場":{on:"ジョウ",kun:"ば",mean:"장소"},
+"壊":{on:"カイ",kun:"こわ(れる)",mean:"고장나다/부서지다"},
+"外":{on:"ガイ",kun:"そと",mean:"밖(外国人)"},
+"大":{on:"ダイ",kun:"おお(きい)",mean:"크다"},
+"天":{on:"テン",kun:"あめ",mean:"하늘(天気=날씨)"},
+"夫":{on:"フ",kun:"おっと",mean:"남편(大丈夫)"},
+"失":{on:"シツ",kun:"うしな(う)",mean:"잃다(失礼)"},
+"好":{on:"コウ",kun:"す(き)",mean:"좋아하다"},
+"子":{on:"シ",kun:"こ",mean:"아이"},
+"学":{on:"ガク",kun:"まな(ぶ)",mean:"배우다(学生)"},
+"守":{on:"シュ",kun:"まも(る)",mean:"지키다"},
+"安":{on:"アン",kun:"やす(い)",mean:"편안하다/싸다"},
+"室":{on:"シツ",kun:"むろ",mean:"방(試着室)"},
+"察":{on:"サツ",kun:"-",mean:"살피다(警察)"},
+"小":{on:"ショウ",kun:"ちい(さい)",mean:"작다"},
+"局":{on:"キョク",kun:"-",mean:"국/부서(薬局)"},
+"屋":{on:"オク",kun:"や",mean:"가게/집"},
+"左":{on:"サ",kun:"ひだり",mean:"왼쪽"},
+"布":{on:"フ",kun:"ぬの",mean:"천(財布)"},
+"席":{on:"セキ",kun:"-",mean:"자리"},
+"帰":{on:"キ",kun:"かえ(る)",mean:"돌아가다"},
+"常":{on:"ジョウ",kun:"つね",mean:"항상(非常口)"},
+"店":{on:"テン",kun:"みせ",mean:"가게"},
+"度":{on:"ド",kun:"たび",mean:"정도/번(今度)"},
+"庫":{on:"コ",kun:"-",mean:"창고(金庫)"},
+"建":{on:"ケン",kun:"た(てる)",mean:"짓다(建物)"},
+"引":{on:"イン",kun:"ひ(く)",mean:"끌다(割引)"},
+"影":{on:"エイ",kun:"かげ",mean:"그림자(撮影)"},
+"往":{on:"オウ",kun:"-",mean:"가다(往復)"},
+"待":{on:"タイ",kun:"ま(つ)",mean:"기다리다"},
+"後":{on:"ゴ",kun:"あと",mean:"뒤/후"},
+"復":{on:"フク",kun:"-",mean:"회복/왕복"},
+"必":{on:"ヒツ",kun:"かなら(ず)",mean:"반드시(必要)"},
+"応":{on:"オウ",kun:"こた(える)",mean:"응하다"},
+"急":{on:"キュウ",kun:"いそ(ぐ)",mean:"급하다"},
+"悪":{on:"アク",kun:"わる(い)",mean:"나쁘다"},
+"意":{on:"イ",kun:"-",mean:"뜻(意味)"},
+"所":{on:"ショ",kun:"ところ",mean:"장소"},
+"手":{on:"シュ",kun:"て",mean:"손"},
+"払":{on:"フツ",kun:"はら(う)",mean:"지불하다"},
+"抜":{on:"バツ",kun:"ぬ(く)",mean:"빼다"},
+"持":{on:"ジ",kun:"も(つ)",mean:"가지다"},
+"換":{on:"カン",kun:"か(える)",mean:"바꾸다(両替)"},
+"撮":{on:"サツ",kun:"と(る)",mean:"찍다(撮影)"},
+"支":{on:"シ",kun:"ささ(える)",mean:"지불하다/지지하다"},
+"故":{on:"コ",kun:"ゆえ",mean:"사고/까닭(事故)"},
+"救":{on:"キュウ",kun:"すく(う)",mean:"구하다(救急車)"},
+"料":{on:"リョウ",kun:"-",mean:"요금/재료"},
+"日":{on:"ニチ",kun:"ひ",mean:"날/해"},
+"時":{on:"ジ",kun:"とき",mean:"때/시"},
+"曲":{on:"キョク",kun:"ま(がる)",mean:"굽다(各駅停車)"},
+"替":{on:"タイ",kun:"か(える)",mean:"바꾸다(両替)"},
+"朝":{on:"チョウ",kun:"あさ",mean:"아침"},
+"本":{on:"ホン",kun:"もと",mean:"책/근본"},
+"杯":{on:"ハイ",kun:"-",mean:"잔(단위, 一杯)"},
+"枚":{on:"マイ",kun:"-",mean:"장(단위, 종이류)"},
+"案":{on:"アン",kun:"-",mean:"안내/계획(案内所)"},
+"棒":{on:"ボウ",kun:"-",mean:"막대(泥棒=도둑)"},
+"業":{on:"ギョウ",kun:"わざ",mean:"업/일(営業)"},
+"止":{on:"シ",kun:"と(まる)",mean:"멈추다"},
+"気":{on:"キ",kun:"-",mean:"기운/느낌(天気)"},
+"水":{on:"スイ",kun:"みず",mean:"물"},
+"氷":{on:"ヒョウ",kun:"こおり",mean:"얼음"},
+"泥":{on:"デイ",kun:"どろ",mean:"진흙(泥棒=도둑)"},
+"混":{on:"コン",kun:"ま(じる)",mean:"섞이다/붐비다"},
+"温":{on:"オン",kun:"あたた(かい)",mean:"따뜻하다"},
+"港":{on:"コウ",kun:"みなと",mean:"항구(空港)"},
+"湯":{on:"トウ",kun:"ゆ",mean:"뜨거운 물"},
+"滞":{on:"タイ",kun:"とどこお(る)",mean:"머무르다/체류"},
+"火":{on:"カ",kun:"ひ",mean:"불(火事=화재)"},
+"無":{on:"ム",kun:"な(い)",mean:"없다(無料)"},
+"煙":{on:"エン",kun:"けむり",mean:"연기/담배(禁煙)"},
+"片":{on:"ヘン",kun:"かた",mean:"조각/편(片道)"},
+"物":{on:"ブツ",kun:"もの",mean:"물건(荷物)"},
+"現":{on:"ゲン",kun:"あらわ(れる)",mean:"나타나다/현재(現金)"},
+"生":{on:"セイ",kun:"い(きる)",mean:"살다/날것(学生)"},
+"産":{on:"サン",kun:"う(む)",mean:"낳다/생산(お土産)"},
+"用":{on:"ヨウ",kun:"もち(いる)",mean:"사용/용도"},
+"申":{on:"シン",kun:"もう(す)",mean:"말씀드리다"},
+"番":{on:"バン",kun:"-",mean:"순번(番線)"},
+"病":{on:"ビョウ",kun:"やまい",mean:"병(病院)"},
+"真":{on:"シン",kun:"ま",mean:"참/진짜(写真)"},
+"眺":{on:"チョウ",kun:"なが(める)",mean:"바라보다/전망"},
+"着":{on:"チャク",kun:"き(る)・つ(く)",mean:"입다/도착하다"},
+"礼":{on:"レイ",kun:"-",mean:"예의/감사(失礼)"},
+"祭":{on:"サイ",kun:"まつ(り)",mean:"축제"},
+"禁":{on:"キン",kun:"-",mean:"금하다"},
+"私":{on:"シ",kun:"わたし",mean:"나"},
+"税":{on:"ゼイ",kun:"-",mean:"세금(免税)"},
+"空":{on:"クウ",kun:"そら",mean:"하늘/비다(空港)"},
+"符":{on:"フ",kun:"-",mean:"표/부호(切符)"},
+"箸":{on:"チョ",kun:"はし",mean:"젓가락"},
+"約":{on:"ヤク",kun:"-",mean:"약속/대략(予約)"},
+"紛":{on:"フン",kun:"まぎ(れる)",mean:"헷갈리다/분실"},
+"終":{on:"シュウ",kun:"お(わる)",mean:"끝나다(終電)"},
+"絡":{on:"ラク",kun:"から(む)",mean:"얽히다/연락"},
+"線":{on:"セン",kun:"-",mean:"선(路線図)"},
+"翻":{on:"ホン",kun:"ひるがえ(る)",mean:"뒤집다/번역"},
+"肉":{on:"ニク",kun:"-",mean:"고기"},
+"色":{on:"ショク",kun:"いろ",mean:"색"},
+"英":{on:"エイ",kun:"-",mean:"영국/뛰어나다(英語)"},
+"茶":{on:"サ・チャ",kun:"-",mean:"차(お茶)"},
+"荷":{on:"カ",kun:"に",mean:"짐(荷物)"},
+"薬":{on:"ヤク",kun:"くすり",mean:"약(薬局)"},
+"行":{on:"コウ",kun:"い(く)・おこな(う)",mean:"가다/행하다"},
+"袋":{on:"タイ",kun:"ふくろ",mean:"봉투"},
+"要":{on:"ヨウ",kun:"い(る)",mean:"필요하다"},
+"見":{on:"ケン",kun:"み(る)",mean:"보다"},
+"観":{on:"カン",kun:"-",mean:"보다/관광"},
+"触":{on:"ショク",kun:"さわ(る)",mean:"만지다"},
+"言":{on:"ゲン",kun:"い(う)",mean:"말하다"},
+"計":{on:"ケイ",kun:"はか(る)",mean:"계산하다(会計)"},
+"訳":{on:"ヤク",kun:"わけ",mean:"번역/이유(翻訳)"},
+"試":{on:"シ",kun:"こころ(みる)",mean:"시험하다(試着)"},
+"話":{on:"ワ",kun:"はな(す)",mean:"이야기하다"},
+"語":{on:"ゴ",kun:"かた(る)",mean:"말/언어"},
+"調":{on:"チョウ",kun:"しら(べる)",mean:"조사하다"},
+"警":{on:"ケイ",kun:"-",mean:"경계하다(警察)"},
+"財":{on:"ザイ",kun:"-",mean:"재물(財布)"},
+"買":{on:"バイ",kun:"か(う)",mean:"사다"},
+"路":{on:"ロ",kun:"じ",mean:"길(路線図)"},
+"車":{on:"シャ",kun:"くるま",mean:"차/수레"},
+"辛":{on:"シン",kun:"から(い)",mean:"맵다"},
+"近":{on:"キン",kun:"ちか(い)",mean:"가깝다"},
+"返":{on:"ヘン",kun:"かえ(す)",mean:"돌려주다(返品)"},
+"迷":{on:"メイ",kun:"まよ(う)",mean:"헤매다"},
+"連":{on:"レン",kun:"つ(れる)",mean:"데리다/잇다(連絡)"},
+"道":{on:"ドウ",kun:"みち",mean:"길"},
+"違":{on:"イ",kun:"ちが(う)",mean:"다르다"},
+"遠":{on:"エン",kun:"とお(い)",mean:"멀다"},
+"遭":{on:"ソウ",kun:"あ(う)",mean:"만나다(불행한 일)"},
+"部":{on:"ブ",kun:"-",mean:"부분/부서(部屋)"},
+"酒":{on:"シュ",kun:"さけ",mean:"술"},
+"金":{on:"キン",kun:"かね",mean:"돈/금"},
+"鉄":{on:"テツ",kun:"-",mean:"철(地下鉄)"},
+"鍵":{on:"ケン",kun:"かぎ",mean:"열쇠"},
+"閉":{on:"ヘイ",kun:"し(まる)",mean:"닫다"},
+"開":{on:"カイ",kun:"あ(く)",mean:"열다"},
+"間":{on:"カン",kun:"あいだ",mean:"사이(時間)"},
+"降":{on:"コウ",kun:"お(りる)",mean:"내리다"},
+"院":{on:"イン",kun:"-",mean:"원(기관, 病院)"},
+"隣":{on:"リン",kun:"となり",mean:"이웃/옆"},
+"電":{on:"デン",kun:"-",mean:"전기(電車)"},
+"静":{on:"セイ",kun:"しず(か)",mean:"조용하다"},
+"非":{on:"ヒ",kun:"-",mean:"아니다(非常口)"},
+"韓":{on:"カン",kun:"-",mean:"한국"},
+"預":{on:"ヨ",kun:"あず(ける)",mean:"맡기다"},
+"願":{on:"ガン",kun:"ねが(う)",mean:"바라다(お願い)"},
+"飯":{on:"ハン",kun:"めし",mean:"밥(ご飯)"},
+"館":{on:"カン",kun:"-",mean:"건물/관(大使館)"},
+"駅":{on:"エキ",kun:"-",mean:"역"},
+"高":{on:"コウ",kun:"たか(い)",mean:"높다/비싸다"}
+};
+
+/* ===================== 후리가나(단어별 읽기) & 한자 훈·음 분해 =====================
+   jp(한자+가나 원문)와 kana(문장 전체 히라가나 읽기)를 비교해서,
+   한자 덩어리마다 정확한 읽기를 자동으로 역산합니다.
+   (가나/기호 부분은 두 필드에 동일하게 남아있으므로 그 사이 구간이 한자의 읽기가 됩니다) */
+function isKanjiChar(ch){
+  return /[一-龯々]/.test(ch);
+}
+function tokenizeJp(jp){
+  var tokens = [];
+  var cur = '';
+  var curKind = null;
+  for (var i = 0; i < jp.length; i++){
+    var ch = jp[i];
+    var kind = isKanjiChar(ch) ? 'kanji' : 'other';
+    if (kind !== curKind){
+      if (cur) tokens.push({kind: curKind, text: cur});
+      cur = ch; curKind = kind;
+    } else {
+      cur += ch;
+    }
+  }
+  if (cur) tokens.push({kind: curKind, text: cur});
+  return tokens;
+}
+function buildFuriganaSegments(jp, kana){
+  var tokens = tokenizeJp(jp);
+  var kanaPos = 0;
+  var segments = [];
+  for (var i = 0; i < tokens.length; i++){
+    var tok = tokens[i];
+    if (tok.kind === 'other'){
+      var idx = kana.indexOf(tok.text, kanaPos);
+      if (idx === -1) return null;
+      segments.push({kind:'other', text: tok.text});
+      kanaPos = idx + tok.text.length;
+    } else {
+      var nextOtherIdx = -1;
+      for (var j = i + 1; j < tokens.length; j++){
+        if (tokens[j].kind === 'other'){ nextOtherIdx = j; break; }
+      }
+      var readingEnd;
+      if (nextOtherIdx === -1){
+        readingEnd = kana.length;
+      } else {
+        var nidx = kana.indexOf(tokens[nextOtherIdx].text, kanaPos);
+        if (nidx === -1) return null;
+        readingEnd = nidx;
+      }
+      segments.push({kind:'kanji', text: tok.text, reading: kana.slice(kanaPos, readingEnd)});
+      kanaPos = readingEnd;
+    }
+  }
+  return segments;
+}
+function furiganaHtml(jp, kana){
+  var segs = buildFuriganaSegments(jp, kana);
+  if (!segs) return escapeHtml(jp);
+  return segs.map(function(s){
+    if (s.kind === 'kanji'){
+      return '<ruby>' + escapeHtml(s.text) + '<rt>' + escapeHtml(s.reading) + '</rt></ruby>';
+    }
+    return escapeHtml(s.text);
+  }).join('');
+}
+function uniqueKanjiChars(jp){
+  var seen = {};
+  var list = [];
+  for (var i = 0; i < jp.length; i++){
+    var ch = jp[i];
+    if (isKanjiChar(ch) && ch !== '々' && !seen[ch]){
+      seen[ch] = true;
+      list.push(ch);
+    }
+  }
+  return list;
+}
+function kanjiBreakdownHtml(jp){
+  var chars = uniqueKanjiChars(jp);
+  var html = '';
+  for (var i = 0; i < chars.length; i++){
+    var info = KANJI_INFO[chars[i]];
+    if (!info) continue;
+    html += '<div class="kanji-chip"><span class="kanji-char">' + chars[i] +
+      '</span><span class="kanji-readings">훈 ' + escapeHtml(info.kun) + ' · 음 ' + escapeHtml(info.on) +
+      '</span><span class="kanji-mean">' + escapeHtml(info.mean) + '</span></div>';
+  }
+  return html;
+}
+
 /* ===================== 상태 관리 ===================== */
 var STORAGE_KEY = 'jpTravelQuizBookmarks_v1';
 var order = [];
@@ -569,6 +897,8 @@ var answerBlock = document.getElementById('answerBlock');
 var jpText = document.getElementById('jpText');
 var kanaText = document.getElementById('kanaText');
 var pronText = document.getElementById('pronText');
+var kanjiRow = document.getElementById('kanjiRow');
+var kanjiBreakdown = document.getElementById('kanjiBreakdown');
 var grammarText = document.getElementById('grammarText');
 var actionRow = document.getElementById('actionRow');
 var bookmarkBtn = document.getElementById('bookmarkBtn');
@@ -590,9 +920,12 @@ function renderQuiz(){
   progressText.textContent = (pos + 1) + ' / ' + DATA.length;
   progressFill.style.width = (((pos + 1) / DATA.length) * 100) + '%';
   krText.textContent = item.kr;
-  jpText.textContent = item.jp;
+  jpText.innerHTML = furiganaHtml(item.jp, item.kana);
   kanaText.textContent = item.kana;
   pronText.textContent = item.pronunciation;
+  var kbHtml = kanjiBreakdownHtml(item.jp);
+  kanjiBreakdown.innerHTML = kbHtml;
+  kanjiRow.style.display = kbHtml ? 'block' : 'none';
   grammarText.textContent = item.grammar;
 
   revealed = false;
@@ -684,9 +1017,10 @@ function renderBookmarkView(){
     var detail = document.createElement('div');
     detail.className = 'bm-detail';
     detail.innerHTML =
-      '<div class="answer-row"><div class="answer-label">① 일본어 원문</div><div class="jp-text">' + escapeHtml(item.jp) + '</div></div>' +
-      '<div class="answer-row"><div class="answer-label">② 히라가나 읽기</div><div class="kana-text">' + escapeHtml(item.kana) + '</div></div>' +
+      '<div class="answer-row"><div class="answer-label">① 일본어 원문 (단어별 읽기 포함)</div><div class="jp-text">' + furiganaHtml(item.jp, item.kana) + '</div></div>' +
+      '<div class="answer-row"><div class="answer-label">② 문장 전체 히라가나 읽기</div><div class="kana-text">' + escapeHtml(item.kana) + '</div></div>' +
       '<div class="answer-row"><div class="answer-label">③ 한글 발음</div><div class="pron-text">' + escapeHtml(item.pronunciation) + '</div></div>' +
+      (kanjiBreakdownHtml(item.jp) ? '<div class="answer-row"><div class="answer-label">④ 한자 훈·음 풀이</div><div class="kanji-breakdown">' + kanjiBreakdownHtml(item.jp) + '</div></div>' : '') +
       '<div class="answer-row" style="margin-bottom:0;"><div class="grammar-box"><span class="glabel">💡 핵심 문법 포인트</span>' + escapeHtml(item.grammar) + '</div></div>';
 
     var actions = document.createElement('div');

@@ -191,6 +191,88 @@ main{
 .kanji-chip .kanji-readings.jp{color:var(--blue);}
 .kanji-chip .kanji-readings.kr{color:var(--red);}
 .kanji-chip .kanji-mean{color:var(--sub); flex:0 0 auto; padding-left:6px; border-left:1px solid var(--border);}
+.segmented{
+  display:flex;
+  background:var(--border);
+  border-radius:10px;
+  padding:2px;
+  margin-bottom:12px;
+}
+.seg-btn{
+  flex:1;
+  border:none;
+  background:none;
+  padding:9px 6px;
+  border-radius:8px;
+  font-size:14px;
+  font-weight:600;
+  color:var(--text);
+  cursor:pointer;
+  transition:background .15s ease;
+}
+.seg-btn.active{background:var(--card); box-shadow:0 1px 3px rgba(0,0,0,0.14);}
+.cat-scroll{
+  display:flex;
+  gap:8px;
+  overflow-x:auto;
+  -webkit-overflow-scrolling:touch;
+  padding-bottom:12px;
+  scrollbar-width:none;
+}
+.cat-scroll::-webkit-scrollbar{display:none;}
+.cat-chip{
+  flex:0 0 auto;
+  padding:7px 14px;
+  border-radius:100px;
+  background:var(--card);
+  border:1px solid var(--border);
+  color:var(--sub);
+  font-size:13px;
+  font-weight:600;
+  cursor:pointer;
+  white-space:nowrap;
+}
+.cat-chip.active{background:var(--blue); color:#fff; border-color:var(--blue);}
+.conj-base{
+  font-size:13px;
+  font-weight:600;
+  color:var(--sub);
+  text-align:center;
+  margin-bottom:8px;
+}
+.conj-form{
+  display:block;
+  text-align:center;
+  font-size:14px;
+  font-weight:700;
+  color:var(--blue);
+  background:var(--chip-bg);
+  border-radius:100px;
+  padding:7px 14px;
+  margin:0 auto 4px auto;
+}
+.alt-box{
+  background:var(--bg);
+  border:1px dashed var(--border);
+  border-radius:12px;
+  padding:10px 12px;
+  margin-top:10px;
+}
+.alt-box .alt-label{
+  display:block;
+  font-size:11px;
+  font-weight:700;
+  color:var(--sub);
+  margin-bottom:4px;
+}
+.alt-box .alt-jp{font-size:17px; font-weight:700; line-height:1.9;}
+.alt-box .alt-pron{font-size:13px; color:var(--sub); margin-top:2px;}
+.bm-section-title{
+  font-size:13px;
+  font-weight:700;
+  color:var(--sub);
+  margin:4px 2px 10px 2px;
+}
 .grammar-box{
   background:var(--grammar-bg);
   border-radius:14px;
@@ -324,6 +406,57 @@ nav.tabbar{
       </div>
     </section>
 
+    <section class="view" id="view-conj">
+      <div class="segmented" id="conjModeSeg">
+        <button class="seg-btn active" data-mode="seq">분류별 순서</button>
+        <button class="seg-btn" data-mode="random">랜덤</button>
+      </div>
+      <div class="cat-scroll" id="conjCatRow"></div>
+
+      <div class="card">
+        <div class="conj-base" id="conjBase"></div>
+        <span class="conj-form" id="conjForm"></span>
+        <div class="kr-text" id="conjKr"></div>
+
+        <button class="btn btn-primary" id="conjRevealBtn">답 확인</button>
+
+        <div class="answer-block" id="conjAnswerBlock">
+          <div class="answer-row">
+            <div class="answer-label">① 일본어 (단어별 읽기 포함)</div>
+            <div class="jp-text" id="conjJp"></div>
+          </div>
+          <div class="answer-row">
+            <div class="answer-label">② 히라가나 읽기</div>
+            <div class="kana-text" id="conjKana"></div>
+          </div>
+          <div class="answer-row">
+            <div class="answer-label">③ 한글 발음</div>
+            <div class="pron-text" id="conjPron"></div>
+            <div class="alt-box" id="conjAltBox" style="display:none;">
+              <span class="alt-label">또 다른 표현</span>
+              <div class="alt-jp" id="conjAltJp"></div>
+              <div class="alt-pron" id="conjAltPron"></div>
+            </div>
+          </div>
+          <div class="answer-row" id="conjKanjiRow">
+            <div class="answer-label">④ 한자 훈·음 풀이 (일본어 🇯🇵 + 한국 한자음 🇰🇷)</div>
+            <div class="kanji-breakdown" id="conjKanjiBreakdown"></div>
+          </div>
+          <div class="answer-row" style="margin-bottom:0;">
+            <div class="grammar-box">
+              <span class="glabel">💡 활용 만드는 법</span>
+              <span id="conjTip"></span>
+            </div>
+          </div>
+        </div>
+
+        <div class="btn-row" id="conjActionRow" style="display:none;">
+          <button class="btn btn-secondary" id="conjBookmarkBtn">헷갈려요 (저장)</button>
+          <button class="btn btn-primary" id="conjNextBtn">다음 문제</button>
+        </div>
+      </div>
+    </section>
+
     <section class="view" id="view-bookmark">
       <div id="bookmarkList"></div>
     </section>
@@ -332,6 +465,9 @@ nav.tabbar{
   <nav class="tabbar">
     <button class="tab-btn active" id="tab-quiz" data-view="view-quiz">
       <span class="tab-icon">📝</span><span>퀴즈 풀기</span>
+    </button>
+    <button class="tab-btn" id="tab-conj" data-view="view-conj">
+      <span class="tab-icon">🧩</span><span>문법 연습</span>
     </button>
     <button class="tab-btn" id="tab-bookmark" data-view="view-bookmark">
       <span class="tab-icon">🔖</span><span>저장된 단어장</span>
@@ -546,7 +682,7 @@ var DATA = [
 {id:200,category:"관광/기타",kr:"여러 가지로 감사했습니다",jp:"いろいろとありがとうございました",kana:"いろいろとありがとうございました",pronunciation:"이로이로토 아리가토- 고자이마시타",grammar:"いろいろと는 '여러 가지로'라는 부사로, 작별 인사에 자주 쓰입니다."}
 ];
 
-/* ===================== 한자 훈/음 사전 (210자, 일본어+한국 한자음) ===================== */
+/* ===================== 한자 훈/음 사전 (214자, 일본어+한국 한자음) ===================== */
 var KANJI_INFO = {
 "一":{on:"イチ・イツ",kun:"ひと(つ)",mean:"하나",krKun:"하나",krEum:"일"},
 "丈":{on:"ジョウ",kun:"たけ",mean:"길이(大丈夫=괜찮다)",krKun:"어른",krEum:"장"},
@@ -757,8 +893,141 @@ var KANJI_INFO = {
 "飯":{on:"ハン",kun:"めし",mean:"밥(ご飯)",krKun:"밥",krEum:"반"},
 "館":{on:"カン",kun:"-",mean:"건물/관(大使館)",krKun:"집",krEum:"관"},
 "駅":{on:"エキ",kun:"-",mean:"역",krKun:"역",krEum:"역"},
-"高":{on:"コウ",kun:"たか(い)",mean:"높다/비싸다",krKun:"높을",krEum:"고"}
+"高":{on:"コウ",kun:"たか(い)",mean:"높다/비싸다",krKun:"높을",krEum:"고"},
+"親":{on:"シン",kun:"おや・した(しい)",mean:"친하다/부모(親切=친절)",krKun:"친할",krEum:"친"},
+"書":{on:"ショ",kun:"か(く)",mean:"쓰다",krKun:"글",krEum:"서"},
+"食":{on:"ショク",kun:"た(べる)・く(う)",mean:"먹다",krKun:"밥/먹을",krEum:"식"},
+"来":{on:"ライ",kun:"く(る)",mean:"오다",krKun:"올",krEum:"래"}
 };
+
+/* ===================== 문법 활용 연습 데이터 (123개) ===================== */
+var CONJ_DATA = [
+{id:1,cat:"명사",base:"学生 (がくせい) 학생",form:"기본형 (~이다)",kr:"학생이다",jp:"学生だ",kana:"がくせいだ",pron:"가쿠세-다",tip:"명사 뒤에 だ를 붙이면 반말 기본형이 됩니다."},
+{id:2,cat:"명사",base:"学生 (がくせい) 학생",form:"과거형 (~이었다)",kr:"학생이었다",jp:"学生だった",kana:"がくせいだった",pron:"가쿠세-닷타",tip:"だ → だった 로 바꿔 과거를 나타냅니다."},
+{id:3,cat:"명사",base:"学生 (がくせい) 학생",form:"부정형 (~이 아니다)",kr:"학생이 아니다",jp:"学生じゃない",kana:"がくせいじゃない",pron:"가쿠세-쟈나이",tip:"だ → じゃない. 격식체는 ではない 입니다."},
+{id:4,cat:"명사",base:"学生 (がくせい) 학생",form:"과거 부정형 (~이 아니었다)",kr:"학생이 아니었다",jp:"学生じゃなかった",kana:"がくせいじゃなかった",pron:"가쿠세-쟈나캇타",tip:"じゃない 의 い 가 かった 로 바뀝니다 (い형용사와 같은 방식)."},
+{id:5,cat:"명사",base:"学生 (がくせい) 학생",form:"연결형 (~이고, ~이라서)",kr:"학생이고 / 학생이라서",jp:"学生で",kana:"がくせいで",pron:"가쿠세-데",tip:"だ → で. 뒤 문장으로 이어줍니다."},
+{id:6,cat:"명사",base:"学生 (がくせい) 학생",form:"원인 (~이기 때문에)",kr:"학생이기 때문에",jp:"学生だから",kana:"がくせいだから",pron:"가쿠세-다카라",tip:"기본형 だ + から 로 이유를 나타냅니다."},
+{id:7,cat:"명사",base:"学生 (がくせい) 학생",form:"가정형 (~이라면)",kr:"학생이라면",jp:"学生なら",kana:"がくせいなら",pron:"가쿠세-나라",tip:"명사 + なら. だ 를 빼고 なら 를 붙입니다."},
+{id:8,cat:"명사",base:"学生 (がくせい) 학생",form:"추측 (~이겠지)",kr:"학생이겠지",jp:"学生だろう",kana:"がくせいだろう",pron:"가쿠세-다로-",tip:"だ → だろう. 정중하게는 でしょう 를 씁니다."},
+{id:9,cat:"명사",base:"学生 (がくせい) 학생",form:"정중형 (~입니다)",kr:"학생입니다",jp:"学生です",kana:"がくせいです",pron:"가쿠세-데스",tip:"だ → です 로 바꾸면 정중체가 됩니다."},
+{id:10,cat:"명사",base:"学生 (がくせい) 학생",form:"의문형 (~입니까?)",kr:"학생입니까?",jp:"学生ですか",kana:"がくせいですか",pron:"가쿠세-데스카",tip:"です + か. 끝을 올려 읽습니다."},
+{id:11,cat:"명사",base:"学生 (がくせい) 학생",form:"과거 정중형 (~이었습니다)",kr:"학생이었습니다",jp:"学生でした",kana:"がくせいでした",pron:"가쿠세-데시타",tip:"です → でした."},
+{id:12,cat:"명사",base:"学生 (がくせい) 학생",form:"과거 의문형 (~이었습니까?)",kr:"학생이었습니까?",jp:"学生でしたか",kana:"がくせいでしたか",pron:"가쿠세-데시타카",tip:"でした + か."},
+{id:13,cat:"명사",base:"学生 (がくせい) 학생",form:"부정 정중형 (~이 아닙니다)",kr:"학생이 아닙니다",jp:"学生じゃないです",kana:"がくせいじゃないです",pron:"가쿠세-쟈나이데스",tip:"회화체는 じゃないです, 격식체는 ではありません 입니다.",altJp:"学生ではありません",altKana:"がくせいではありません",altPron:"가쿠세-데와 아리마센"},
+{id:14,cat:"명사",base:"学生 (がくせい) 학생",form:"과거 부정 정중형 (~이 아니었습니다)",kr:"학생이 아니었습니다",jp:"学生じゃなかったです",kana:"がくせいじゃなかったです",pron:"가쿠세-쟈나캇타데스",tip:"⚠️ ~ないでした 는 틀린 표현! ~なかったです 가 올바릅니다.",altJp:"学生ではありませんでした",altKana:"がくせいではありませんでした",altPron:"가쿠세-데와 아리마센데시타"},
+{id:15,cat:"い형용사",base:"高い (たかい) 비싸다/높다",form:"기본형 (~하다)",kr:"비싸다",jp:"高い",kana:"たかい",pron:"타카이",tip:"어미가 い 로 끝나는 형용사의 기본형입니다."},
+{id:16,cat:"い형용사",base:"高い (たかい) 비싸다/높다",form:"과거형 (~했다)",kr:"비쌌다",jp:"高かった",kana:"たかかった",pron:"타카캇타",tip:"어미 い → かった."},
+{id:17,cat:"い형용사",base:"高い (たかい) 비싸다/높다",form:"부정형 (~하지 않다)",kr:"비싸지 않다",jp:"高くない",kana:"たかくない",pron:"타카쿠나이",tip:"어미 い → くない."},
+{id:18,cat:"い형용사",base:"高い (たかい) 비싸다/높다",form:"과거 부정형 (~하지 않았다)",kr:"비싸지 않았다",jp:"高くなかった",kana:"たかくなかった",pron:"타카쿠나캇타",tip:"くない 의 い → かった."},
+{id:19,cat:"い형용사",base:"高い (たかい) 비싸다/높다",form:"연결형 (~하고, ~해서)",kr:"비싸고 / 비싸서",jp:"高くて",kana:"たかくて",pron:"타카쿠테",tip:"어미 い → くて."},
+{id:20,cat:"い형용사",base:"高い (たかい) 비싸다/높다",form:"부사형 (~하게)",kr:"비싸게 / 높게",jp:"高く",kana:"たかく",pron:"타카쿠",tip:"어미 い → く. (な형용사는 に 를 씁니다)"},
+{id:21,cat:"い형용사",base:"高い (たかい) 비싸다/높다",form:"가정형 (~하다면)",kr:"비싸다면",jp:"高ければ",kana:"たかければ",pron:"타카케레바",tip:"어미 い → ければ."},
+{id:22,cat:"い형용사",base:"高い (たかい) 비싸다/높다",form:"추측 (~하겠죠)",kr:"비싸겠죠",jp:"高いでしょう",kana:"たかいでしょう",pron:"타카이데쇼-",tip:"기본형 + でしょう."},
+{id:23,cat:"い형용사",base:"高い (たかい) 비싸다/높다",form:"명사 수식 (~한 + 명사)",kr:"비싼 책",jp:"高い本",kana:"たかいほん",pron:"타카이 혼",tip:"い형용사는 기본형 그대로 명사를 수식합니다."},
+{id:24,cat:"い형용사",base:"高い (たかい) 비싸다/높다",form:"부정 수식 (~하지 않은 + 명사)",kr:"비싸지 않은 책",jp:"高くない本",kana:"たかくないほん",pron:"타카쿠나이 혼",tip:"부정형 くない 뒤에 바로 명사를 붙입니다."},
+{id:25,cat:"い형용사",base:"高い (たかい) 비싸다/높다",form:"원인 (~하기 때문에)",kr:"비싸기 때문에",jp:"高いから",kana:"たかいから",pron:"타카이카라",tip:"기본형 + から."},
+{id:26,cat:"い형용사",base:"高い (たかい) 비싸다/높다",form:"정중형 (~합니다)",kr:"비쌉니다",jp:"高いです",kana:"たかいです",pron:"타카이데스",tip:"기본형 + です. (だ 를 붙이지 않습니다)"},
+{id:27,cat:"い형용사",base:"高い (たかい) 비싸다/높다",form:"과거 정중형 (~했습니다)",kr:"비쌌습니다",jp:"高かったです",kana:"たかかったです",pron:"타카캇타데스",tip:"과거형 かった + です."},
+{id:28,cat:"い형용사",base:"高い (たかい) 비싸다/높다",form:"부정 정중형 (~하지 않습니다)",kr:"비싸지 않습니다",jp:"高くないです",kana:"たかくないです",pron:"타카쿠나이데스",tip:"회화체는 くないです, 격식체는 くありません 입니다.",altJp:"高くありません",altKana:"たかくありません",altPron:"타카쿠 아리마센"},
+{id:29,cat:"い형용사",base:"高い (たかい) 비싸다/높다",form:"과거 부정 정중형 (~하지 않았습니다)",kr:"비싸지 않았습니다",jp:"高くなかったです",kana:"たかくなかったです",pron:"타카쿠나캇타데스",tip:"⚠️ ~くないでした 는 틀립니다. ~くなかったです 가 맞습니다.",altJp:"高くありませんでした",altKana:"たかくありませんでした",altPron:"타카쿠 아리마센데시타"},
+{id:30,cat:"い형용사",base:"いい (좋다) — 불규칙",form:"과거형 (~했다)",kr:"좋았다",jp:"よかった",kana:"よかった",pron:"요캇타",tip:"いい 는 활용할 때 よい 로 바뀝니다. いかった 는 틀립니다."},
+{id:31,cat:"い형용사",base:"いい (좋다) — 불규칙",form:"부정형 (~하지 않다)",kr:"좋지 않다",jp:"よくない",kana:"よくない",pron:"요쿠나이",tip:"いくない 가 아니라 よくない 입니다."},
+{id:32,cat:"い형용사",base:"いい (좋다) — 불규칙",form:"연결형 (~하고, ~해서)",kr:"좋고 / 좋아서",jp:"よくて",kana:"よくて",pron:"요쿠테",tip:"いくて 가 아니라 よくて 입니다."},
+{id:33,cat:"な형용사",base:"親切だ (しんせつだ) 친절하다",form:"기본형 (~하다)",kr:"친절하다",jp:"親切だ",kana:"しんせつだ",pron:"신세츠다",tip:"어미가 だ 로 끝나는 형용사의 기본형입니다."},
+{id:34,cat:"な형용사",base:"親切だ (しんせつだ) 친절하다",form:"과거형 (~했다)",kr:"친절했다",jp:"親切だった",kana:"しんせつだった",pron:"신세츠닷타",tip:"だ → だった. (명사와 같은 방식)"},
+{id:35,cat:"な형용사",base:"親切だ (しんせつだ) 친절하다",form:"부정형 (~하지 않다)",kr:"친절하지 않다",jp:"親切じゃない",kana:"しんせつじゃない",pron:"신세츠쟈나이",tip:"だ → じゃない."},
+{id:36,cat:"な형용사",base:"親切だ (しんせつだ) 친절하다",form:"과거 부정형 (~하지 않았다)",kr:"친절하지 않았다",jp:"親切じゃなかった",kana:"しんせつじゃなかった",pron:"신세츠쟈나캇타",tip:"じゃない 의 い → かった."},
+{id:37,cat:"な형용사",base:"親切だ (しんせつだ) 친절하다",form:"연결형 (~하고, ~해서)",kr:"친절하고 / 친절해서",jp:"親切で",kana:"しんせつで",pron:"신세츠데",tip:"だ → で. (い형용사의 くて 와 대응)"},
+{id:38,cat:"な형용사",base:"親切だ (しんせつだ) 친절하다",form:"부사형 (~하게)",kr:"친절하게",jp:"親切に",kana:"しんせつに",pron:"신세츠니",tip:"だ → に. い형용사는 く, な형용사는 に 입니다."},
+{id:39,cat:"な형용사",base:"親切だ (しんせつだ) 친절하다",form:"가정형 (~하다면)",kr:"친절하다면",jp:"親切なら",kana:"しんせつなら",pron:"신세츠나라",tip:"だ → なら."},
+{id:40,cat:"な형용사",base:"親切だ (しんせつだ) 친절하다",form:"추측 (~하겠죠)",kr:"친절하겠죠",jp:"親切でしょう",kana:"しんせつでしょう",pron:"신세츠데쇼-",tip:"어간 + でしょう."},
+{id:41,cat:"な형용사",base:"親切だ (しんせつだ) 친절하다",form:"명사 수식 (~한 + 명사)",kr:"친절한 사람",jp:"親切な人",kana:"しんせつなひと",pron:"신세츠나 히토",tip:"な형용사는 명사 앞에서 어미가 な 로 바뀝니다. 이름의 유래입니다."},
+{id:42,cat:"な형용사",base:"親切だ (しんせつだ) 친절하다",form:"부정 수식 (~하지 않은 + 명사)",kr:"친절하지 않은 사람",jp:"親切じゃない人",kana:"しんせつじゃないひと",pron:"신세츠쟈나이 히토",tip:"부정형 じゃない 뒤에 바로 명사를 붙입니다."},
+{id:43,cat:"な형용사",base:"親切だ (しんせつだ) 친절하다",form:"원인 (~하기 때문에)",kr:"친절하기 때문에",jp:"親切だから",kana:"しんせつだから",pron:"신세츠다카라",tip:"기본형 だ + から."},
+{id:44,cat:"な형용사",base:"親切だ (しんせつだ) 친절하다",form:"정중형 (~합니다)",kr:"친절합니다",jp:"親切です",kana:"しんせつです",pron:"신세츠데스",tip:"だ → です."},
+{id:45,cat:"な형용사",base:"親切だ (しんせつだ) 친절하다",form:"과거 정중형 (~했습니다)",kr:"친절했습니다",jp:"親切でした",kana:"しんせつでした",pron:"신세츠데시타",tip:"です → でした. (い형용사의 かったです 와 다릅니다)"},
+{id:46,cat:"な형용사",base:"親切だ (しんせつだ) 친절하다",form:"부정 정중형 (~하지 않습니다)",kr:"친절하지 않습니다",jp:"親切じゃないです",kana:"しんせつじゃないです",pron:"신세츠쟈나이데스",tip:"회화체는 じゃないです, 격식체는 ではありません 입니다.",altJp:"親切ではありません",altKana:"しんせつではありません",altPron:"신세츠데와 아리마센"},
+{id:47,cat:"な형용사",base:"親切だ (しんせつだ) 친절하다",form:"과거 부정 정중형 (~하지 않았습니다)",kr:"친절하지 않았습니다",jp:"親切じゃなかったです",kana:"しんせつじゃなかったです",pron:"신세츠쟈나캇타데스",tip:"⚠️ ~じゃないでした 는 틀립니다. ~じゃなかったです 가 맞습니다.",altJp:"親切ではありませんでした",altKana:"しんせつではありませんでした",altPron:"신세츠데와 아리마센데시타"},
+{id:48,cat:"동사 1그룹",base:"書く (かく) 쓰다",form:"기본형 (~하다)",kr:"쓰다",jp:"書く",kana:"かく",pron:"카쿠",tip:"u단으로 끝나는 1그룹(5단) 동사의 기본형입니다."},
+{id:49,cat:"동사 1그룹",base:"書く (かく) 쓰다",form:"정중형 (~합니다)",kr:"씁니다",jp:"書きます",kana:"かきます",pron:"카키마스",tip:"어미 u단 → i단 + ます. く → き + ます."},
+{id:50,cat:"동사 1그룹",base:"書く (かく) 쓰다",form:"과거형 (~했다)",kr:"썼다",jp:"書いた",kana:"かいた",pron:"카이타",tip:"く 로 끝나는 1그룹은 いた 로 음편이 일어납니다."},
+{id:51,cat:"동사 1그룹",base:"書く (かく) 쓰다",form:"과거 정중형 (~했습니다)",kr:"썼습니다",jp:"書きました",kana:"かきました",pron:"카키마시타",tip:"ます → ました."},
+{id:52,cat:"동사 1그룹",base:"書く (かく) 쓰다",form:"부정형 (~ 안 하다)",kr:"안 쓴다",jp:"書かない",kana:"かかない",pron:"카카나이",tip:"어미 u단 → a단 + ない. く → か + ない."},
+{id:53,cat:"동사 1그룹",base:"書く (かく) 쓰다",form:"부정 정중형 (~ 안 합니다)",kr:"안 씁니다",jp:"書きません",kana:"かきません",pron:"카키마센",tip:"ます → ません. 회화체로는 書かないです 도 씁니다.",altJp:"書かないです",altKana:"かかないです",altPron:"카카나이데스"},
+{id:54,cat:"동사 1그룹",base:"書く (かく) 쓰다",form:"과거 부정형 (~ 안 했다)",kr:"안 썼다",jp:"書かなかった",kana:"かかなかった",pron:"카카나캇타",tip:"ない 의 い → かった."},
+{id:55,cat:"동사 1그룹",base:"書く (かく) 쓰다",form:"과거 부정 정중형 (~ 안 했습니다)",kr:"안 썼습니다",jp:"書きませんでした",kana:"かきませんでした",pron:"카키마센데시타",tip:"ません + でした. 회화체는 書かなかったです.",altJp:"書かなかったです",altKana:"かかなかったです",altPron:"카카나캇타데스"},
+{id:56,cat:"동사 1그룹",base:"書く (かく) 쓰다",form:"연결형 (~하고, ~해서 / て형)",kr:"쓰고 / 써서",jp:"書いて",kana:"かいて",pron:"카이테",tip:"く 로 끝나는 1그룹은 いて 로 음편이 일어납니다."},
+{id:57,cat:"동사 1그룹",base:"書く (かく) 쓰다",form:"연용형 (~하기)",kr:"쓰기",jp:"書き",kana:"かき",pron:"카키",tip:"ます 를 뗀 형태로, 명사처럼 쓰입니다."},
+{id:58,cat:"동사 1그룹",base:"書く (かく) 쓰다",form:"가정형 (~한다면)",kr:"쓴다면",jp:"書けば",kana:"かけば",pron:"카케바",tip:"어미 u단 → e단 + ば. く → け + ば."},
+{id:59,cat:"동사 1그룹",base:"書く (かく) 쓰다",form:"추측 (~하겠죠)",kr:"쓰겠죠",jp:"書くでしょう",kana:"かくでしょう",pron:"카쿠데쇼-",tip:"기본형 + でしょう. 반말은 書くだろう.",altJp:"書くだろう",altKana:"かくだろう",altPron:"카쿠다로-"},
+{id:60,cat:"동사 1그룹",base:"書く (かく) 쓰다",form:"명사 수식 (~할 + 명사)",kr:"쓸 책",jp:"書く本",kana:"かくほん",pron:"카쿠 혼",tip:"동사 기본형이 그대로 명사를 수식합니다."},
+{id:61,cat:"동사 1그룹",base:"書く (かく) 쓰다",form:"부정 수식 (~ 안 하는 + 명사)",kr:"안 쓰는 사람",jp:"書かない人",kana:"かかないひと",pron:"카카나이 히토",tip:"부정형 ない 뒤에 바로 명사를 붙입니다."},
+{id:62,cat:"동사 2그룹",base:"食べる (たべる) 먹다",form:"기본형 (~하다)",kr:"먹다",jp:"食べる",kana:"たべる",pron:"타베루",tip:"iる / eる 로 끝나는 2그룹(1단) 동사의 기본형입니다."},
+{id:63,cat:"동사 2그룹",base:"食べる (たべる) 먹다",form:"정중형 (~합니다)",kr:"먹습니다",jp:"食べます",kana:"たべます",pron:"타베마스",tip:"る 를 떼고 ます. 1그룹보다 규칙이 단순합니다."},
+{id:64,cat:"동사 2그룹",base:"食べる (たべる) 먹다",form:"과거형 (~했다)",kr:"먹었다",jp:"食べた",kana:"たべた",pron:"타베타",tip:"る 를 떼고 た."},
+{id:65,cat:"동사 2그룹",base:"食べる (たべる) 먹다",form:"과거 정중형 (~했습니다)",kr:"먹었습니다",jp:"食べました",kana:"たべました",pron:"타베마시타",tip:"ます → ました."},
+{id:66,cat:"동사 2그룹",base:"食べる (たべる) 먹다",form:"부정형 (~ 안 하다)",kr:"안 먹는다",jp:"食べない",kana:"たべない",pron:"타베나이",tip:"る 를 떼고 ない."},
+{id:67,cat:"동사 2그룹",base:"食べる (たべる) 먹다",form:"부정 정중형 (~ 안 합니다)",kr:"안 먹습니다",jp:"食べません",kana:"たべません",pron:"타베마센",tip:"ます → ません. 회화체로는 食べないです 도 씁니다.",altJp:"食べないです",altKana:"たべないです",altPron:"타베나이데스"},
+{id:68,cat:"동사 2그룹",base:"食べる (たべる) 먹다",form:"과거 부정형 (~ 안 했다)",kr:"안 먹었다",jp:"食べなかった",kana:"たべなかった",pron:"타베나캇타",tip:"ない 의 い → かった."},
+{id:69,cat:"동사 2그룹",base:"食べる (たべる) 먹다",form:"과거 부정 정중형 (~ 안 했습니다)",kr:"안 먹었습니다",jp:"食べませんでした",kana:"たべませんでした",pron:"타베마센데시타",tip:"ません + でした. 회화체는 食べなかったです.",altJp:"食べなかったです",altKana:"たべなかったです",altPron:"타베나캇타데스"},
+{id:70,cat:"동사 2그룹",base:"食べる (たべる) 먹다",form:"연결형 (~하고, ~해서 / て형)",kr:"먹고 / 먹어서",jp:"食べて",kana:"たべて",pron:"타베테",tip:"る 를 떼고 て. 음편이 없어 간단합니다."},
+{id:71,cat:"동사 2그룹",base:"食べる (たべる) 먹다",form:"연용형 (~하기)",kr:"먹기",jp:"食べ",kana:"たべ",pron:"타베",tip:"る 를 뗀 형태로, 명사처럼 쓰입니다."},
+{id:72,cat:"동사 2그룹",base:"食べる (たべる) 먹다",form:"가정형 (~한다면)",kr:"먹는다면",jp:"食べれば",kana:"たべれば",pron:"타베레바",tip:"る 를 떼고 れば."},
+{id:73,cat:"동사 2그룹",base:"食べる (たべる) 먹다",form:"추측 (~하겠죠)",kr:"먹겠죠",jp:"食べるでしょう",kana:"たべるでしょう",pron:"타베루데쇼-",tip:"기본형 + でしょう. 반말은 食べるだろう.",altJp:"食べるだろう",altKana:"たべるだろう",altPron:"타베루다로-"},
+{id:74,cat:"동사 2그룹",base:"食べる (たべる) 먹다",form:"명사 수식 (~할 + 명사)",kr:"먹을 것",jp:"食べる物",kana:"たべるもの",pron:"타베루 모노",tip:"동사 기본형이 그대로 명사를 수식합니다."},
+{id:75,cat:"동사 2그룹",base:"食べる (たべる) 먹다",form:"부정 수식 (~ 안 하는 + 명사)",kr:"안 먹는 사람",jp:"食べない人",kana:"たべないひと",pron:"타베나이 히토",tip:"부정형 ない 뒤에 바로 명사를 붙입니다."},
+{id:76,cat:"가능형",base:"書ける (かける) 쓸 수 있다",form:"가능 기본형 (~할 수 있다)",kr:"쓸 수 있다",jp:"書ける",kana:"かける",pron:"카케루",tip:"1그룹: 어미 u단 → e단 + る. く → け + る."},
+{id:77,cat:"가능형",base:"書ける (かける) 쓸 수 있다",form:"가능 정중형 (~할 수 있습니다)",kr:"쓸 수 있습니다",jp:"書けます",kana:"かけます",pron:"카케마스",tip:"가능형은 2그룹처럼 활용합니다. る → ます."},
+{id:78,cat:"가능형",base:"書ける (かける) 쓸 수 있다",form:"가능 부정형 (~할 수 없다)",kr:"쓸 수 없다",jp:"書けない",kana:"かけない",pron:"카케나이",tip:"る → ない."},
+{id:79,cat:"가능형",base:"書ける (かける) 쓸 수 있다",form:"가능 부정 정중형 (~할 수 없습니다)",kr:"쓸 수 없습니다",jp:"書けないです",kana:"かけないです",pron:"카케나이데스",tip:"書けません 도 같은 뜻입니다.",altJp:"書けません",altKana:"かけません",altPron:"카케마센"},
+{id:80,cat:"가능형",base:"書ける (かける) 쓸 수 있다",form:"가능 과거형 (~할 수 있었다)",kr:"쓸 수 있었다",jp:"書けた",kana:"かけた",pron:"카케타",tip:"る → た."},
+{id:81,cat:"가능형",base:"書ける (かける) 쓸 수 있다",form:"가능 과거 정중형 (~할 수 있었습니다)",kr:"쓸 수 있었습니다",jp:"書けました",kana:"かけました",pron:"카케마시타",tip:"ます → ました."},
+{id:82,cat:"가능형",base:"書ける (かける) 쓸 수 있다",form:"가능 과거 부정형 (~할 수 없었다)",kr:"쓸 수 없었다",jp:"書けなかった",kana:"かけなかった",pron:"카케나캇타",tip:"ない 의 い → かった."},
+{id:83,cat:"가능형",base:"書ける (かける) 쓸 수 있다",form:"가능 과거 부정 정중형 (~할 수 없었습니다)",kr:"쓸 수 없었습니다",jp:"書けなかったです",kana:"かけなかったです",pron:"카케나캇타데스",tip:"書けませんでした 도 같은 뜻입니다.",altJp:"書けませんでした",altKana:"かけませんでした",altPron:"카케마센데시타"},
+{id:84,cat:"가능형",base:"食べられる (たべられる) 먹을 수 있다",form:"가능 기본형 (~할 수 있다)",kr:"먹을 수 있다",jp:"食べられる",kana:"たべられる",pron:"타베라레루",tip:"2그룹: る 를 떼고 られる."},
+{id:85,cat:"가능형",base:"食べられる (たべられる) 먹을 수 있다",form:"가능 정중형 (~할 수 있습니다)",kr:"먹을 수 있습니다",jp:"食べられます",kana:"たべられます",pron:"타베라레마스",tip:"られる → られます."},
+{id:86,cat:"가능형",base:"食べられる (たべられる) 먹을 수 있다",form:"가능 부정형 (~할 수 없다)",kr:"먹을 수 없다",jp:"食べられない",kana:"たべられない",pron:"타베라레나이",tip:"られる → られない."},
+{id:87,cat:"가능형",base:"食べられる (たべられる) 먹을 수 있다",form:"가능 부정 정중형 (~할 수 없습니다)",kr:"먹을 수 없습니다",jp:"食べられないです",kana:"たべられないです",pron:"타베라레나이데스",tip:"食べられません 도 같은 뜻입니다.",altJp:"食べられません",altKana:"たべられません",altPron:"타베라레마센"},
+{id:88,cat:"가능형",base:"食べられる (たべられる) 먹을 수 있다",form:"가능 과거형 (~할 수 있었다)",kr:"먹을 수 있었다",jp:"食べられた",kana:"たべられた",pron:"타베라레타",tip:"られる → られた."},
+{id:89,cat:"가능형",base:"食べられる (たべられる) 먹을 수 있다",form:"가능 과거 정중형 (~할 수 있었습니다)",kr:"먹을 수 있었습니다",jp:"食べられました",kana:"たべられました",pron:"타베라레마시타",tip:"ます → ました."},
+{id:90,cat:"가능형",base:"食べられる (たべられる) 먹을 수 있다",form:"가능 과거 부정형 (~할 수 없었다)",kr:"먹을 수 없었다",jp:"食べられなかった",kana:"たべられなかった",pron:"타베라레나캇타",tip:"ない 의 い → かった."},
+{id:91,cat:"가능형",base:"食べられる (たべられる) 먹을 수 있다",form:"가능 과거 부정 정중형 (~할 수 없었습니다)",kr:"먹을 수 없었습니다",jp:"食べられなかったです",kana:"たべられなかったです",pron:"타베라레나캇타데스",tip:"食べられませんでした 도 같은 뜻입니다.",altJp:"食べられませんでした",altKana:"たべられませんでした",altPron:"타베라레마센데시타"},
+{id:92,cat:"희망형",base:"書きたい (かきたい) 쓰고 싶다",form:"희망 기본형 (~하고 싶다)",kr:"쓰고 싶다",jp:"書きたい",kana:"かきたい",pron:"카키타이",tip:"ます형 어간(書き) + たい. 이후 い형용사처럼 활용합니다."},
+{id:93,cat:"희망형",base:"書きたい (かきたい) 쓰고 싶다",form:"희망 정중형 (~하고 싶습니다)",kr:"쓰고 싶습니다",jp:"書きたいです",kana:"かきたいです",pron:"카키타이데스",tip:"たい + です."},
+{id:94,cat:"희망형",base:"書きたい (かきたい) 쓰고 싶다",form:"희망 부정형 (~하고 싶지 않다)",kr:"쓰고 싶지 않다",jp:"書きたくない",kana:"かきたくない",pron:"카키타쿠나이",tip:"たい 의 い → くない."},
+{id:95,cat:"희망형",base:"書きたい (かきたい) 쓰고 싶다",form:"희망 부정 정중형 (~하고 싶지 않습니다)",kr:"쓰고 싶지 않습니다",jp:"書きたくないです",kana:"かきたくないです",pron:"카키타쿠나이데스",tip:"たくない + です."},
+{id:96,cat:"희망형",base:"書きたい (かきたい) 쓰고 싶다",form:"희망 과거형 (~하고 싶었다)",kr:"쓰고 싶었다",jp:"書きたかった",kana:"かきたかった",pron:"카키타캇타",tip:"たい 의 い → かった."},
+{id:97,cat:"희망형",base:"書きたい (かきたい) 쓰고 싶다",form:"희망 과거 정중형 (~하고 싶었습니다)",kr:"쓰고 싶었습니다",jp:"書きたかったです",kana:"かきたかったです",pron:"카키타캇타데스",tip:"たかった + です."},
+{id:98,cat:"희망형",base:"書きたい (かきたい) 쓰고 싶다",form:"희망 과거 부정형 (~하고 싶지 않았다)",kr:"쓰고 싶지 않았다",jp:"書きたくなかった",kana:"かきたくなかった",pron:"카키타쿠나캇타",tip:"たくない 의 い → かった."},
+{id:99,cat:"희망형",base:"書きたい (かきたい) 쓰고 싶다",form:"희망 과거 부정 정중형 (~하고 싶지 않았습니다)",kr:"쓰고 싶지 않았습니다",jp:"書きたくなかったです",kana:"かきたくなかったです",pron:"카키타쿠나캇타데스",tip:"たくなかった + です."},
+{id:100,cat:"희망형",base:"食べたい (たべたい) 먹고 싶다",form:"희망 기본형 (~하고 싶다)",kr:"먹고 싶다",jp:"食べたい",kana:"たべたい",pron:"타베타이",tip:"ます형 어간(食べ) + たい."},
+{id:101,cat:"희망형",base:"食べたい (たべたい) 먹고 싶다",form:"희망 정중형 (~하고 싶습니다)",kr:"먹고 싶습니다",jp:"食べたいです",kana:"たべたいです",pron:"타베타이데스",tip:"たい + です."},
+{id:102,cat:"희망형",base:"食べたい (たべたい) 먹고 싶다",form:"희망 부정형 (~하고 싶지 않다)",kr:"먹고 싶지 않다",jp:"食べたくない",kana:"たべたくない",pron:"타베타쿠나이",tip:"たい 의 い → くない."},
+{id:103,cat:"희망형",base:"食べたい (たべたい) 먹고 싶다",form:"희망 부정 정중형 (~하고 싶지 않습니다)",kr:"먹고 싶지 않습니다",jp:"食べたくないです",kana:"たべたくないです",pron:"타베타쿠나이데스",tip:"たくない + です."},
+{id:104,cat:"희망형",base:"食べたい (たべたい) 먹고 싶다",form:"희망 과거형 (~하고 싶었다)",kr:"먹고 싶었다",jp:"食べたかった",kana:"たべたかった",pron:"타베타캇타",tip:"たい 의 い → かった."},
+{id:105,cat:"희망형",base:"食べたい (たべたい) 먹고 싶다",form:"희망 과거 정중형 (~하고 싶었습니다)",kr:"먹고 싶었습니다",jp:"食べたかったです",kana:"たべたかったです",pron:"타베타캇타데스",tip:"たかった + です."},
+{id:106,cat:"희망형",base:"食べたい (たべたい) 먹고 싶다",form:"희망 과거 부정형 (~하고 싶지 않았다)",kr:"먹고 싶지 않았다",jp:"食べたくなかった",kana:"たべたくなかった",pron:"타베타쿠나캇타",tip:"たくない 의 い → かった."},
+{id:107,cat:"희망형",base:"食べたい (たべたい) 먹고 싶다",form:"희망 과거 부정 정중형 (~하고 싶지 않았습니다)",kr:"먹고 싶지 않았습니다",jp:"食べたくなかったです",kana:"たべたくなかったです",pron:"타베타쿠나캇타데스",tip:"たくなかった + です."},
+{id:108,cat:"가능+희망",base:"書ける + たい",form:"과거 부정 가능 희망 (반말)",kr:"쓸 수 있고 싶지 않았다",jp:"書けたくなかった",kana:"かけたくなかった",pron:"카케타쿠나캇타",tip:"⚠️ 실제 일본어에서는 거의 쓰지 않는 조합입니다. 가능형은 '상태'를 나타내서 의지를 뜻하는 たい 와 잘 붙지 않습니다. 자연스러운 표현은 書きたくなかった(쓰고 싶지 않았다) 입니다. 요청하신 형태 그대로 실어둡니다."},
+{id:109,cat:"가능+희망",base:"書ける + たい",form:"과거 부정 가능 희망 (정중)",kr:"쓸 수 있고 싶지 않았습니다",jp:"書けたくなかったです",kana:"かけたくなかったです",pron:"카케타쿠나캇타데스",tip:"⚠️ 실제 일본어에서는 거의 쓰지 않는 조합입니다. 가능형은 '상태'를 나타내서 의지를 뜻하는 たい 와 잘 붙지 않습니다. 자연스러운 표현은 書きたくなかったです 입니다. 요청하신 형태 그대로 실어둡니다."},
+{id:110,cat:"가능+희망",base:"食べられる + たい",form:"과거 부정 가능 희망 (반말)",kr:"먹을 수 있고 싶지 않았다",jp:"食べられたくなかった",kana:"たべられたくなかった",pron:"타베라레타쿠나캇타",tip:"⚠️ 실제 일본어에서는 거의 쓰지 않는 조합입니다. 가능형은 '상태'를 나타내서 의지를 뜻하는 たい 와 잘 붙지 않습니다. 자연스러운 표현은 食べたくなかった(먹고 싶지 않았다) 입니다. 요청하신 형태 그대로 실어둡니다."},
+{id:111,cat:"가능+희망",base:"食べられる + たい",form:"과거 부정 가능 희망 (정중)",kr:"먹을 수 있고 싶지 않았습니다",jp:"食べられたくなかったです",kana:"たべられたくなかったです",pron:"타베라레타쿠나캇타데스",tip:"⚠️ 실제 일본어에서는 거의 쓰지 않는 조합입니다. 가능형은 '상태'를 나타내서 의지를 뜻하는 たい 와 잘 붙지 않습니다. 자연스러운 표현은 食べたくなかったです 입니다. 요청하신 형태 그대로 실어둡니다."},
+{id:112,cat:"3그룹 불규칙",base:"する (하다)",form:"정중형 (~합니다)",kr:"합니다",jp:"します",kana:"します",pron:"시마스",tip:"する → します."},
+{id:113,cat:"3그룹 불규칙",base:"する (하다)",form:"부정형 (~ 안 하다)",kr:"안 한다",jp:"しない",kana:"しない",pron:"시나이",tip:"する → しない."},
+{id:114,cat:"3그룹 불규칙",base:"する (하다)",form:"과거형 (~했다)",kr:"했다",jp:"した",kana:"した",pron:"시타",tip:"する → した."},
+{id:115,cat:"3그룹 불규칙",base:"する (하다)",form:"연결형 (~하고, ~해서)",kr:"하고 / 해서",jp:"して",kana:"して",pron:"시테",tip:"する → して."},
+{id:116,cat:"3그룹 불규칙",base:"する (하다)",form:"가능형 (~할 수 있다)",kr:"할 수 있다",jp:"できる",kana:"できる",pron:"데키루",tip:"する 의 가능형은 완전 불규칙으로 できる 입니다. されいる 같은 형태는 없습니다."},
+{id:117,cat:"3그룹 불규칙",base:"する (하다)",form:"희망형 (~하고 싶다)",kr:"하고 싶다",jp:"したい",kana:"したい",pron:"시타이",tip:"ます형 어간 し + たい."},
+{id:118,cat:"3그룹 불규칙",base:"来る (くる) 오다",form:"정중형 (~합니다)",kr:"옵니다",jp:"来ます",kana:"きます",pron:"키마스",tip:"来 의 읽기가 き 로 바뀝니다."},
+{id:119,cat:"3그룹 불규칙",base:"来る (くる) 오다",form:"부정형 (~ 안 하다)",kr:"안 온다",jp:"来ない",kana:"こない",pron:"코나이",tip:"来 의 읽기가 こ 로 바뀝니다. 한자는 같지만 읽기가 달라 주의!"},
+{id:120,cat:"3그룹 불규칙",base:"来る (くる) 오다",form:"과거형 (~했다)",kr:"왔다",jp:"来た",kana:"きた",pron:"키타",tip:"来 의 읽기가 き 로 바뀝니다."},
+{id:121,cat:"3그룹 불규칙",base:"来る (くる) 오다",form:"연결형 (~하고, ~해서)",kr:"오고 / 와서",jp:"来て",kana:"きて",pron:"키테",tip:"来 의 읽기가 き 로 바뀝니다."},
+{id:122,cat:"3그룹 불규칙",base:"来る (くる) 오다",form:"가능형 (~할 수 있다)",kr:"올 수 있다",jp:"来られる",kana:"こられる",pron:"코라레루",tip:"来 의 읽기가 こ 로 바뀝니다."},
+{id:123,cat:"3그룹 불규칙",base:"来る (くる) 오다",form:"희망형 (~하고 싶다)",kr:"오고 싶다",jp:"来たい",kana:"きたい",pron:"키타이",tip:"ます형 어간 き + たい."}
+];
+
+var CONJ_CATS = ["명사","い형용사","な형용사","동사 1그룹","동사 2그룹","가능형","희망형","가능+희망","3그룹 불규칙"];
 
 /* ===================== 후리가나(단어별 읽기) & 한자 훈·음 분해 =====================
    jp(한자+가나 원문)와 kana(문장 전체 히라가나 읽기)를 비교해서,
@@ -894,6 +1163,51 @@ function removeBookmark(id){
   saveBookmarks(list);
 }
 
+/* ===================== 문법 활용 연습 상태 ===================== */
+var CONJ_STORAGE_KEY = 'jpConjBookmarks_v1';
+var CONJ_PREF_KEY = 'jpConjPref_v1';
+var conjMode = 'seq';          // 'seq' = 분류별 순서, 'random' = 랜덤
+var conjCat = CONJ_CATS[0];
+var conjOrder = [];
+var conjPos = 0;
+var conjRevealed = false;
+
+function loadConjPref(){
+  try{
+    var raw = localStorage.getItem(CONJ_PREF_KEY);
+    if (!raw) return;
+    var p = JSON.parse(raw);
+    if (p.mode === 'seq' || p.mode === 'random') conjMode = p.mode;
+    if (CONJ_CATS.indexOf(p.cat) !== -1) conjCat = p.cat;
+  }catch(e){}
+}
+function saveConjPref(){
+  try{
+    localStorage.setItem(CONJ_PREF_KEY, JSON.stringify({mode: conjMode, cat: conjCat}));
+  }catch(e){}
+}
+function loadConjBookmarks(){
+  try{
+    var raw = localStorage.getItem(CONJ_STORAGE_KEY);
+    return raw ? JSON.parse(raw) : [];
+  }catch(e){ return []; }
+}
+function saveConjBookmarks(list){
+  try{ localStorage.setItem(CONJ_STORAGE_KEY, JSON.stringify(list)); }catch(e){}
+}
+function isConjBookmarked(id){
+  return loadConjBookmarks().indexOf(id) !== -1;
+}
+function toggleConjBookmark(id){
+  var list = loadConjBookmarks();
+  var i = list.indexOf(id);
+  if (i === -1){ list.push(id); saveConjBookmarks(list); return true; }
+  list.splice(i, 1); saveConjBookmarks(list); return false;
+}
+function removeConjBookmark(id){
+  saveConjBookmarks(loadConjBookmarks().filter(function(x){ return x !== id; }));
+}
+
 /* ===================== DOM 참조 ===================== */
 var categoryChip = document.getElementById('categoryChip');
 var progressText = document.getElementById('progressText');
@@ -913,9 +1227,31 @@ var nextBtn = document.getElementById('nextBtn');
 var bookmarkList = document.getElementById('bookmarkList');
 var toastEl = document.getElementById('toast');
 var tabQuiz = document.getElementById('tab-quiz');
+var tabConj = document.getElementById('tab-conj');
 var tabBookmark = document.getElementById('tab-bookmark');
 var viewQuiz = document.getElementById('view-quiz');
+var viewConj = document.getElementById('view-conj');
 var viewBookmark = document.getElementById('view-bookmark');
+
+var conjModeSeg = document.getElementById('conjModeSeg');
+var conjCatRow = document.getElementById('conjCatRow');
+var conjBaseEl = document.getElementById('conjBase');
+var conjFormEl = document.getElementById('conjForm');
+var conjKrEl = document.getElementById('conjKr');
+var conjRevealBtn = document.getElementById('conjRevealBtn');
+var conjAnswerBlock = document.getElementById('conjAnswerBlock');
+var conjJpEl = document.getElementById('conjJp');
+var conjKanaEl = document.getElementById('conjKana');
+var conjPronEl = document.getElementById('conjPron');
+var conjAltBox = document.getElementById('conjAltBox');
+var conjAltJpEl = document.getElementById('conjAltJp');
+var conjAltPronEl = document.getElementById('conjAltPron');
+var conjKanjiRow = document.getElementById('conjKanjiRow');
+var conjKanjiBreakdown = document.getElementById('conjKanjiBreakdown');
+var conjTipEl = document.getElementById('conjTip');
+var conjActionRow = document.getElementById('conjActionRow');
+var conjBookmarkBtn = document.getElementById('conjBookmarkBtn');
+var conjNextBtn = document.getElementById('conjNextBtn');
 
 /* ===================== 퀴즈 로직 ===================== */
 function currentItem(){
@@ -923,9 +1259,7 @@ function currentItem(){
 }
 function renderQuiz(){
   var item = currentItem();
-  categoryChip.textContent = item.category;
-  progressText.textContent = (pos + 1) + ' / ' + DATA.length;
-  progressFill.style.width = (((pos + 1) / DATA.length) * 100) + '%';
+  updateHeader();
   krText.textContent = item.kr;
   jpText.innerHTML = furiganaHtml(item.jp, item.kana);
   kanaText.textContent = item.kana;
@@ -970,6 +1304,129 @@ function toggleBookmarkCurrent(){
   }
 }
 
+/* ===================== 헤더 (뷰별 표시) ===================== */
+var activeView = 'view-quiz';
+function updateHeader(){
+  var chip, cur, total;
+  if (activeView === 'view-conj'){
+    chip = (conjMode === 'random') ? '🎲 랜덤' : conjCat;
+    cur = conjOrder.length ? conjPos + 1 : 0;
+    total = conjOrder.length;
+  } else if (activeView === 'view-bookmark'){
+    chip = '저장된 항목';
+    cur = loadBookmarks().length + loadConjBookmarks().length;
+    total = cur;
+  } else {
+    chip = currentItem().category;
+    cur = pos + 1;
+    total = DATA.length;
+  }
+  categoryChip.textContent = chip;
+  progressText.textContent = cur + ' / ' + total;
+  progressFill.style.width = (total ? (cur / total) * 100 : 0) + '%';
+}
+
+/* ===================== 문법 활용 연습 로직 ===================== */
+function rebuildConjOrder(){
+  var idxs = [];
+  for (var i = 0; i < CONJ_DATA.length; i++){
+    if (conjMode === 'random' || CONJ_DATA[i].cat === conjCat) idxs.push(i);
+  }
+  if (conjMode === 'random') shuffle(idxs);
+  conjOrder = idxs;
+  conjPos = 0;
+}
+function currentConjItem(){
+  return CONJ_DATA[conjOrder[conjPos]];
+}
+function renderConjCats(){
+  conjCatRow.style.display = (conjMode === 'random') ? 'none' : 'flex';
+  if (conjMode === 'random') return;
+  conjCatRow.innerHTML = '';
+  CONJ_CATS.forEach(function(cat){
+    var chip = document.createElement('button');
+    chip.className = 'cat-chip' + (cat === conjCat ? ' active' : '');
+    chip.textContent = cat;
+    chip.addEventListener('click', function(){
+      conjCat = cat;
+      saveConjPref();
+      rebuildConjOrder();
+      renderConjCats();
+      renderConj();
+    });
+    conjCatRow.appendChild(chip);
+  });
+}
+function renderConj(){
+  var item = currentConjItem();
+  if (!item) return;
+  updateHeader();
+
+  conjBaseEl.textContent = item.base;
+  conjFormEl.textContent = item.form;
+  conjKrEl.textContent = item.kr;
+
+  conjJpEl.innerHTML = furiganaHtml(item.jp, item.kana);
+  conjKanaEl.textContent = item.kana;
+  conjPronEl.textContent = item.pron;
+
+  if (item.altJp){
+    conjAltBox.style.display = 'block';
+    conjAltJpEl.innerHTML = furiganaHtml(item.altJp, item.altKana);
+    conjAltPronEl.textContent = item.altKana + '  ·  ' + item.altPron;
+  } else {
+    conjAltBox.style.display = 'none';
+  }
+
+  var kb = kanjiBreakdownHtml(item.jp + (item.altJp || ''));
+  conjKanjiBreakdown.innerHTML = kb;
+  conjKanjiRow.style.display = kb ? 'block' : 'none';
+
+  conjTipEl.textContent = item.tip;
+
+  conjRevealed = false;
+  conjAnswerBlock.classList.remove('show');
+  conjRevealBtn.style.display = 'block';
+  conjActionRow.style.display = 'none';
+  conjBookmarkBtn.textContent = isConjBookmarked(item.id) ? '저장됨 ✓' : '헷갈려요 (저장)';
+}
+function revealConj(){
+  if (conjRevealed) return;
+  conjRevealed = true;
+  conjAnswerBlock.classList.add('show');
+  conjRevealBtn.style.display = 'none';
+  conjActionRow.style.display = 'flex';
+}
+function nextConj(){
+  conjPos++;
+  if (conjPos >= conjOrder.length){
+    if (conjMode === 'random'){
+      rebuildConjOrder();
+      showToast('한 바퀴 끝! 새로 섞어서 다시 시작합니다 🎲');
+    } else {
+      conjPos = 0;
+      showToast('「' + conjCat + '」 활용을 모두 마쳤어요! 🎉');
+    }
+  }
+  renderConj();
+}
+function toggleConjBookmarkCurrent(){
+  var item = currentConjItem();
+  var added = toggleConjBookmark(item.id);
+  conjBookmarkBtn.textContent = added ? '저장됨 ✓' : '헷갈려요 (저장)';
+  showToast(added ? '오답노트에 저장했습니다 🔖' : '단어장에서 삭제했습니다');
+}
+function setConjMode(mode){
+  conjMode = mode;
+  saveConjPref();
+  Array.prototype.forEach.call(conjModeSeg.children, function(b){
+    b.classList.toggle('active', b.getAttribute('data-mode') === mode);
+  });
+  rebuildConjOrder();
+  renderConjCats();
+  renderConj();
+}
+
 /* ===================== 토스트 ===================== */
 var toastTimer = null;
 function showToast(msg){
@@ -982,78 +1439,121 @@ function showToast(msg){
 }
 
 /* ===================== 북마크 뷰 ===================== */
+function makeBookmarkItem(catLabel, krLabel, detailHtml, onDelete){
+  var box = document.createElement('div');
+  box.className = 'bm-item';
+
+  var head = document.createElement('div');
+  head.className = 'bm-head';
+
+  var left = document.createElement('div');
+  left.style.flex = '1';
+  var catEl = document.createElement('div');
+  catEl.className = 'bm-cat';
+  catEl.textContent = catLabel;
+  var krEl = document.createElement('div');
+  krEl.className = 'bm-kr';
+  krEl.textContent = krLabel;
+  left.appendChild(catEl);
+  left.appendChild(krEl);
+
+  var chevron = document.createElement('span');
+  chevron.className = 'bm-chevron';
+  chevron.textContent = '\u25B6';
+
+  head.appendChild(left);
+  head.appendChild(chevron);
+
+  var detail = document.createElement('div');
+  detail.className = 'bm-detail';
+  detail.innerHTML = detailHtml;
+
+  var actions = document.createElement('div');
+  actions.className = 'bm-actions';
+  var delBtn = document.createElement('button');
+  delBtn.className = 'btn btn-danger-outline';
+  delBtn.textContent = '\uC0AD\uC81C';
+  delBtn.addEventListener('click', function(e){
+    e.stopPropagation();
+    onDelete();
+    showToast('\uC0AD\uC81C\uD588\uC2B5\uB2C8\uB2E4');
+    renderBookmarkView();
+  });
+  actions.appendChild(delBtn);
+  detail.appendChild(actions);
+
+  head.addEventListener('click', function(){
+    var isOpen = detail.classList.contains('show');
+    detail.classList.toggle('show', !isOpen);
+    chevron.classList.toggle('open', !isOpen);
+  });
+
+  box.appendChild(head);
+  box.appendChild(detail);
+  return box;
+}
+function phraseDetailHtml(item){
+  return '<div class="answer-row"><div class="answer-label">\u2460 \uC77C\uBCF8\uC5B4 \uC6D0\uBB38 (\uB2E8\uC5B4\uBCC4 \uC77D\uAE30 \uD3EC\uD568)</div><div class="jp-text">' + furiganaHtml(item.jp, item.kana) + '</div></div>' +
+    '<div class="answer-row"><div class="answer-label">\u2461 \uBB38\uC7A5 \uC804\uCCB4 \uD788\uB77C\uAC00\uB098 \uC77D\uAE30</div><div class="kana-text">' + escapeHtml(item.kana) + '</div></div>' +
+    '<div class="answer-row"><div class="answer-label">\u2462 \uD55C\uAE00 \uBC1C\uC74C</div><div class="pron-text">' + escapeHtml(item.pronunciation) + '</div></div>' +
+    (kanjiBreakdownHtml(item.jp) ? '<div class="answer-row"><div class="answer-label">\u2463 \uD55C\uC790 \uD6C8\u00B7\uC74C \uD480\uC774 (\uC77C\uBCF8\uC5B4 \uD83C\uDDEF\uD83C\uDDF5 + \uD55C\uAD6D \uD55C\uC790\uC74C \uD83C\uDDF0\uD83C\uDDF7)</div><div class="kanji-breakdown">' + kanjiBreakdownHtml(item.jp) + '</div></div>' : '') +
+    '<div class="answer-row" style="margin-bottom:0;"><div class="grammar-box"><span class="glabel">\uD83D\uDCA1 \uD575\uC2EC \uBB38\uBC95 \uD3EC\uC778\uD2B8</span>' + escapeHtml(item.grammar) + '</div></div>';
+}
+function conjDetailHtml(item){
+  var kb = kanjiBreakdownHtml(item.jp + (item.altJp || ''));
+  return '<div class="answer-row"><div class="answer-label">\uAE30\uBCF8\uD615</div><div class="pron-text">' + escapeHtml(item.base) + '</div></div>' +
+    '<div class="answer-row"><div class="answer-label">\u2460 \uC77C\uBCF8\uC5B4 (\uB2E8\uC5B4\uBCC4 \uC77D\uAE30 \uD3EC\uD568)</div><div class="jp-text">' + furiganaHtml(item.jp, item.kana) + '</div></div>' +
+    '<div class="answer-row"><div class="answer-label">\u2461 \uD788\uB77C\uAC00\uB098 \uC77D\uAE30</div><div class="kana-text">' + escapeHtml(item.kana) + '</div></div>' +
+    '<div class="answer-row"><div class="answer-label">\u2462 \uD55C\uAE00 \uBC1C\uC74C</div><div class="pron-text">' + escapeHtml(item.pron) + '</div>' +
+      (item.altJp ? '<div class="alt-box"><span class="alt-label">\uB610 \uB2E4\uB978 \uD45C\uD604</span><div class="alt-jp">' + furiganaHtml(item.altJp, item.altKana) + '</div><div class="alt-pron">' + escapeHtml(item.altKana) + '  \u00B7  ' + escapeHtml(item.altPron) + '</div></div>' : '') +
+    '</div>' +
+    (kb ? '<div class="answer-row"><div class="answer-label">\u2463 \uD55C\uC790 \uD6C8\u00B7\uC74C \uD480\uC774 (\uC77C\uBCF8\uC5B4 \uD83C\uDDEF\uD83C\uDDF5 + \uD55C\uAD6D \uD55C\uC790\uC74C \uD83C\uDDF0\uD83C\uDDF7)</div><div class="kanji-breakdown">' + kb + '</div></div>' : '') +
+    '<div class="answer-row" style="margin-bottom:0;"><div class="grammar-box"><span class="glabel">\uD83D\uDCA1 \uD65C\uC6A9 \uB9CC\uB4DC\uB294 \uBC95</span>' + escapeHtml(item.tip) + '</div></div>';
+}
 function renderBookmarkView(){
   var ids = loadBookmarks();
+  var conjIds = loadConjBookmarks();
   bookmarkList.innerHTML = '';
-  if (ids.length === 0){
+
+  if (ids.length === 0 && conjIds.length === 0){
     var empty = document.createElement('div');
     empty.className = 'empty-state';
-    empty.textContent = '아직 저장된 문장이 없어요.\n퀴즈에서 [헷갈려요] 버튼을 눌러 저장해보세요.';
+    empty.textContent = '\uC544\uC9C1 \uC800\uC7A5\uB41C \uD56D\uBAA9\uC774 \uC5C6\uC5B4\uC694.\n\uD034\uC988\uB098 \uBB38\uBC95 \uC5F0\uC2B5\uC5D0\uC11C [\uD5F7\uAC08\uB824\uC694] \uBC84\uD2BC\uC744 \uB20C\uB7EC \uC800\uC7A5\uD574\uBCF4\uC138\uC694.';
     empty.style.whiteSpace = 'pre-line';
     bookmarkList.appendChild(empty);
     return;
   }
-  ids.slice().reverse().forEach(function(id){
-    var item = DATA.filter(function(d){ return d.id === id; })[0];
-    if (!item) return;
 
-    var box = document.createElement('div');
-    box.className = 'bm-item';
-
-    var head = document.createElement('div');
-    head.className = 'bm-head';
-
-    var left = document.createElement('div');
-    left.style.flex = '1';
-    var catEl = document.createElement('div');
-    catEl.className = 'bm-cat';
-    catEl.textContent = item.category;
-    var krEl = document.createElement('div');
-    krEl.className = 'bm-kr';
-    krEl.textContent = item.kr;
-    left.appendChild(catEl);
-    left.appendChild(krEl);
-
-    var chevron = document.createElement('span');
-    chevron.className = 'bm-chevron';
-    chevron.textContent = '▶';
-
-    head.appendChild(left);
-    head.appendChild(chevron);
-
-    var detail = document.createElement('div');
-    detail.className = 'bm-detail';
-    detail.innerHTML =
-      '<div class="answer-row"><div class="answer-label">① 일본어 원문 (단어별 읽기 포함)</div><div class="jp-text">' + furiganaHtml(item.jp, item.kana) + '</div></div>' +
-      '<div class="answer-row"><div class="answer-label">② 문장 전체 히라가나 읽기</div><div class="kana-text">' + escapeHtml(item.kana) + '</div></div>' +
-      '<div class="answer-row"><div class="answer-label">③ 한글 발음</div><div class="pron-text">' + escapeHtml(item.pronunciation) + '</div></div>' +
-      (kanjiBreakdownHtml(item.jp) ? '<div class="answer-row"><div class="answer-label">④ 한자 훈·음 풀이 (일본어 🇯🇵 + 한국 한자음 🇰🇷)</div><div class="kanji-breakdown">' + kanjiBreakdownHtml(item.jp) + '</div></div>' : '') +
-      '<div class="answer-row" style="margin-bottom:0;"><div class="grammar-box"><span class="glabel">💡 핵심 문법 포인트</span>' + escapeHtml(item.grammar) + '</div></div>';
-
-    var actions = document.createElement('div');
-    actions.className = 'bm-actions';
-    var delBtn = document.createElement('button');
-    delBtn.className = 'btn btn-danger-outline';
-    delBtn.textContent = '삭제';
-    delBtn.addEventListener('click', function(e){
-      e.stopPropagation();
-      removeBookmark(item.id);
-      showToast('삭제했습니다');
-      renderBookmarkView();
+  if (ids.length){
+    var t1 = document.createElement('div');
+    t1.className = 'bm-section-title';
+    t1.textContent = '\uD83D\uDCAC \uC5EC\uD589 \uD68C\uD654 (' + ids.length + ')';
+    bookmarkList.appendChild(t1);
+    ids.slice().reverse().forEach(function(id){
+      var item = DATA.filter(function(d){ return d.id === id; })[0];
+      if (!item) return;
+      bookmarkList.appendChild(makeBookmarkItem(
+        item.category, item.kr, phraseDetailHtml(item),
+        function(){ removeBookmark(item.id); }
+      ));
     });
-    actions.appendChild(delBtn);
-    detail.appendChild(actions);
+  }
 
-    head.addEventListener('click', function(){
-      var isOpen = detail.classList.contains('show');
-      detail.classList.toggle('show', !isOpen);
-      chevron.classList.toggle('open', !isOpen);
+  if (conjIds.length){
+    var t2 = document.createElement('div');
+    t2.className = 'bm-section-title';
+    t2.style.marginTop = ids.length ? '18px' : '4px';
+    t2.textContent = '\uD83E\uDDE9 \uBB38\uBC95 \uD65C\uC6A9 (' + conjIds.length + ')';
+    bookmarkList.appendChild(t2);
+    conjIds.slice().reverse().forEach(function(id){
+      var item = CONJ_DATA.filter(function(d){ return d.id === id; })[0];
+      if (!item) return;
+      bookmarkList.appendChild(makeBookmarkItem(
+        item.cat + ' \u00B7 ' + item.form, item.kr, conjDetailHtml(item),
+        function(){ removeConjBookmark(item.id); }
+      ));
     });
-
-    box.appendChild(head);
-    box.appendChild(detail);
-    bookmarkList.appendChild(box);
-  });
+  }
 }
 function escapeHtml(str){
   return String(str)
@@ -1064,27 +1564,50 @@ function escapeHtml(str){
 
 /* ===================== 탭 전환 ===================== */
 function switchTab(viewId){
-  [viewQuiz, viewBookmark].forEach(function(v){ v.classList.remove('active'); });
+  activeView = viewId;
+  [viewQuiz, viewConj, viewBookmark].forEach(function(v){ v.classList.remove('active'); });
   document.getElementById(viewId).classList.add('active');
-  [tabQuiz, tabBookmark].forEach(function(t){ t.classList.remove('active'); });
+  [tabQuiz, tabConj, tabBookmark].forEach(function(t){ t.classList.remove('active'); });
+
   if (viewId === 'view-quiz'){
     tabQuiz.classList.add('active');
+  } else if (viewId === 'view-conj'){
+    tabConj.classList.add('active');
   } else {
     tabBookmark.classList.add('active');
     renderBookmarkView();
   }
+  updateHeader();
 }
 
 /* ===================== 이벤트 바인딩 ===================== */
 revealBtn.addEventListener('click', revealAnswer);
 nextBtn.addEventListener('click', nextQuestion);
 bookmarkBtn.addEventListener('click', toggleBookmarkCurrent);
+
+conjRevealBtn.addEventListener('click', revealConj);
+conjNextBtn.addEventListener('click', nextConj);
+conjBookmarkBtn.addEventListener('click', toggleConjBookmarkCurrent);
+Array.prototype.forEach.call(conjModeSeg.children, function(b){
+  b.addEventListener('click', function(){ setConjMode(b.getAttribute('data-mode')); });
+});
+
 tabQuiz.addEventListener('click', function(){ switchTab('view-quiz'); });
+tabConj.addEventListener('click', function(){ switchTab('view-conj'); });
 tabBookmark.addEventListener('click', function(){ switchTab('view-bookmark'); });
 
 /* ===================== 초기화 ===================== */
 order = buildOrder();
 renderQuiz();
+
+loadConjPref();
+Array.prototype.forEach.call(conjModeSeg.children, function(b){
+  b.classList.toggle('active', b.getAttribute('data-mode') === conjMode);
+});
+rebuildConjOrder();
+renderConjCats();
+renderConj();
+updateHeader();
 
 /* ===================== PWA: Manifest (Blob 기반, 오프라인 단일 파일) ===================== */
 (function(){

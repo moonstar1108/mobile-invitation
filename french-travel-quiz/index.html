@@ -1,0 +1,927 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover, user-scalable=no">
+<title>프랑스어 여행 회화 퀴즈</title>
+<!-- PWA 메타 태그 (외부 CDN 없음 / 아이콘은 인라인 SVG 데이터 URI) -->
+<meta name="theme-color" content="#F2F2F7">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="프랑스어 여행">
+<meta name="format-detection" content="telephone=no">
+<meta name="description" content="오프라인으로 동작하는 프랑스 여행 회화 퀴즈 200문장">
+<link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180'%3E%3Crect width='180' height='180' rx='40' fill='%230055A4'/%3E%3Crect x='118' y='0' width='62' height='180' fill='%23EF4135'/%3E%3Ctext x='72' y='120' font-size='76' font-weight='bold' text-anchor='middle' fill='white' font-family='sans-serif'%3EFR%3C/text%3E%3C/svg%3E">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230055A4'/%3E%3Crect x='42' y='0' width='22' height='64' fill='%23EF4135'/%3E%3Ctext x='26' y='43' font-size='26' font-weight='bold' text-anchor='middle' fill='white' font-family='sans-serif'%3EFR%3C/text%3E%3C/svg%3E">
+<style>
+/* ===== 전부 Pure CSS. 외부 폰트/CSS 라이브러리를 쓰지 않습니다. ===== */
+:root{
+  --bg:#F2F2F7;
+  --card:#FFFFFF;
+  --text:#1C1C1E;
+  --sub:#6D6D72;
+  --blue:#0055A4;          /* 프랑스 국기 파랑 */
+  --blue-soft:rgba(0,85,164,0.09);
+  --red:#EF4135;           /* 프랑스 국기 빨강 */
+  --red-soft:rgba(239,65,53,0.10);
+  --green:#34C759;
+  --border:rgba(60,60,67,0.13);
+  --tabbar-bg:rgba(249,249,249,0.86);
+}
+@media (prefers-color-scheme: dark){
+  :root{
+    --bg:#000000;
+    --card:#1C1C1E;
+    --text:#F2F2F7;
+    --sub:#98989D;
+    --blue:#6BA6FF;
+    --blue-soft:rgba(107,166,255,0.15);
+    --red:#FF6B60;
+    --red-soft:rgba(255,107,96,0.15);
+    --border:rgba(255,255,255,0.14);
+    --tabbar-bg:rgba(28,28,30,0.86);
+  }
+}
+*{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
+html,body{
+  height:100%; margin:0;
+  overscroll-behavior:none;            /* 스크롤 튐 방지 */
+  background:var(--bg); color:var(--text);
+  font-family:-apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", system-ui, sans-serif;
+  -webkit-font-smoothing:antialiased;
+}
+body{position:fixed; inset:0; overflow:hidden; display:flex; flex-direction:column;}
+button{font-family:inherit; touch-action:manipulation;}
+#app{display:flex; flex-direction:column; height:100%; width:100%;}
+
+/* ===== 상단 바 : 노치 / Dynamic Island 대응 ===== */
+header.topbar{
+  flex:0 0 auto;
+  padding-top:calc(10px + env(safe-area-inset-top));
+  padding-right:calc(18px + env(safe-area-inset-right));
+  padding-bottom:12px;
+  padding-left:calc(18px + env(safe-area-inset-left));
+  background:var(--card);
+  border-bottom:1px solid var(--border);
+}
+.topbar-row{display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom:10px;}
+.cat-chip{
+  display:inline-block; padding:5px 12px; border-radius:100px;
+  background:var(--blue-soft); color:var(--blue);
+  font-size:13px; font-weight:600; max-width:62%;
+  overflow:hidden; text-overflow:ellipsis; white-space:nowrap;
+}
+.progress-text{font-size:13px; color:var(--sub); font-weight:600; font-variant-numeric:tabular-nums; flex:0 0 auto;}
+.progress-track{height:6px; border-radius:3px; background:var(--border); overflow:hidden;}
+.progress-fill{height:100%; border-radius:3px; background:var(--blue); width:0%; transition:width .35s ease;}
+
+main{
+  flex:1 1 auto; overflow-y:auto; overflow-x:hidden;   /* 가로 스크롤 방지 */
+  -webkit-overflow-scrolling:touch; overscroll-behavior-y:contain;
+  padding-top:16px; padding-bottom:24px;
+  padding-right:calc(18px + env(safe-area-inset-right));
+  padding-left:calc(18px + env(safe-area-inset-left));
+}
+.view{display:none;}
+.view.active{display:block;}
+
+/* ===== 카테고리 선택 칩 ===== */
+.chip-scroll{
+  display:flex; gap:8px; overflow-x:auto; overflow-y:hidden;
+  -webkit-overflow-scrolling:touch; padding-bottom:12px; scrollbar-width:none;
+}
+.chip-scroll::-webkit-scrollbar{display:none;}
+.pick{
+  flex:0 0 auto; padding:8px 14px; border-radius:100px; min-height:36px;
+  background:var(--card); border:1px solid var(--border);
+  color:var(--sub); font-size:13px; font-weight:600; cursor:pointer; white-space:nowrap;
+}
+.pick.active{background:var(--blue); color:#fff; border-color:var(--blue);}
+.pick:active{opacity:.7;}
+
+/* ===== 카드 ===== */
+.card{
+  background:var(--card); border-radius:20px; padding:24px 20px;
+  box-shadow:0 1px 2px rgba(0,0,0,0.04), 0 8px 24px rgba(0,0,0,0.06);
+  margin-bottom:16px;
+  overflow-wrap:break-word; word-break:break-word;   /* 긴 문장 삐져나옴 방지 */
+}
+.kr-question{
+  font-size:23px; font-weight:700; line-height:1.45; text-align:center;
+  padding:18px 4px 24px 4px; min-height:56px;
+}
+.btn{
+  display:block; width:100%; border:none; border-radius:14px;
+  padding:17px 16px; min-height:52px;                 /* 충분한 터치 영역 */
+  font-size:16px; font-weight:600; cursor:pointer;
+  transition:transform .12s ease, opacity .12s ease;
+}
+.btn:active{transform:scale(0.97); opacity:0.82;}
+.btn-primary{background:var(--blue); color:#fff;}
+.btn-secondary{background:var(--red-soft); color:var(--red);}
+.btn-ghost{background:var(--bg); color:var(--text); border:1px solid var(--border);}
+.btn-danger{background:rgba(255,59,48,0.10); color:#FF3B30;}
+.btn-row{display:flex; gap:10px; margin-top:14px;}
+.btn-row .btn{flex:1;}
+
+/* ===== 정답 영역 ===== */
+.answer{display:none; margin-top:6px; padding-top:20px; border-top:1px solid var(--border);}
+.answer.show{display:block; animation:fadeIn .25s ease;}
+@keyframes fadeIn{from{opacity:0; transform:translateY(4px);} to{opacity:1; transform:translateY(0);}}
+.row{margin-bottom:18px;}
+.row:last-child{margin-bottom:0;}
+.row-label{font-size:12px; font-weight:700; color:var(--sub); margin-bottom:6px;}
+.fr-line{display:flex; align-items:flex-start; gap:10px;}
+.fr-text{
+  font-size:26px; font-weight:700; line-height:1.35; color:var(--blue); flex:1;
+  overflow-wrap:break-word; word-break:break-word;
+}
+.pron-text{font-size:18px; font-weight:700; color:var(--red);}
+.pron-hint{font-size:11px; color:var(--sub); margin-top:5px; line-height:1.5;}
+.speak-btn{
+  flex:0 0 auto; width:46px; height:46px; border-radius:23px; border:none;
+  background:var(--blue-soft); color:var(--blue); font-size:20px; cursor:pointer;
+  display:flex; align-items:center; justify-content:center;
+  transition:transform .12s ease, opacity .12s ease;
+}
+.speak-btn:active{transform:scale(0.9); opacity:.7;}
+.speak-btn.small{width:34px; height:34px; border-radius:17px; font-size:15px;}
+.speak-btn[disabled]{opacity:.35;}
+.grammar-box{
+  background:var(--blue-soft); border-radius:14px; padding:14px 16px;
+  font-size:14px; line-height:1.6; color:var(--text);
+}
+.grammar-box .glabel{color:var(--blue); font-weight:700; margin-bottom:5px; display:block;}
+.kw-list{display:flex; flex-direction:column; gap:8px;}
+.kw{
+  display:flex; align-items:center; gap:10px;
+  background:var(--bg); border:1px solid var(--border);
+  border-radius:12px; padding:10px 12px;
+}
+.kw-main{flex:1; min-width:0;}
+.kw-word{font-size:15px; font-weight:700; color:var(--blue); overflow-wrap:break-word;}
+.kw-mean{font-size:12.5px; color:var(--sub); margin-top:2px;}
+.kw-pron{font-size:12.5px; color:var(--red); font-weight:600; margin-top:1px;}
+
+/* ===== 완료 화면 ===== */
+.done-card{text-align:center; padding:34px 22px;}
+.done-emoji{font-size:52px; line-height:1;}
+.done-title{font-size:20px; font-weight:700; margin:14px 0 6px;}
+.done-desc{font-size:14px; color:var(--sub); line-height:1.6; margin-bottom:22px;}
+
+/* ===== 저장된 단어장 ===== */
+.empty{text-align:center; color:var(--sub); padding:56px 20px; font-size:15px; line-height:1.7; white-space:pre-line;}
+.saved-item{
+  background:var(--card); border-radius:16px; padding:16px 18px; margin-bottom:12px;
+  box-shadow:0 1px 2px rgba(0,0,0,0.04); overflow-wrap:break-word;
+}
+.saved-head{display:flex; justify-content:space-between; align-items:center; gap:10px; cursor:pointer;}
+.saved-cat{font-size:11px; color:var(--blue); font-weight:700; margin-bottom:4px;}
+.saved-kr{font-size:16px; font-weight:600; flex:1;}
+.chev{color:var(--sub); font-size:14px; transition:transform .2s ease; flex:0 0 auto;}
+.chev.open{transform:rotate(90deg);}
+.saved-detail{display:none; margin-top:14px; padding-top:14px; border-top:1px solid var(--border);}
+.saved-detail.show{display:block;}
+.saved-actions{margin-top:14px;}
+.saved-actions .btn{padding:12px; min-height:44px; font-size:14px;}
+.count-line{font-size:13px; font-weight:700; color:var(--sub); margin:2px 2px 12px;}
+
+/* ===== 하단 탭 바 : 홈 인디케이터 대응 ===== */
+nav.tabbar{
+  flex:0 0 auto; display:flex;
+  background:var(--tabbar-bg);
+  -webkit-backdrop-filter:blur(20px); backdrop-filter:blur(20px);  /* 반투명 블러 */
+  border-top:1px solid var(--border);
+  padding-top:8px;
+  padding-bottom:calc(6px + env(safe-area-inset-bottom));
+  padding-right:env(safe-area-inset-right);
+  padding-left:env(safe-area-inset-left);
+}
+.tab{
+  flex:1; background:none; border:none; cursor:pointer;
+  display:flex; flex-direction:column; align-items:center; gap:3px;
+  padding:6px 0 2px; min-height:48px;
+  color:var(--sub); font-size:11px; font-weight:600;
+}
+.tab .ico{font-size:22px; line-height:1;}
+.tab.active{color:var(--blue);}
+.tab:active{opacity:.6;}
+
+/* ===== 토스트 ===== */
+#toast{
+  position:fixed; left:50%; bottom:calc(94px + env(safe-area-inset-bottom));
+  transform:translateX(-50%) translateY(20px);
+  background:rgba(28,28,30,0.93); color:#fff;
+  padding:12px 22px; border-radius:100px;
+  font-size:14px; font-weight:600; opacity:0; pointer-events:none;
+  transition:opacity .25s ease, transform .25s ease; z-index:999;
+  max-width:88vw; text-align:center;
+  -webkit-backdrop-filter:blur(10px); backdrop-filter:blur(10px);
+}
+#toast.show{opacity:1; transform:translateX(-50%) translateY(0);}
+</style>
+</head>
+<body>
+<div id="app">
+
+  <header class="topbar">
+    <div class="topbar-row">
+      <span class="cat-chip" id="catChip">기본 인사</span>
+      <span class="progress-text" id="progressText">1 / 200</span>
+    </div>
+    <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+  </header>
+
+  <main>
+    <!-- ============ 퀴즈 화면 ============ -->
+    <section class="view active" id="view-quiz">
+      <div class="chip-scroll" id="catPicker"></div>
+
+      <div class="card" id="quizCard">
+        <div class="kr-question" id="krQuestion"></div>
+
+        <button class="btn btn-primary" id="revealBtn">답 확인</button>
+
+        <div class="answer" id="answerBox">
+          <div class="row">
+            <div class="row-label">① 프랑스어</div>
+            <div class="fr-line">
+              <div class="fr-text" id="frText"></div>
+              <button class="speak-btn" id="speakBtn" aria-label="프랑스어 발음 듣기">🔊</button>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="row-label">② 한글 발음</div>
+            <div class="pron-text" id="pronText"></div>
+            <div class="pron-hint">한글 표기는 발음을 돕기 위한 것으로 실제 프랑스어 소리와 완전히 같지는 않아요. 🔊 버튼으로 꼭 들어보세요.</div>
+          </div>
+
+          <div class="row" id="kwRow">
+            <div class="row-label">③ 핵심 단어</div>
+            <div class="kw-list" id="kwList"></div>
+          </div>
+
+          <div class="row">
+            <div class="grammar-box">
+              <span class="glabel">💡 핵심 문법·문형 포인트</span>
+              <span id="grammarText"></span>
+            </div>
+          </div>
+        </div>
+
+        <div class="btn-row" id="actionRow">
+          <button class="btn btn-secondary" id="saveBtn">헷갈려요 🔖</button>
+          <button class="btn btn-primary" id="nextBtn">다음 문제 →</button>
+        </div>
+      </div>
+
+      <!-- 마지막 문제 이후 완료 화면 -->
+      <div class="card done-card" id="doneCard" style="display:none;">
+        <div class="done-emoji">🎉</div>
+        <div class="done-title">한 바퀴 다 돌았어요!</div>
+        <div class="done-desc" id="doneDesc"></div>
+        <button class="btn btn-primary" id="restartBtn">처음부터 다시 풀기</button>
+        <div style="height:10px;"></div>
+        <button class="btn btn-ghost" id="allCatBtn">전체 200문장으로 돌아가기</button>
+        <div class="pron-hint" style="margin-top:14px;">위쪽 카테고리 칩에서 원하는 상황만 골라 복습할 수도 있어요.</div>
+      </div>
+    </section>
+
+    <!-- ============ 저장된 단어장 ============ -->
+    <section class="view" id="view-saved">
+      <div class="count-line" id="savedCount"></div>
+      <div id="savedList"></div>
+    </section>
+  </main>
+
+  <nav class="tabbar">
+    <button class="tab active" id="tabQuiz"><span class="ico">📝</span><span>퀴즈 풀기</span></button>
+    <button class="tab" id="tabSaved"><span class="ico">🔖</span><span>저장된 단어장</span></button>
+  </nav>
+</div>
+
+<div id="toast"></div>
+
+<script>
+"use strict";
+/* ===================== 프랑스 여행 회화 200문장 ===================== */
+var DATA = [
+{id:1,category:"기본 인사",kr:"안녕하세요.",fr:"Bonjour.",pronunciation:"봉주르",grammar:"낮 시간대 인사이자 가게에 들어설 때의 필수 예절이에요. 이 한마디 없이 말을 걸면 무례하게 느껴질 수 있어요.",keywords:[{word:"bonjour",meaning:"안녕하세요",pron:"봉주르"}]},
+{id:2,category:"기본 인사",kr:"안녕하세요. (저녁)",fr:"Bonsoir.",pronunciation:"봉수아르",grammar:"해가 진 뒤에는 Bonjour 대신 Bonsoir를 써요. 대략 저녁 6시 이후예요.",keywords:[{word:"soir",meaning:"저녁",pron:"수아르"}]},
+{id:3,category:"기본 인사",kr:"안녕. (친구에게)",fr:"Salut !",pronunciation:"살뤼",grammar:"만날 때와 헤어질 때 모두 쓰는 반말 인사예요. 친구나 또래에게만 쓰세요.",keywords:[{word:"salut",meaning:"안녕",pron:"살뤼"}]},
+{id:4,category:"기본 인사",kr:"안녕히 가세요.",fr:"Au revoir.",pronunciation:"오 르부아르",grammar:"가게를 나올 때도 꼭 하는 인사예요. 직역하면 '다시 볼 때까지'예요.",keywords:[{word:"au revoir",meaning:"안녕히 가세요",pron:"오 르부아르"}]},
+{id:5,category:"기본 인사",kr:"좋은 하루 보내세요.",fr:"Bonne journée !",pronunciation:"본 주르네",grammar:"헤어질 때 Au revoir 뒤에 덧붙이면 아주 자연스러워요. 저녁에는 Bonne soirée를 써요.",keywords:[{word:"journée",meaning:"하루",pron:"주르네"}]},
+{id:6,category:"기본 인사",kr:"안녕히 주무세요.",fr:"Bonne nuit.",pronunciation:"본 뉘",grammar:"잠자리에 들 때만 써요. 저녁에 헤어질 때는 Bonne soirée가 맞아요.",keywords:[{word:"nuit",meaning:"밤",pron:"뉘"}]},
+{id:7,category:"기본 인사",kr:"곧 또 봬요.",fr:"À bientôt !",pronunciation:"아 비앙토",grammar:"À + 시점으로 '그때 봐요'를 만들어요. À demain(내일 봐요)처럼 응용할 수 있어요.",keywords:[{word:"bientôt",meaning:"곧",pron:"비앙토"}]},
+{id:8,category:"기본 인사",kr:"잘 지내세요?",fr:"Comment allez-vous ?",pronunciation:"코망 탈레 부",grammar:"정중한 안부 인사예요. comment과 allez가 이어져 [코망 탈레]로 발음돼요.",keywords:[{word:"comment",meaning:"어떻게",pron:"코망"}]},
+{id:9,category:"기본 인사",kr:"잘 지내요, 감사합니다.",fr:"Ça va bien, merci.",pronunciation:"사 바 비앙 메르시",grammar:"Ça va는 안부를 묻고 답하는 데 모두 쓰는 만능 표현이에요. 끝을 올리면 질문이 돼요.",keywords:[{word:"bien",meaning:"잘",pron:"비앙"}]},
+{id:10,category:"기본 인사",kr:"반갑습니다.",fr:"Enchanté.",pronunciation:"앙샹테",grammar:"처음 만났을 때 쓰는 인사예요. 말하는 사람이 여성이면 Enchantée로 쓰지만 발음은 같아요.",keywords:[{word:"enchanté",meaning:"반가운",pron:"앙샹테"}]},
+{id:11,category:"자기소개",kr:"저는 민수라고 합니다.",fr:"Je m'appelle Minsu.",pronunciation:"즈 마펠 민수",grammar:"직역하면 '저는 저를 ~라고 부릅니다'예요. 이름을 말할 때 쓰는 가장 기본 표현이에요.",keywords:[{word:"je",meaning:"나는",pron:"즈"},{word:"s'appeler",meaning:"이름이 ~이다",pron:"사플레"}]},
+{id:12,category:"자기소개",kr:"저는 한국 사람입니다.",fr:"Je suis coréen.",pronunciation:"즈 쉬 코레앙",grammar:"être(이다) 동사의 je 형태가 suis예요. 여성은 coréenne(코레엔)으로 써요.",keywords:[{word:"suis",meaning:"~이다",pron:"쉬"},{word:"coréen",meaning:"한국인",pron:"코레앙"}]},
+{id:13,category:"자기소개",kr:"한국에서 왔어요.",fr:"Je viens de Corée.",pronunciation:"즈 비앙 드 코레",grammar:"venir de는 '~에서 오다'예요. 나라 이름 앞 관사는 de와 만나 사라져요.",keywords:[{word:"venir",meaning:"오다",pron:"브니르"},{word:"Corée",meaning:"한국",pron:"코레"}]},
+{id:14,category:"자기소개",kr:"프랑스어를 조금 해요.",fr:"Je parle un peu français.",pronunciation:"즈 파를 앙 푀 프랑세",grammar:"언어 이름 앞에는 관사를 붙이지 않아요. un peu는 '조금'이에요.",keywords:[{word:"parler",meaning:"말하다",pron:"파를레"},{word:"un peu",meaning:"조금",pron:"앙 푀"}]},
+{id:15,category:"자기소개",kr:"영어 하세요?",fr:"Parlez-vous anglais ?",pronunciation:"파를레 부 장글레",grammar:"동사와 주어를 뒤집어 만드는 정중한 의문문이에요. vous와 anglais가 이어져 [부 장글레]가 돼요.",keywords:[{word:"anglais",meaning:"영어",pron:"앙글레"}]},
+{id:16,category:"자기소개",kr:"관광하러 왔어요.",fr:"Je suis ici pour le tourisme.",pronunciation:"즈 쉬 지시 푸르 르 투리슴",grammar:"pour는 '~을 위해'라는 목적을 나타내요. 입국 심사에서 그대로 쓸 수 있어요.",keywords:[{word:"ici",meaning:"여기",pron:"이시"},{word:"pour",meaning:"~을 위해",pron:"푸르"}]},
+{id:17,category:"감사·사과",kr:"감사합니다.",fr:"Merci.",pronunciation:"메르시",grammar:"가장 기본적인 감사 표현이에요. 무언가를 사양할 때 Non, merci로도 써요.",keywords:[{word:"merci",meaning:"감사합니다",pron:"메르시"}]},
+{id:18,category:"감사·사과",kr:"정말 감사합니다.",fr:"Merci beaucoup.",pronunciation:"메르시 보쿠",grammar:"beaucoup은 '많이'예요. 끝의 p는 소리 나지 않아요.",keywords:[{word:"beaucoup",meaning:"많이",pron:"보쿠"}]},
+{id:19,category:"감사·사과",kr:"천만에요.",fr:"De rien.",pronunciation:"드 리앙",grammar:"'별것 아니에요'라는 뜻이에요. 더 정중하게는 Je vous en prie를 써요.",keywords:[{word:"rien",meaning:"아무것도 아닌 것",pron:"리앙"}]},
+{id:20,category:"감사·사과",kr:"죄송합니다.",fr:"Je suis désolé.",pronunciation:"즈 쉬 데졸레",grammar:"잘못을 사과할 때 써요. 여성은 désolée로 쓰지만 발음은 같아요.",keywords:[{word:"désolé",meaning:"미안한",pron:"데졸레"}]},
+{id:21,category:"감사·사과",kr:"실례합니다.",fr:"Excusez-moi.",pronunciation:"엑스퀴제 무아",grammar:"말을 걸거나 사람 사이를 지나갈 때 쓰는 표현이에요. 사과의 désolé와는 쓰임이 달라요.",keywords:[{word:"excuser",meaning:"용서하다",pron:"엑스퀴제"}]},
+{id:22,category:"감사·사과",kr:"괜찮아요.",fr:"Ce n'est pas grave.",pronunciation:"스 네 파 그라브",grammar:"상대의 사과에 답할 때 써요. 회화에서는 C'est pas grave로 ne를 생략해요.",keywords:[{word:"grave",meaning:"심각한",pron:"그라브"}]},
+{id:23,category:"감사·사과",kr:"도와주셔서 감사합니다.",fr:"Merci pour votre aide.",pronunciation:"메르시 푸르 보트르 에드",grammar:"merci pour + 명사로 감사의 이유를 붙여요.",keywords:[{word:"aide",meaning:"도움",pron:"에드"},{word:"votre",meaning:"당신의",pron:"보트르"}]},
+{id:24,category:"감사·사과",kr:"친절하시네요.",fr:"C'est très gentil.",pronunciation:"세 트레 장티",grammar:"C'est는 '그것은 ~이다'예요. très는 '아주'라는 강조예요.",keywords:[{word:"gentil",meaning:"친절한",pron:"장티"},{word:"très",meaning:"아주",pron:"트레"}]},
+{id:25,category:"식당",kr:"두 명 자리 부탁합니다.",fr:"Une table pour deux, s'il vous plaît.",pronunciation:"윈 타블 푸르 되 씰 부 플레",grammar:"s'il vous plaît는 '부탁합니다'로 요청 끝에 붙이면 정중해져요. 인원수만 바꿔 쓰면 돼요.",keywords:[{word:"table",meaning:"테이블",pron:"타블"},{word:"deux",meaning:"둘",pron:"되"}]},
+{id:26,category:"식당",kr:"예약했습니다.",fr:"J'ai une réservation.",pronunciation:"제 윈 레제르바시옹",grammar:"avoir(가지다)를 써서 '예약을 가지고 있다'고 표현해요. j'ai는 je + ai의 축약이에요.",keywords:[{word:"réservation",meaning:"예약",pron:"레제르바시옹"}]},
+{id:27,category:"식당",kr:"자리 있나요?",fr:"Vous avez une table ?",pronunciation:"부 자베 윈 타블",grammar:"끝을 올리기만 하면 의문문이 돼요. vous avez는 [부 자베]로 이어 읽어요.",keywords:[{word:"avez",meaning:"가지고 있다",pron:"아베"}]},
+{id:28,category:"식당",kr:"테라스 자리로 주세요.",fr:"En terrasse, s'il vous plaît.",pronunciation:"앙 테라스 씰 부 플레",grammar:"en + 장소로 '~에서'를 나타내요. 파리 카페의 테라스 자리는 인기가 많아요.",keywords:[{word:"terrasse",meaning:"테라스",pron:"테라스"}]},
+{id:29,category:"식당",kr:"메뉴판 주세요.",fr:"La carte, s'il vous plaît.",pronunciation:"라 카르트 씰 부 플레",grammar:"메뉴판은 la carte예요. le menu는 '세트 코스'를 뜻하니 헷갈리지 마세요.",keywords:[{word:"carte",meaning:"메뉴판",pron:"카르트"}]},
+{id:30,category:"식당",kr:"주문할게요.",fr:"Je voudrais commander.",pronunciation:"즈 부드레 코망데",grammar:"je voudrais는 '~하고 싶습니다'라는 정중한 요청이에요. 여행 중 가장 많이 쓰게 될 표현이에요.",keywords:[{word:"voudrais",meaning:"~하고 싶다",pron:"부드레"},{word:"commander",meaning:"주문하다",pron:"코망데"}]},
+{id:31,category:"식당",kr:"이걸로 할게요.",fr:"Je vais prendre ça.",pronunciation:"즈 베 프랑드르 사",grammar:"aller + 동사원형으로 가까운 미래를 만들어요. 메뉴를 가리키며 쓰면 확실해요.",keywords:[{word:"prendre",meaning:"취하다",pron:"프랑드르"},{word:"ça",meaning:"그것",pron:"사"}]},
+{id:32,category:"식당",kr:"맛있어요.",fr:"C'est délicieux.",pronunciation:"세 델리시외",grammar:"C'est + 형용사로 감상을 말해요. 간단히 C'est bon(세 봉)도 자주 써요.",keywords:[{word:"délicieux",meaning:"맛있는",pron:"델리시외"}]},
+{id:33,category:"식당",kr:"물 한 병 주세요.",fr:"Une carafe d'eau, s'il vous plaît.",pronunciation:"윈 카라프 도 씰 부 플레",grammar:"carafe d'eau는 무료로 주는 수돗물이에요. 유료 생수는 eau minérale이에요.",keywords:[{word:"eau",meaning:"물",pron:"오"},{word:"carafe",meaning:"물병",pron:"카라프"}]},
+{id:34,category:"식당",kr:"냅킨 좀 주시겠어요?",fr:"Une serviette, s'il vous plaît.",pronunciation:"윈 세르비에트 씰 부 플레",grammar:"필요한 것 이름 + s'il vous plaît만으로도 충분히 정중한 요청이 돼요.",keywords:[{word:"serviette",meaning:"냅킨",pron:"세르비에트"}]},
+{id:35,category:"카페·베이커리",kr:"커피 한 잔 주세요.",fr:"Un café, s'il vous plaît.",pronunciation:"앙 카페 씰 부 플레",grammar:"그냥 café라고 하면 에스프레소가 나와요. un은 남성 명사 앞의 '하나'예요.",keywords:[{word:"café",meaning:"커피",pron:"카페"}]},
+{id:36,category:"카페·베이커리",kr:"카페라테 한 잔 주세요.",fr:"Un café au lait, s'il vous plaît.",pronunciation:"앙 카페 오 레 씰 부 플레",grammar:"au는 à + le의 축약으로 '~을 넣은'이라는 뜻이에요.",keywords:[{word:"lait",meaning:"우유",pron:"레"}]},
+{id:37,category:"카페·베이커리",kr:"크루아상 하나 주세요.",fr:"Un croissant, s'il vous plaît.",pronunciation:"앙 쿠라상 씰 부 플레",grammar:"빵집에서는 원하는 것을 가리키며 이렇게 말하면 돼요. 끝의 t는 묵음이에요.",keywords:[{word:"croissant",meaning:"크루아상",pron:"쿠라상"}]},
+{id:38,category:"카페·베이커리",kr:"바게트 하나 주세요.",fr:"Une baguette, s'il vous plaît.",pronunciation:"윈 바게트 씰 부 플레",grammar:"baguette는 여성 명사라 une를 써요. 명사의 성에 따라 un/une가 갈려요.",keywords:[{word:"baguette",meaning:"바게트",pron:"바게트"}]},
+{id:39,category:"카페·베이커리",kr:"여기서 먹을게요.",fr:"Sur place.",pronunciation:"쉬르 플라스",grammar:"카페에서 '드시고 가세요, 가져가세요?'라고 물으면 이렇게 답해요.",keywords:[{word:"place",meaning:"자리",pron:"플라스"}]},
+{id:40,category:"카페·베이커리",kr:"가져갈게요.",fr:"À emporter.",pronunciation:"아 앙포르테",grammar:"포장해 갈 때 쓰는 한마디예요. 파리 카페에서는 자리에서 먹을 때 값이 더 비싸요.",keywords:[{word:"emporter",meaning:"가져가다",pron:"앙포르테"}]},
+{id:41,category:"카페·베이커리",kr:"이건 뭐예요?",fr:"Qu'est-ce que c'est ?",pronunciation:"케스크 세",grammar:"빵 이름을 모를 때 가리키며 물어보세요. 통째로 외워두면 아주 유용해요.",keywords:[{word:"qu'est-ce que",meaning:"무엇",pron:"케스크"}]},
+{id:42,category:"카페·베이커리",kr:"저것도 하나 주세요.",fr:"Celui-là aussi, s'il vous plaît.",pronunciation:"슬뤼 라 오시 씰 부 플레",grammar:"celui-là는 '저것'이에요. 여성 물건이면 celle-là(셀 라)라고 해요.",keywords:[{word:"aussi",meaning:"역시",pron:"오시"}]},
+{id:43,category:"음식 주문",kr:"추천해 주시겠어요?",fr:"Qu'est-ce que vous recommandez ?",pronunciation:"케스크 부 르코망데",grammar:"무엇을 먹을지 모를 때 가장 유용한 질문이에요. 현지인의 추천을 받을 수 있어요.",keywords:[{word:"recommander",meaning:"추천하다",pron:"르코망데"}]},
+{id:44,category:"음식 주문",kr:"오늘의 메뉴는 뭐예요?",fr:"Quel est le plat du jour ?",pronunciation:"켈 레 르 플라 뒤 주르",grammar:"plat du jour는 '오늘의 요리'로 대개 저렴하고 신선해요. du는 de + le의 축약이에요.",keywords:[{word:"plat",meaning:"요리",pron:"플라"},{word:"jour",meaning:"날",pron:"주르"}]},
+{id:45,category:"음식 주문",kr:"이거 하나 주세요.",fr:"Je voudrais ça, s'il vous plaît.",pronunciation:"즈 부드레 사 씰 부 플레",grammar:"메뉴를 가리키며 ça(그것)라고 하면 발음 걱정 없이 주문할 수 있어요.",keywords:[{word:"voudrais",meaning:"~하고 싶다",pron:"부드레"}]},
+{id:46,category:"음식 주문",kr:"스테이크 미디엄으로 주세요.",fr:"Un steak à point, s'il vous plaît.",pronunciation:"앙 스테크 아 푸앙 씰 부 플레",grammar:"굽기는 saignant(레어), à point(미디엄), bien cuit(웰던)으로 말해요.",keywords:[{word:"à point",meaning:"미디엄",pron:"아 푸앙"}]},
+{id:47,category:"음식 주문",kr:"같은 걸로 주세요.",fr:"La même chose, s'il vous plaît.",pronunciation:"라 멤 쇼즈 씰 부 플레",grammar:"일행이 시킨 것과 같은 것을 주문할 때 써요.",keywords:[{word:"même",meaning:"같은",pron:"멤"},{word:"chose",meaning:"것",pron:"쇼즈"}]},
+{id:48,category:"음식 주문",kr:"와인 한 잔 주세요.",fr:"Un verre de vin, s'il vous plaît.",pronunciation:"앙 베르 드 뱅 씰 부 플레",grammar:"un verre de + 음료로 '한 잔'을 표현해요. 레드는 vin rouge, 화이트는 vin blanc이에요.",keywords:[{word:"verre",meaning:"잔",pron:"베르"},{word:"vin",meaning:"와인",pron:"뱅"}]},
+{id:49,category:"음식 주문",kr:"디저트 있나요?",fr:"Vous avez des desserts ?",pronunciation:"부 자베 데 데세르",grammar:"des는 복수 부정관사로 '몇 개의'라는 뜻이에요.",keywords:[{word:"dessert",meaning:"디저트",pron:"데세르"}]},
+{id:50,category:"음식 주문",kr:"조금만 주세요.",fr:"Une petite portion, s'il vous plaît.",pronunciation:"윈 프티트 포르시옹 씰 부 플레",grammar:"portion이 여성 명사라 petit이 petite로 바뀌어요. 형용사는 명사의 성을 따라가요.",keywords:[{word:"portion",meaning:"양",pron:"포르시옹"}]},
+{id:51,category:"메뉴 확인",kr:"이 안에 뭐가 들어 있나요?",fr:"Qu'est-ce qu'il y a dedans ?",pronunciation:"케스킬 리 아 드당",grammar:"il y a는 '~이 있다'예요. 영어의 there is에 해당하는 필수 표현이에요.",keywords:[{word:"il y a",meaning:"~이 있다",pron:"일 리 아"},{word:"dedans",meaning:"안에",pron:"드당"}]},
+{id:52,category:"메뉴 확인",kr:"고기가 들어 있나요?",fr:"Est-ce qu'il y a de la viande ?",pronunciation:"에스킬 리 아 드 라 비앙드",grammar:"Est-ce que를 문장 앞에 붙이면 어떤 평서문도 의문문이 돼요.",keywords:[{word:"viande",meaning:"고기",pron:"비앙드"}]},
+{id:53,category:"메뉴 확인",kr:"이거 매운가요?",fr:"C'est épicé ?",pronunciation:"세 테피세",grammar:"C'est와 épicé가 이어져 [세 테피세]로 발음돼요.",keywords:[{word:"épicé",meaning:"매운",pron:"에피세"}]},
+{id:54,category:"메뉴 확인",kr:"채식 메뉴 있나요?",fr:"Vous avez un plat végétarien ?",pronunciation:"부 자베 앙 플라 베제타리앙",grammar:"végétarien은 채식주의의예요. 비건은 végétalien이라고 해요.",keywords:[{word:"végétarien",meaning:"채식의",pron:"베제타리앙"}]},
+{id:55,category:"메뉴 확인",kr:"영어 메뉴판 있나요?",fr:"Vous avez une carte en anglais ?",pronunciation:"부 자베 윈 카르트 앙 낭글레",grammar:"en + 언어로 '~로 된'을 나타내요. en과 anglais가 이어져 [앙 낭글레]가 돼요.",keywords:[{word:"en anglais",meaning:"영어로",pron:"앙 낭글레"}]},
+{id:56,category:"메뉴 확인",kr:"이거 어떻게 먹는 거예요?",fr:"Comment ça se mange ?",pronunciation:"코망 사 스 망주",grammar:"se manger는 '먹히다'라는 재귀 형태로 '어떻게 먹느냐'를 자연스럽게 물어요.",keywords:[{word:"manger",meaning:"먹다",pron:"망제"}]},
+{id:57,category:"알레르기·요청",kr:"저는 견과류 알레르기가 있어요.",fr:"Je suis allergique aux noix.",pronunciation:"즈 쉬 잘레르지크 오 누아",grammar:"allergique à + 음식으로 알레르기를 말해요. aux는 à + les의 축약이에요.",keywords:[{word:"allergique",meaning:"알레르기의",pron:"알레르지크"},{word:"noix",meaning:"견과",pron:"누아"}]},
+{id:58,category:"알레르기·요청",kr:"글루텐이 없는 걸로 주세요.",fr:"Sans gluten, s'il vous plaît.",pronunciation:"상 글뤼텐 씰 부 플레",grammar:"sans는 '~ 없이'예요. sans sucre(무설탕)처럼 응용할 수 있어요.",keywords:[{word:"sans",meaning:"~없이",pron:"상"}]},
+{id:59,category:"알레르기·요청",kr:"양파는 빼주세요.",fr:"Sans oignon, s'il vous plaît.",pronunciation:"상 오뇽 씰 부 플레",grammar:"빼고 싶은 재료 이름 앞에 sans만 붙이면 돼요. gn은 [뉴] 소리예요.",keywords:[{word:"oignon",meaning:"양파",pron:"오뇽"}]},
+{id:60,category:"알레르기·요청",kr:"덜 맵게 해주세요.",fr:"Moins épicé, s'il vous plaît.",pronunciation:"무앙 제피세 씰 부 플레",grammar:"moins는 '덜'이라는 비교 표현이에요. 반대는 plus(더)예요.",keywords:[{word:"moins",meaning:"덜",pron:"무앙"}]},
+{id:61,category:"알레르기·요청",kr:"소스는 따로 주세요.",fr:"La sauce à part, s'il vous plaît.",pronunciation:"라 소스 아 파르 씰 부 플레",grammar:"à part는 '따로'라는 뜻이에요.",keywords:[{word:"sauce",meaning:"소스",pron:"소스"},{word:"à part",meaning:"따로",pron:"아 파르"}]},
+{id:62,category:"알레르기·요청",kr:"얼음 빼고 주세요.",fr:"Sans glaçons, s'il vous plaît.",pronunciation:"상 글라송 씰 부 플레",grammar:"ç(세디유)는 c를 [ㅅ] 소리로 만들어 줘요. 복수라 -s가 붙었어요.",keywords:[{word:"glaçon",meaning:"얼음",pron:"글라송"}]},
+{id:63,category:"계산·결제",kr:"계산서 주세요.",fr:"L'addition, s'il vous plaît.",pronunciation:"라디시옹 씰 부 플레",grammar:"식당에서 계산할 때 쓰는 고정 표현이에요. 프랑스에서는 자리에 앉아서 계산해요.",keywords:[{word:"addition",meaning:"계산서",pron:"아디시옹"}]},
+{id:64,category:"계산·결제",kr:"카드로 계산할게요.",fr:"Je paie par carte.",pronunciation:"즈 페 파르 카르트",grammar:"par는 수단을 나타내요. 현금은 en espèces(앙 네스페스)라고 해요.",keywords:[{word:"payer",meaning:"지불하다",pron:"페예"},{word:"carte",meaning:"카드",pron:"카르트"}]},
+{id:65,category:"계산·결제",kr:"현금으로 낼게요.",fr:"Je paie en espèces.",pronunciation:"즈 페 앙 네스페스",grammar:"espèces는 항상 복수로 써요. en과 이어져 [앙 네스페스]로 발음돼요.",keywords:[{word:"espèces",meaning:"현금",pron:"에스페스"}]},
+{id:66,category:"계산·결제",kr:"따로 계산할게요.",fr:"On paie séparément.",pronunciation:"옹 페 세파레망",grammar:"on은 회화에서 '우리'를 대신하는 주어예요. 동사는 3인칭 단수로 써요.",keywords:[{word:"séparément",meaning:"따로",pron:"세파레망"}]},
+{id:67,category:"계산·결제",kr:"영수증 주세요.",fr:"Le reçu, s'il vous plaît.",pronunciation:"르 르쉬 씰 부 플레",grammar:"ticket de caisse라고도 해요. 면세 신청을 하려면 꼭 받아두세요.",keywords:[{word:"reçu",meaning:"영수증",pron:"르쉬"}]},
+{id:68,category:"계산·결제",kr:"계산이 잘못된 것 같아요.",fr:"Je pense qu'il y a une erreur.",pronunciation:"즈 팡스 킬 리 아 윈 에뢰르",grammar:"직접 '틀렸다'고 하지 않고 '착오가 있는 것 같다'고 부드럽게 말하는 표현이에요.",keywords:[{word:"erreur",meaning:"오류",pron:"에뢰르"},{word:"penser",meaning:"생각하다",pron:"팡세"}]},
+{id:69,category:"계산·결제",kr:"팁은 포함인가요?",fr:"Le service est compris ?",pronunciation:"르 세르비스 에 콩프리",grammar:"프랑스는 봉사료가 포함되어 있어 팁이 의무가 아니에요. 만족하면 조금 남기는 정도예요.",keywords:[{word:"service",meaning:"봉사료",pron:"세르비스"},{word:"compris",meaning:"포함된",pron:"콩프리"}]},
+{id:70,category:"계산·결제",kr:"잔돈은 괜찮아요.",fr:"Gardez la monnaie.",pronunciation:"가르데 라 모네",grammar:"garder(간직하다)의 명령형이에요. monnaie는 '잔돈'이에요.",keywords:[{word:"monnaie",meaning:"잔돈",pron:"모네"}]},
+{id:71,category:"쇼핑",kr:"그냥 구경하는 거예요.",fr:"Je regarde seulement.",pronunciation:"즈 르가르드 쇨망",grammar:"점원이 도와줄지 물을 때 쓰는 정중한 사양이에요.",keywords:[{word:"regarder",meaning:"보다",pron:"르가르데"},{word:"seulement",meaning:"단지",pron:"쇨망"}]},
+{id:72,category:"쇼핑",kr:"이거 봐도 될까요?",fr:"Je peux regarder ça ?",pronunciation:"즈 푀 르가르데 사",grammar:"Je peux + 동사원형은 '~해도 될까요?'라는 허락을 구하는 표현이에요.",keywords:[{word:"peux",meaning:"할 수 있다",pron:"푀"}]},
+{id:73,category:"쇼핑",kr:"이거 있어요?",fr:"Vous avez ça ?",pronunciation:"부 자베 사",grammar:"사진이나 물건을 보여주며 쓰면 발음 걱정 없이 통해요.",keywords:[{word:"avez",meaning:"가지고 있다",pron:"아베"}]},
+{id:74,category:"쇼핑",kr:"선물용으로 포장해 주세요.",fr:"C'est pour offrir, s'il vous plaît.",pronunciation:"세 푸르 오프리르 씰 부 플레",grammar:"'선물용이에요'라고 하면 포장해 줘요. offrir는 '선물하다'예요.",keywords:[{word:"offrir",meaning:"선물하다",pron:"오프리르"}]},
+{id:75,category:"쇼핑",kr:"봉투 하나 주세요.",fr:"Un sac, s'il vous plaît.",pronunciation:"앙 사크 씰 부 플레",grammar:"프랑스 상점에서 봉투는 대개 유료예요.",keywords:[{word:"sac",meaning:"봉투",pron:"사크"}]},
+{id:76,category:"쇼핑",kr:"이걸로 살게요.",fr:"Je prends celui-ci.",pronunciation:"즈 프랑 슬뤼 시",grammar:"celui-ci는 '이것'(남성)이에요. 여성 물건이면 celle-ci(셀 시)라고 해요.",keywords:[{word:"prendre",meaning:"사다",pron:"프랑드르"}]},
+{id:77,category:"쇼핑",kr:"좀 더 생각해 볼게요.",fr:"Je vais réfléchir.",pronunciation:"즈 베 레플레시르",grammar:"사지 않고 나올 때 쓰는 부드러운 표현이에요.",keywords:[{word:"réfléchir",meaning:"생각하다",pron:"레플레시르"}]},
+{id:78,category:"쇼핑",kr:"면세 되나요?",fr:"C'est détaxé ?",pronunciation:"세 데탁세",grammar:"EU 밖 거주자는 일정 금액 이상 사면 세금을 환급받을 수 있어요.",keywords:[{word:"détaxé",meaning:"면세된",pron:"데탁세"}]},
+{id:79,category:"가격 묻기",kr:"이거 얼마예요?",fr:"C'est combien ?",pronunciation:"세 콩비앙",grammar:"가격을 묻는 가장 짧고 확실한 표현이에요. combien은 '얼마'예요.",keywords:[{word:"combien",meaning:"얼마",pron:"콩비앙"}]},
+{id:80,category:"가격 묻기",kr:"전부 얼마예요?",fr:"Ça fait combien en tout ?",pronunciation:"사 페 콩비앙 앙 투",grammar:"en tout는 '전부 합해서'예요. Ça fait ~은 합계를 말할 때 써요.",keywords:[{word:"en tout",meaning:"전부",pron:"앙 투"}]},
+{id:81,category:"가격 묻기",kr:"너무 비싸요.",fr:"C'est trop cher.",pronunciation:"세 트로 셰르",grammar:"trop은 '너무'예요. cher는 '비싼'이라는 뜻이에요.",keywords:[{word:"cher",meaning:"비싼",pron:"셰르"},{word:"trop",meaning:"너무",pron:"트로"}]},
+{id:82,category:"가격 묻기",kr:"좀 깎아 주실 수 있어요?",fr:"Vous pouvez faire un prix ?",pronunciation:"부 푸베 페르 앙 프리",grammar:"faire un prix는 '값을 깎아주다'예요. 시장이나 벼룩시장에서만 통해요.",keywords:[{word:"prix",meaning:"가격",pron:"프리"}]},
+{id:83,category:"가격 묻기",kr:"더 싼 거 있어요?",fr:"Vous avez moins cher ?",pronunciation:"부 자베 무앙 셰르",grammar:"moins cher는 '덜 비싼'이라는 비교 표현이에요.",keywords:[{word:"moins",meaning:"덜",pron:"무앙"}]},
+{id:84,category:"가격 묻기",kr:"할인 중인가요?",fr:"C'est en solde ?",pronunciation:"세 탕 솔드",grammar:"les soldes는 연 2회 있는 프랑스의 공식 세일 기간이에요.",keywords:[{word:"solde",meaning:"세일",pron:"솔드"}]},
+{id:85,category:"사이즈·색상",kr:"입어봐도 될까요?",fr:"Je peux l'essayer ?",pronunciation:"즈 푀 레세예",grammar:"le/la + essayer가 축약되어 l'essayer가 돼요. 옷을 입어볼 때 쓰는 표현이에요.",keywords:[{word:"essayer",meaning:"입어보다",pron:"에세예"}]},
+{id:86,category:"사이즈·색상",kr:"탈의실이 어디예요?",fr:"Où est la cabine d'essayage ?",pronunciation:"우 에 라 카빈 데세야주",grammar:"Où est ~ ?는 여행 중 가장 많이 쓰게 될 문형이에요.",keywords:[{word:"cabine",meaning:"칸막이방",pron:"카빈"}]},
+{id:87,category:"사이즈·색상",kr:"더 큰 사이즈 있어요?",fr:"Vous avez une taille plus grande ?",pronunciation:"부 자베 윈 타이 플뤼 그랑드",grammar:"taille가 여성 명사라 grand이 grande로 바뀌었어요.",keywords:[{word:"taille",meaning:"사이즈",pron:"타이"}]},
+{id:88,category:"사이즈·색상",kr:"더 작은 사이즈 있어요?",fr:"Vous avez une taille plus petite ?",pronunciation:"부 자베 윈 타이 플뤼 프티트",grammar:"plus + 형용사로 비교급을 만들어요. 여성형이라 petite예요.",keywords:[{word:"petit",meaning:"작은",pron:"프티"}]},
+{id:89,category:"사이즈·색상",kr:"다른 색 있어요?",fr:"Vous avez une autre couleur ?",pronunciation:"부 자베 윈 오트르 쿨뢰르",grammar:"autre는 '다른'이에요. couleur는 여성 명사예요.",keywords:[{word:"couleur",meaning:"색",pron:"쿨뢰르"}]},
+{id:90,category:"사이즈·색상",kr:"검은색으로 주세요.",fr:"En noir, s'il vous plaît.",pronunciation:"앙 누아르 씰 부 플레",grammar:"en + 색으로 '~색으로'를 나타내요. 흰색은 blanc, 파란색은 bleu예요.",keywords:[{word:"noir",meaning:"검은",pron:"누아르"}]},
+{id:91,category:"환불·교환",kr:"환불해 주세요.",fr:"Je voudrais être remboursé.",pronunciation:"즈 부드레 에트르 랑부르세",grammar:"être remboursé는 '환불받다'라는 수동 표현이에요.",keywords:[{word:"rembourser",meaning:"환불하다",pron:"랑부르세"}]},
+{id:92,category:"환불·교환",kr:"교환할 수 있나요?",fr:"Je peux échanger ?",pronunciation:"즈 푀 에샹제",grammar:"échanger는 '교환하다'예요. 환불(remboursement)과 구분해서 말해야 해요.",keywords:[{word:"échanger",meaning:"교환하다",pron:"에샹제"}]},
+{id:93,category:"환불·교환",kr:"여기 영수증이요.",fr:"Voici le reçu.",pronunciation:"부아시 르 르쉬",grammar:"voici는 물건을 건네며 '여기 있습니다'라고 할 때 써요.",keywords:[{word:"voici",meaning:"여기 있다",pron:"부아시"}]},
+{id:94,category:"환불·교환",kr:"사이즈가 안 맞아요.",fr:"Ce n'est pas la bonne taille.",pronunciation:"스 네 파 라 본 타이",grammar:"bonne은 bon(좋은, 맞는)의 여성형이에요. taille가 여성이라 bonne이 됐어요.",keywords:[{word:"bonne",meaning:"알맞은",pron:"본"}]},
+{id:95,category:"환불·교환",kr:"고장 나 있어요.",fr:"C'est cassé.",pronunciation:"세 카세",grammar:"casser는 '깨뜨리다, 고장 내다'예요. 불량품을 알릴 때 써요.",keywords:[{word:"cassé",meaning:"고장 난",pron:"카세"}]},
+{id:96,category:"지하철",kr:"지하철역이 어디예요?",fr:"Où est le métro ?",pronunciation:"우 에 르 메트로",grammar:"파리 지하철은 métro라고 해요. Où est ~ ?로 위치를 물어요.",keywords:[{word:"métro",meaning:"지하철",pron:"메트로"},{word:"où",meaning:"어디",pron:"우"}]},
+{id:97,category:"지하철",kr:"표 한 장 주세요.",fr:"Un ticket, s'il vous plaît.",pronunciation:"앙 티케 씰 부 플레",grammar:"10장 묶음은 un carnet(앙 카르네)라고 하며 더 저렴해요. 끝의 t는 묵음이에요.",keywords:[{word:"ticket",meaning:"표",pron:"티케"}]},
+{id:98,category:"지하철",kr:"1일권 주세요.",fr:"Un passe journée, s'il vous plaît.",pronunciation:"앙 파스 주르네 씰 부 플레",grammar:"하루 종일 무제한으로 탈 수 있는 승차권이에요.",keywords:[{word:"passe",meaning:"이용권",pron:"파스"}]},
+{id:99,category:"지하철",kr:"어느 방향으로 가야 해요?",fr:"Quelle direction je dois prendre ?",pronunciation:"켈 디렉시옹 즈 두아 프랑드르",grammar:"파리 지하철은 종점 이름으로 방향을 표시해요. direction 뒤의 역 이름을 보세요.",keywords:[{word:"direction",meaning:"방향",pron:"디렉시옹"},{word:"devoir",meaning:"~해야 한다",pron:"드부아르"}]},
+{id:100,category:"지하철",kr:"몇 정거장 가야 해요?",fr:"C'est combien d'arrêts ?",pronunciation:"세 콩비앙 다레",grammar:"arrêt은 '정거장'이에요. combien de + 명사로 개수를 물어요.",keywords:[{word:"arrêt",meaning:"정거장",pron:"아레"}]},
+{id:101,category:"지하철",kr:"여기서 갈아타나요?",fr:"Je change ici ?",pronunciation:"즈 샹주 이시",grammar:"changer는 '갈아타다'예요. 환승은 correspondance라고 표시돼 있어요.",keywords:[{word:"changer",meaning:"갈아타다",pron:"샹제"}]},
+{id:102,category:"버스",kr:"버스 정류장이 어디예요?",fr:"Où est l'arrêt de bus ?",pronunciation:"우 에 라레 드 뷔스",grammar:"l'arrêt은 le arrêt이 축약된 형태예요. 모음 앞에서는 관사가 l'로 줄어요.",keywords:[{word:"bus",meaning:"버스",pron:"뷔스"}]},
+{id:103,category:"버스",kr:"이 버스 루브르에 가나요?",fr:"Ce bus va au Louvre ?",pronunciation:"스 뷔스 바 오 루브르",grammar:"aller(가다)의 3인칭 단수는 va예요. au는 à + le의 축약이에요.",keywords:[{word:"aller",meaning:"가다",pron:"알레"}]},
+{id:104,category:"버스",kr:"다음 버스는 언제 와요?",fr:"Le prochain bus est à quelle heure ?",pronunciation:"르 프로쉥 뷔스 에 타 켈 뢰르",grammar:"prochain은 '다음의'예요. à quelle heure는 '몇 시에'를 물어요.",keywords:[{word:"prochain",meaning:"다음의",pron:"프로쉥"},{word:"heure",meaning:"시간",pron:"뢰르"}]},
+{id:105,category:"버스",kr:"어디서 내려야 하는지 알려주시겠어요?",fr:"Vous pouvez me dire où descendre ?",pronunciation:"부 푸베 므 디르 우 데상드르",grammar:"Vous pouvez me dire ~ ?는 '~를 알려주시겠어요?'라는 정중한 부탁이에요.",keywords:[{word:"descendre",meaning:"내리다",pron:"데상드르"},{word:"dire",meaning:"말하다",pron:"디르"}]},
+{id:106,category:"버스",kr:"다음 정거장에서 내려요.",fr:"Je descends au prochain arrêt.",pronunciation:"즈 데상 오 프로쉐 나레",grammar:"descendre의 je 형태는 descends이고 끝의 ds는 소리 나지 않아요.",keywords:[{word:"prochain arrêt",meaning:"다음 정거장",pron:"프로쉐 나레"}]},
+{id:107,category:"기차",kr:"파리행 표 한 장 주세요.",fr:"Un billet pour Paris, s'il vous plaît.",pronunciation:"앙 비예 푸르 파리 씰 부 플레",grammar:"기차표는 billet, 지하철표는 ticket으로 구분해서 써요. pour는 목적지를 나타내요.",keywords:[{word:"billet",meaning:"표",pron:"비예"}]},
+{id:108,category:"기차",kr:"왕복으로 주세요.",fr:"Un aller-retour, s'il vous plaît.",pronunciation:"앙 날레 르투르 씰 부 플레",grammar:"편도는 un aller simple(앙 날레 생플)이에요.",keywords:[{word:"aller-retour",meaning:"왕복",pron:"알레 르투르"}]},
+{id:109,category:"기차",kr:"기차가 몇 시에 출발해요?",fr:"Le train part à quelle heure ?",pronunciation:"르 트랭 파르 아 켈 뢰르",grammar:"partir(출발하다)의 3인칭 단수는 part이고 끝의 t는 묵음이에요.",keywords:[{word:"train",meaning:"기차",pron:"트랭"},{word:"partir",meaning:"출발하다",pron:"파르티르"}]},
+{id:110,category:"기차",kr:"몇 번 승강장이에요?",fr:"C'est quel quai ?",pronunciation:"세 켈 케",grammar:"quai는 승강장이에요. 프랑스 기차역은 출발 직전에 승강장을 안내해요.",keywords:[{word:"quai",meaning:"승강장",pron:"케"}]},
+{id:111,category:"기차",kr:"이 자리 비어 있나요?",fr:"Cette place est libre ?",pronunciation:"세트 플라스 에 리브르",grammar:"libre는 '비어 있는, 자유로운'이에요. 지정석이 아닌 칸에서 쓸 수 있어요.",keywords:[{word:"libre",meaning:"비어 있는",pron:"리브르"}]},
+{id:112,category:"기차",kr:"기차를 놓쳤어요.",fr:"J'ai raté mon train.",pronunciation:"제 라테 몽 트랭",grammar:"rater는 '놓치다'예요. j'ai + 과거분사로 과거를 만들어요.",keywords:[{word:"rater",meaning:"놓치다",pron:"라테"}]},
+{id:113,category:"역",kr:"매표소가 어디예요?",fr:"Où est le guichet ?",pronunciation:"우 에 르 기셰",grammar:"guichet은 매표 창구예요. 자동판매기는 une borne이라고 해요.",keywords:[{word:"guichet",meaning:"매표소",pron:"기셰"}]},
+{id:114,category:"역",kr:"시간표를 볼 수 있을까요?",fr:"Je peux voir les horaires ?",pronunciation:"즈 푀 부아르 레 조레르",grammar:"horaires는 항상 복수로 써요. les와 이어져 [레 조레르]로 발음돼요.",keywords:[{word:"horaires",meaning:"시간표",pron:"오레르"}]},
+{id:115,category:"역",kr:"코인 로커가 있나요?",fr:"Il y a une consigne ?",pronunciation:"일 리 아 윈 콩시뉴",grammar:"consigne은 짐 보관소예요. 파리 주요 역에 있어요.",keywords:[{word:"consigne",meaning:"짐 보관소",pron:"콩시뉴"}]},
+{id:116,category:"역",kr:"출구가 어디예요?",fr:"Où est la sortie ?",pronunciation:"우 에 라 소르티",grammar:"sortie는 '출구', entrée는 '입구'예요. 표지판에서 자주 보게 돼요.",keywords:[{word:"sortie",meaning:"출구",pron:"소르티"}]},
+{id:117,category:"역",kr:"엘리베이터가 어디예요?",fr:"Où est l'ascenseur ?",pronunciation:"우 에 라상쇠르",grammar:"계단이 많은 파리 지하철역에서 짐이 무거울 때 꼭 필요한 질문이에요. 모음 앞이라 le가 l'로 줄었어요.",keywords:[{word:"ascenseur",meaning:"엘리베이터",pron:"아상쇠르"}]},
+{id:118,category:"공항",kr:"체크인 카운터가 어디예요?",fr:"Où est le comptoir d'enregistrement ?",pronunciation:"우 에 르 콩투아르 당르지스트르망",grammar:"enregistrement는 '탑승 수속'이에요. 길지만 공항 표지판에 그대로 쓰여 있어요.",keywords:[{word:"comptoir",meaning:"카운터",pron:"콩투아르"}]},
+{id:119,category:"공항",kr:"여권 여기 있습니다.",fr:"Voici mon passeport.",pronunciation:"부아시 몽 파스포르",grammar:"mon은 '나의'(남성)예요. passeport의 끝 t는 묵음이에요.",keywords:[{word:"passeport",meaning:"여권",pron:"파스포르"},{word:"mon",meaning:"나의",pron:"몽"}]},
+{id:120,category:"공항",kr:"일주일 머물 예정입니다.",fr:"Je reste une semaine.",pronunciation:"즈 레스트 윈 스멘",grammar:"입국 심사에서 체류 기간을 말할 때 써요. rester는 '머물다'예요.",keywords:[{word:"rester",meaning:"머물다",pron:"레스테"},{word:"semaine",meaning:"주",pron:"스멘"}]},
+{id:121,category:"공항",kr:"신고할 물건 없습니다.",fr:"Rien à déclarer.",pronunciation:"리앙 나 데클라레",grammar:"세관 통로에 쓰여 있는 문구 그대로예요. rien과 à가 이어져 발음돼요.",keywords:[{word:"déclarer",meaning:"신고하다",pron:"데클라레"}]},
+{id:122,category:"공항",kr:"제 짐이 안 나왔어요.",fr:"Ma valise n'est pas arrivée.",pronunciation:"마 발리즈 네 파 자리베",grammar:"valise가 여성 명사라 과거분사도 arrivée로 e가 붙었어요.",keywords:[{word:"valise",meaning:"여행가방",pron:"발리즈"}]},
+{id:123,category:"공항",kr:"탑승구가 어디예요?",fr:"Où est la porte d'embarquement ?",pronunciation:"우 에 라 포르트 당바르크망",grammar:"porte는 '문'이자 '탑승구'예요. 전광판에서 porte 번호를 확인하세요.",keywords:[{word:"porte",meaning:"탑승구",pron:"포르트"}]},
+{id:124,category:"공항",kr:"환승하려고 해요.",fr:"Je suis en correspondance.",pronunciation:"즈 쉬 장 코레스퐁당스",grammar:"correspondance는 환승이에요. suis와 en이 이어져 [쉬 장]으로 발음돼요.",keywords:[{word:"correspondance",meaning:"환승",pron:"코레스퐁당스"}]},
+{id:125,category:"택시",kr:"택시를 불러 주시겠어요?",fr:"Vous pouvez m'appeler un taxi ?",pronunciation:"부 푸베 마플레 앙 탁시",grammar:"me + appeler가 축약되어 m'appeler가 돼요. 호텔 프런트에서 자주 쓰는 표현이에요.",keywords:[{word:"taxi",meaning:"택시",pron:"탁시"},{word:"appeler",meaning:"부르다",pron:"아플레"}]},
+{id:126,category:"택시",kr:"이 주소로 가주세요.",fr:"À cette adresse, s'il vous plaît.",pronunciation:"아 세트 아드레스 씰 부 플레",grammar:"주소를 보여주며 말하면 가장 확실해요. cette는 '이'(여성)예요.",keywords:[{word:"adresse",meaning:"주소",pron:"아드레스"}]},
+{id:127,category:"택시",kr:"공항까지 가주세요.",fr:"À l'aéroport, s'il vous plaît.",pronunciation:"아 라에로포르 씰 부 플레",grammar:"à + le가 축약되어야 하지만 모음 앞이라 à l'로 써요.",keywords:[{word:"aéroport",meaning:"공항",pron:"아에로포르"}]},
+{id:128,category:"택시",kr:"얼마나 걸려요?",fr:"Ça prend combien de temps ?",pronunciation:"사 프랑 콩비앙 드 탕",grammar:"prendre du temps은 '시간이 걸리다'예요. temps의 끝 ps는 묵음이에요.",keywords:[{word:"temps",meaning:"시간",pron:"탕"}]},
+{id:129,category:"택시",kr:"여기서 세워 주세요.",fr:"Arrêtez-vous ici, s'il vous plaît.",pronunciation:"아레테 부 지시 씰 부 플레",grammar:"s'arrêter(멈추다)의 명령형이에요. 재귀동사라 -vous가 붙어요.",keywords:[{word:"arrêter",meaning:"멈추다",pron:"아레테"}]},
+{id:130,category:"택시",kr:"카드로 계산되나요?",fr:"Vous prenez la carte ?",pronunciation:"부 프르네 라 카르트",grammar:"prendre la carte는 '카드를 받다'예요. 택시에 타기 전에 물어보는 게 좋아요.",keywords:[{word:"prenez",meaning:"받다",pron:"프르네"}]},
+{id:131,category:"길 묻기",kr:"실례합니다, 길 좀 여쭐게요.",fr:"Excusez-moi, je cherche mon chemin.",pronunciation:"엑스퀴제 무아 즈 셰르슈 몽 슈맹",grammar:"말을 걸 때는 반드시 Excusez-moi로 시작하세요. chercher는 '찾다'예요.",keywords:[{word:"chercher",meaning:"찾다",pron:"셰르셰"},{word:"chemin",meaning:"길",pron:"슈맹"}]},
+{id:132,category:"길 묻기",kr:"에펠탑이 어디예요?",fr:"Où est la tour Eiffel ?",pronunciation:"우 에 라 투르 에펠",grammar:"la tour는 '탑', le tour는 '한 바퀴'로 성에 따라 뜻이 완전히 달라져요.",keywords:[{word:"tour",meaning:"탑",pron:"투르"}]},
+{id:133,category:"길 묻기",kr:"여기서 멀어요?",fr:"C'est loin d'ici ?",pronunciation:"세 루앙 디시",grammar:"가까우면 C'est près d'ici(세 프레 디시)라고 답해줘요.",keywords:[{word:"loin",meaning:"먼",pron:"루앙"},{word:"ici",meaning:"여기",pron:"이시"}]},
+{id:134,category:"길 묻기",kr:"걸어서 갈 수 있어요?",fr:"Je peux y aller à pied ?",pronunciation:"즈 푀 지 알레 아 피에",grammar:"à pied는 '걸어서'예요. y는 '거기에'를 받는 대명사예요.",keywords:[{word:"à pied",meaning:"걸어서",pron:"아 피에"}]},
+{id:135,category:"길 묻기",kr:"곧장 가세요.",fr:"Allez tout droit.",pronunciation:"알레 투 드루아",grammar:"tout droit는 '곧장'이에요. 길 안내를 들을 때 자주 나오는 표현이에요.",keywords:[{word:"tout droit",meaning:"곧장",pron:"투 드루아"}]},
+{id:136,category:"길 묻기",kr:"오른쪽으로 도세요.",fr:"Tournez à droite.",pronunciation:"투르네 아 드루아트",grammar:"왼쪽은 à gauche(아 고슈)예요. tourner는 '돌다'예요.",keywords:[{word:"droite",meaning:"오른쪽",pron:"드루아트"},{word:"tourner",meaning:"돌다",pron:"투르네"}]},
+{id:137,category:"길 묻기",kr:"지도에서 보여주시겠어요?",fr:"Vous pouvez me montrer sur la carte ?",pronunciation:"부 푸베 므 몽트레 쉬르 라 카르트",grammar:"말이 잘 안 통할 때 가장 확실한 방법이에요. montrer는 '보여주다'예요.",keywords:[{word:"montrer",meaning:"보여주다",pron:"몽트레"}]},
+{id:138,category:"길 묻기",kr:"길을 잃었어요.",fr:"Je suis perdu.",pronunciation:"즈 쉬 페르뒤",grammar:"perdu는 '길 잃은'이라는 형용사예요. 여성은 perdue로 쓰지만 발음은 같아요.",keywords:[{word:"perdu",meaning:"길 잃은",pron:"페르뒤"}]},
+{id:139,category:"관광지",kr:"입장료가 얼마예요?",fr:"C'est combien l'entrée ?",pronunciation:"세 콩비앙 랑트레",grammar:"entrée는 '입장, 입구'예요. 모음으로 시작해 l'로 축약됐어요.",keywords:[{word:"entrée",meaning:"입장",pron:"앙트레"}]},
+{id:140,category:"관광지",kr:"몇 시에 문을 열어요?",fr:"Ça ouvre à quelle heure ?",pronunciation:"사 우브르 아 켈 뢰르",grammar:"ouvrir는 '열다'예요. 닫는 시간은 Ça ferme à quelle heure ?로 물어요.",keywords:[{word:"ouvrir",meaning:"열다",pron:"우브리르"}]},
+{id:141,category:"관광지",kr:"오늘 문 열어요?",fr:"C'est ouvert aujourd'hui ?",pronunciation:"세 투베르 오주르뒤",grammar:"프랑스 박물관은 월요일이나 화요일에 쉬는 곳이 많아요.",keywords:[{word:"ouvert",meaning:"열린",pron:"우베르"},{word:"aujourd'hui",meaning:"오늘",pron:"오주르뒤"}]},
+{id:142,category:"관광지",kr:"학생 할인 있나요?",fr:"Il y a un tarif étudiant ?",pronunciation:"일 리 아 앙 타리프 에튀디앙",grammar:"tarif는 '요금'이에요. EU 거주 청년은 무료인 곳도 많아요.",keywords:[{word:"tarif",meaning:"요금",pron:"타리프"},{word:"étudiant",meaning:"학생",pron:"에튀디앙"}]},
+{id:143,category:"관광지",kr:"사진 찍어도 되나요?",fr:"Je peux prendre des photos ?",pronunciation:"즈 푀 프랑드르 데 포토",grammar:"prendre une photo는 '사진을 찍다'예요. 박물관에서는 꼭 물어보세요.",keywords:[{word:"photo",meaning:"사진",pron:"포토"}]},
+{id:144,category:"관광지",kr:"사진 좀 찍어 주시겠어요?",fr:"Vous pouvez me prendre en photo ?",pronunciation:"부 푸베 므 프랑드르 앙 포토",grammar:"prendre en photo는 '사진에 담다'예요. 지나가는 사람에게 부탁할 때 써요.",keywords:[{word:"prendre",meaning:"찍다",pron:"프랑드르"}]},
+{id:145,category:"관광지",kr:"한국어 안내서 있나요?",fr:"Vous avez un guide en coréen ?",pronunciation:"부 자베 앙 기드 앙 코레앙",grammar:"guide는 '안내서'이자 '가이드(사람)'예요.",keywords:[{word:"guide",meaning:"안내서",pron:"기드"}]},
+{id:146,category:"관광지",kr:"기념품 가게가 어디예요?",fr:"Où est la boutique de souvenirs ?",pronunciation:"우 에 라 부티크 드 수브니르",grammar:"souvenir는 '기념품'이자 '추억'이에요.",keywords:[{word:"boutique",meaning:"가게",pron:"부티크"},{word:"souvenir",meaning:"기념품",pron:"수브니르"}]},
+{id:147,category:"호텔·숙소",kr:"빈 방 있나요?",fr:"Vous avez une chambre libre ?",pronunciation:"부 자베 윈 샹브르 리브르",grammar:"chambre는 '방'이에요. libre는 '비어 있는'이라는 뜻이에요.",keywords:[{word:"chambre",meaning:"방",pron:"샹브르"}]},
+{id:148,category:"호텔·숙소",kr:"1박에 얼마예요?",fr:"C'est combien par nuit ?",pronunciation:"세 콩비앙 파르 뉘",grammar:"par nuit은 '1박당'이에요. par personne은 '1인당'이에요.",keywords:[{word:"par nuit",meaning:"1박당",pron:"파르 뉘"}]},
+{id:149,category:"호텔·숙소",kr:"아침 식사 포함인가요?",fr:"Le petit-déjeuner est inclus ?",pronunciation:"르 프티 데죄네 에 탱클뤼",grammar:"petit-déjeuner는 직역하면 '작은 점심'이지만 아침 식사를 뜻해요.",keywords:[{word:"petit-déjeuner",meaning:"아침 식사",pron:"프티 데죄네"},{word:"inclus",meaning:"포함된",pron:"앵클뤼"}]},
+{id:150,category:"호텔·숙소",kr:"엘리베이터가 있나요?",fr:"Est-ce qu'il y a un ascenseur ?",pronunciation:"에스킬 리 아 아 나상쇠르",grammar:"파리의 오래된 건물에는 엘리베이터가 없는 곳이 많아요. Est-ce que를 붙이면 더 정중한 질문이 돼요.",keywords:[{word:"ascenseur",meaning:"엘리베이터",pron:"아상쇠르"},{word:"est-ce que",meaning:"~인가요",pron:"에스크"}]},
+{id:151,category:"호텔·숙소",kr:"방을 볼 수 있을까요?",fr:"Je peux voir la chambre ?",pronunciation:"즈 푀 부아르 라 샹브르",grammar:"voir는 '보다'예요. 예약 전에 방을 확인하고 싶을 때 써요.",keywords:[{word:"voir",meaning:"보다",pron:"부아르"}]},
+{id:152,category:"호텔·숙소",kr:"하룻밤 더 묵고 싶어요.",fr:"Je voudrais rester une nuit de plus.",pronunciation:"즈 부드레 레스테 윈 뉘 드 플뤼",grammar:"de plus는 '더'라는 뜻이에요. je voudrais로 정중하게 요청해요.",keywords:[{word:"de plus",meaning:"더",pron:"드 플뤼"}]},
+{id:153,category:"체크인",kr:"체크인하고 싶어요.",fr:"Je voudrais faire le check-in.",pronunciation:"즈 부드레 페르 르 체크인",grammar:"프랑스에서도 check-in을 그대로 써요. faire는 '하다'예요.",keywords:[{word:"faire",meaning:"하다",pron:"페르"}]},
+{id:154,category:"체크인",kr:"○○ 이름으로 예약했어요.",fr:"J'ai réservé au nom de Minsu.",pronunciation:"제 레제르베 오 농 드 민수",grammar:"au nom de는 '~의 이름으로'예요. 예약 확인할 때 쓰는 표현이에요.",keywords:[{word:"nom",meaning:"이름",pron:"농"},{word:"réserver",meaning:"예약하다",pron:"레제르베"}]},
+{id:155,category:"체크인",kr:"체크인이 몇 시부터예요?",fr:"Le check-in est à partir de quelle heure ?",pronunciation:"르 체크인 에 타 파르티르 드 켈 뢰르",grammar:"à partir de는 '~부터'라는 뜻이에요.",keywords:[{word:"à partir de",meaning:"~부터",pron:"아 파르티르 드"}]},
+{id:156,category:"체크인",kr:"짐을 맡길 수 있을까요?",fr:"Je peux laisser mes bagages ?",pronunciation:"즈 푀 레세 메 바가주",grammar:"bagages는 항상 복수로 써요. 체크인 전이나 체크아웃 후에 유용해요.",keywords:[{word:"bagages",meaning:"짐",pron:"바가주"},{word:"laisser",meaning:"맡기다",pron:"레세"}]},
+{id:157,category:"체크인",kr:"방 열쇠 주세요.",fr:"La clé, s'il vous plaît.",pronunciation:"라 클레 씰 부 플레",grammar:"clé는 '열쇠'예요. clef로 쓰기도 하는데 발음은 같아요.",keywords:[{word:"clé",meaning:"열쇠",pron:"클레"}]},
+{id:158,category:"체크아웃",kr:"체크아웃할게요.",fr:"Je voudrais régler la note.",pronunciation:"즈 부드레 레글레 라 노트",grammar:"호텔 계산서는 la note, 식당 계산서는 l'addition이라고 해요.",keywords:[{word:"régler",meaning:"정산하다",pron:"레글레"},{word:"note",meaning:"계산서",pron:"노트"}]},
+{id:159,category:"체크아웃",kr:"체크아웃이 몇 시까지예요?",fr:"Le check-out est jusqu'à quelle heure ?",pronunciation:"르 체카웃 에 쥐스카 켈 뢰르",grammar:"jusqu'à는 '~까지'예요. jusque + à가 축약된 형태예요.",keywords:[{word:"jusqu'à",meaning:"~까지",pron:"쥐스카"}]},
+{id:160,category:"체크아웃",kr:"조금 늦게 나가도 될까요?",fr:"Je peux partir un peu plus tard ?",pronunciation:"즈 푀 파르티르 앙 푀 플뤼 타르",grammar:"plus tard는 '더 늦게'예요. 레이트 체크아웃을 부탁할 때 써요.",keywords:[{word:"plus tard",meaning:"더 늦게",pron:"플뤼 타르"}]},
+{id:161,category:"체크아웃",kr:"여기 묵어서 좋았어요.",fr:"J'ai passé un très bon séjour.",pronunciation:"제 파세 앙 트레 봉 세주르",grammar:"séjour는 '체류'예요. 떠날 때 한마디 건네면 인상이 좋아요.",keywords:[{word:"séjour",meaning:"체류",pron:"세주르"}]},
+{id:162,category:"객실 요청",kr:"수건을 더 주시겠어요?",fr:"Je peux avoir plus de serviettes ?",pronunciation:"즈 푀 아부아르 플뤼 드 세르비에트",grammar:"plus de + 명사는 '더 많은 ~'이에요. serviette는 수건과 냅킨 모두를 뜻해요.",keywords:[{word:"serviette",meaning:"수건",pron:"세르비에트"}]},
+{id:163,category:"객실 요청",kr:"방이 너무 추워요.",fr:"Il fait trop froid dans la chambre.",pronunciation:"일 페 트로 프루아 당 라 샹브르",grammar:"날씨나 실내 온도는 Il fait + 형용사로 말해요. 이때 il은 뜻이 없어요.",keywords:[{word:"froid",meaning:"추운",pron:"프루아"},{word:"dans",meaning:"~안에",pron:"당"}]},
+{id:164,category:"객실 요청",kr:"에어컨이 안 돼요.",fr:"La climatisation ne marche pas.",pronunciation:"라 클리마티자시옹 느 마르슈 파",grammar:"marcher는 '걷다'이자 '작동하다'예요. ne ... pas로 부정문을 만들어요.",keywords:[{word:"marcher",meaning:"작동하다",pron:"마르셰"}]},
+{id:165,category:"객실 요청",kr:"뜨거운 물이 안 나와요.",fr:"Il n'y a pas d'eau chaude.",pronunciation:"일 니 아 파 도 쇼드",grammar:"il y a의 부정은 il n'y a pas예요. 부정 뒤의 관사는 de로 바뀌어요.",keywords:[{word:"chaud",meaning:"뜨거운",pron:"쇼"}]},
+{id:166,category:"객실 요청",kr:"방을 바꿔 주실 수 있나요?",fr:"Je peux changer de chambre ?",pronunciation:"즈 푀 샹제 드 샹브르",grammar:"changer de + 명사는 '~을 바꾸다'예요.",keywords:[{word:"changer",meaning:"바꾸다",pron:"샹제"}]},
+{id:167,category:"객실 요청",kr:"조용한 방으로 부탁드려요.",fr:"Une chambre calme, s'il vous plaît.",pronunciation:"윈 샹브르 칼므 씰 부 플레",grammar:"형용사 calme이 명사 뒤에 왔어요. 프랑스어는 대부분 형용사가 뒤에 와요.",keywords:[{word:"calme",meaning:"조용한",pron:"칼므"}]},
+{id:168,category:"와이파이",kr:"와이파이 있나요?",fr:"Vous avez le wifi ?",pronunciation:"부 자베 르 위피",grammar:"프랑스에서는 wifi를 [위피]로 읽어요. 영어처럼 [와이파이]라고 하면 못 알아들을 수 있어요.",keywords:[{word:"wifi",meaning:"와이파이",pron:"위피"}]},
+{id:169,category:"와이파이",kr:"와이파이 비밀번호가 뭐예요?",fr:"Quel est le mot de passe du wifi ?",pronunciation:"켈 레 르 모 드 파스 뒤 위피",grammar:"mot de passe는 '비밀번호'예요. mot의 끝 t는 묵음이에요.",keywords:[{word:"mot de passe",meaning:"비밀번호",pron:"모 드 파스"}]},
+{id:170,category:"와이파이",kr:"와이파이가 안 돼요.",fr:"Le wifi ne marche pas.",pronunciation:"르 위피 느 마르슈 파",grammar:"ne ... pas가 동사를 감싸는 기본 부정문이에요.",keywords:[{word:"ne...pas",meaning:"~않다",pron:"느 파"}]},
+{id:171,category:"와이파이",kr:"무료인가요?",fr:"C'est gratuit ?",pronunciation:"세 그라튀",grammar:"gratuit는 '무료의'예요. 끝의 t는 소리 나지 않아요.",keywords:[{word:"gratuit",meaning:"무료의",pron:"그라튀"}]},
+{id:172,category:"화장실",kr:"화장실이 어디예요?",fr:"Où sont les toilettes ?",pronunciation:"우 송 레 투알레트",grammar:"toilettes는 항상 복수라 동사도 복수형 sont을 써요. 여행 중 가장 자주 쓰는 문장이에요.",keywords:[{word:"toilettes",meaning:"화장실",pron:"투알레트"}]},
+{id:173,category:"화장실",kr:"화장실 좀 써도 될까요?",fr:"Je peux utiliser les toilettes ?",pronunciation:"즈 푀 위틸리제 레 투알레트",grammar:"카페에서는 음료를 시킨 손님만 쓸 수 있는 경우가 많아요.",keywords:[{word:"utiliser",meaning:"사용하다",pron:"위틸리제"}]},
+{id:174,category:"화장실",kr:"화장실이 유료인가요?",fr:"Les toilettes sont payantes ?",pronunciation:"레 투알레트 송 페앙트",grammar:"프랑스 기차역이나 관광지 화장실은 유료인 곳이 있어요. 동전을 준비하세요.",keywords:[{word:"payant",meaning:"유료의",pron:"페앙"}]},
+{id:175,category:"화장실",kr:"휴지가 없어요.",fr:"Il n'y a pas de papier toilette.",pronunciation:"일 니 아 파 드 파피에 투알레트",grammar:"papier는 '종이'예요. 부정문 뒤라 관사가 de로 바뀌었어요.",keywords:[{word:"papier",meaning:"종이",pron:"파피에"}]},
+{id:176,category:"긴급상황",kr:"도와주세요!",fr:"Au secours !",pronunciation:"오 스쿠르",grammar:"위급할 때 외치는 표현이에요. 일반적인 도움 요청과는 달라요.",keywords:[{word:"secours",meaning:"구조",pron:"스쿠르"}]},
+{id:177,category:"긴급상황",kr:"경찰을 불러 주세요.",fr:"Appelez la police !",pronunciation:"아플레 라 폴리스",grammar:"프랑스 경찰 신고는 17번, 통합 응급번호는 112번이에요.",keywords:[{word:"police",meaning:"경찰",pron:"폴리스"}]},
+{id:178,category:"긴급상황",kr:"소매치기를 당했어요.",fr:"On m'a volé mon portefeuille.",pronunciation:"옹 마 볼레 몽 포르트푀유",grammar:"직역하면 '누군가 내 지갑을 훔쳤다'예요. 도난 신고에 그대로 쓸 수 있어요.",keywords:[{word:"voler",meaning:"훔치다",pron:"볼레"},{word:"portefeuille",meaning:"지갑",pron:"포르트푀유"}]},
+{id:179,category:"긴급상황",kr:"여권을 잃어버렸어요.",fr:"J'ai perdu mon passeport.",pronunciation:"제 페르뒤 몽 파스포르",grammar:"perdre(잃다)의 과거분사는 perdu예요. 분실 후 대사관에 연락해야 해요.",keywords:[{word:"perdre",meaning:"잃다",pron:"페르드르"}]},
+{id:180,category:"긴급상황",kr:"한국 대사관에 연락해 주세요.",fr:"Appelez l'ambassade de Corée.",pronunciation:"아플레 랑바사드 드 코레",grammar:"ambassade는 '대사관'이에요. 모음 앞이라 la가 l'로 축약됐어요.",keywords:[{word:"ambassade",meaning:"대사관",pron:"앙바사드"}]},
+{id:181,category:"긴급상황",kr:"영어 하는 분 계세요?",fr:"Il y a quelqu'un qui parle anglais ?",pronunciation:"일 리 아 켈캉 키 파를 앙글레",grammar:"quelqu'un은 '누군가'예요. 급할 때 통역해 줄 사람을 찾는 표현이에요.",keywords:[{word:"quelqu'un",meaning:"누군가",pron:"켈캉"}]},
+{id:182,category:"긴급상황",kr:"제 가방을 못 찾겠어요.",fr:"Je ne trouve pas mon sac.",pronunciation:"즈 느 트루브 파 몽 사크",grammar:"trouver는 '찾다, 발견하다'예요. ne ... pas로 부정해요.",keywords:[{word:"trouver",meaning:"찾다",pron:"트루베"}]},
+{id:183,category:"병원·약국",kr:"약국이 어디예요?",fr:"Où est la pharmacie ?",pronunciation:"우 에 라 파르마시",grammar:"초록색 십자가 간판이 약국 표시예요. ph는 [ㅍ] 소리가 나요.",keywords:[{word:"pharmacie",meaning:"약국",pron:"파르마시"}]},
+{id:184,category:"병원·약국",kr:"몸이 안 좋아요.",fr:"Je ne me sens pas bien.",pronunciation:"즈 느 므 상 파 비앙",grammar:"se sentir(느끼다)는 재귀동사예요. 부정문에서 ne가 me 앞에 와요.",keywords:[{word:"se sentir",meaning:"느끼다",pron:"스 상티르"}]},
+{id:185,category:"병원·약국",kr:"여기가 아파요.",fr:"J'ai mal ici.",pronunciation:"제 말 이시",grammar:"avoir mal à + 신체 부위로 '~가 아프다'를 말해요. 아픈 곳을 짚으며 쓰면 돼요.",keywords:[{word:"mal",meaning:"아픔",pron:"말"}]},
+{id:186,category:"병원·약국",kr:"머리가 아파요.",fr:"J'ai mal à la tête.",pronunciation:"제 말 아 라 테트",grammar:"tête가 여성 명사라 à la를 써요. 배는 J'ai mal au ventre예요.",keywords:[{word:"tête",meaning:"머리",pron:"테트"}]},
+{id:187,category:"병원·약국",kr:"열이 나요.",fr:"J'ai de la fièvre.",pronunciation:"제 드 라 피에브르",grammar:"fièvre는 여성 명사라 부분관사 de la를 써요.",keywords:[{word:"fièvre",meaning:"열",pron:"피에브르"}]},
+{id:188,category:"병원·약국",kr:"감기약 있나요?",fr:"Vous avez quelque chose contre le rhume ?",pronunciation:"부 자베 켈크 쇼즈 콩트르 르 뤼므",grammar:"contre는 '~에 대항하는'이에요. 증상 이름만 바꿔 쓰면 돼요.",keywords:[{word:"rhume",meaning:"감기",pron:"뤼므"},{word:"contre",meaning:"~에 대해",pron:"콩트르"}]},
+{id:189,category:"병원·약국",kr:"의사를 만나고 싶어요.",fr:"Je voudrais voir un médecin.",pronunciation:"즈 부드레 부아르 앙 메드생",grammar:"médecin은 '의사'예요. 병원 자체는 hôpital이라고 해요.",keywords:[{word:"médecin",meaning:"의사",pron:"메드생"}]},
+{id:190,category:"필수 표현",kr:"네. / 아니요.",fr:"Oui. / Non.",pronunciation:"위 / 농",grammar:"가장 기본이 되는 대답이에요. non의 n은 콧소리로 빠져 [농]에 가까워요.",keywords:[{word:"oui",meaning:"네",pron:"위"},{word:"non",meaning:"아니요",pron:"농"}]},
+{id:191,category:"필수 표현",kr:"알겠어요.",fr:"D'accord.",pronunciation:"다코르",grammar:"동의와 이해를 함께 나타내는 만능 맞장구예요.",keywords:[{word:"d'accord",meaning:"알겠어요",pron:"다코르"}]},
+{id:192,category:"필수 표현",kr:"모르겠어요.",fr:"Je ne sais pas.",pronunciation:"즈 느 세 파",grammar:"savoir(알다)의 부정형이에요. 회화에서는 [셰 파]처럼 뭉개기도 해요.",keywords:[{word:"savoir",meaning:"알다",pron:"사부아르"}]},
+{id:193,category:"필수 표현",kr:"이해 못 했어요.",fr:"Je n'ai pas compris.",pronunciation:"즈 네 파 콩프리",grammar:"말이 너무 빠를 때 이 한마디면 상대가 다시 말해줘요.",keywords:[{word:"comprendre",meaning:"이해하다",pron:"콩프랑드르"}]},
+{id:194,category:"필수 표현",kr:"천천히 말씀해 주세요.",fr:"Parlez plus lentement, s'il vous plaît.",pronunciation:"파를레 플뤼 랑트망 씰 부 플레",grammar:"여행 중 가장 유용한 문장이에요. plus + 부사로 비교급을 만들어요.",keywords:[{word:"lentement",meaning:"천천히",pron:"랑트망"}]},
+{id:195,category:"필수 표현",kr:"다시 말씀해 주시겠어요?",fr:"Pouvez-vous répéter ?",pronunciation:"푸베 부 레페테",grammar:"못 알아들었을 때 쓰는 정중한 되묻기예요.",keywords:[{word:"répéter",meaning:"반복하다",pron:"레페테"}]},
+{id:196,category:"필수 표현",kr:"이게 무슨 뜻이에요?",fr:"Qu'est-ce que ça veut dire ?",pronunciation:"케스크 사 뵈 디르",grammar:"vouloir dire는 '의미하다'라는 관용 표현이에요.",keywords:[{word:"vouloir dire",meaning:"의미하다",pron:"불루아르 디르"}]},
+{id:197,category:"필수 표현",kr:"프랑스어로 뭐라고 해요?",fr:"Comment dit-on en français ?",pronunciation:"코망 디통 앙 프랑세",grammar:"on은 '사람들'을 뜻하는 주어예요. dit-on이 이어져 [디통]으로 발음돼요.",keywords:[{word:"français",meaning:"프랑스어",pron:"프랑세"}]},
+{id:198,category:"필수 표현",kr:"적어 주시겠어요?",fr:"Vous pouvez l'écrire ?",pronunciation:"부 푸베 레크리르",grammar:"말로 안 통할 때 숫자나 이름을 적어 달라고 부탁하는 표현이에요.",keywords:[{word:"écrire",meaning:"쓰다",pron:"에크리르"}]},
+{id:199,category:"필수 표현",kr:"잠시만요.",fr:"Un instant, s'il vous plaît.",pronunciation:"앙 낭스탕 씰 부 플레",grammar:"un과 instant이 이어져 [앙 낭스탕]으로 발음돼요.",keywords:[{word:"instant",meaning:"순간",pron:"앙스탕"}]},
+{id:200,category:"필수 표현",kr:"조심하세요!",fr:"Faites attention !",pronunciation:"페트 자탕시옹",grammar:"faire(하다)의 명령형이에요. faites와 attention이 이어져 발음돼요.",keywords:[{word:"attention",meaning:"주의",pron:"아탕시옹"}]}
+];
+var CATEGORIES = ["기본 인사","자기소개","감사·사과","식당","카페·베이커리","음식 주문","메뉴 확인","알레르기·요청","계산·결제","쇼핑","가격 묻기","사이즈·색상","환불·교환","지하철","버스","기차","역","공항","택시","길 묻기","관광지","호텔·숙소","체크인","체크아웃","객실 요청","와이파이","화장실","긴급상황","병원·약국","필수 표현"];
+
+
+/* =========================================================
+   유틸
+   ========================================================= */
+function $(id){ return document.getElementById(id); }
+function esc(s){
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+var toastEl = $('toast'), toastTimer = null;
+function showToast(msg){
+  toastEl.textContent = msg;
+  toastEl.classList.add('show');
+  if (toastTimer) clearTimeout(toastTimer);
+  toastTimer = setTimeout(function(){ toastEl.classList.remove('show'); }, 1900);
+}
+
+/* =========================================================
+   localStorage (실패해도 앱이 멈추지 않도록 전부 방어 처리)
+   ========================================================= */
+var STORE_KEY = 'frTravelQuizSaved_v1';
+var memoryFallback = [];      // localStorage를 못 쓰는 환경(사파리 프라이빗 등)용 임시 저장
+var storageOK = true;
+
+function loadSaved(){
+  try{
+    var raw = localStorage.getItem(STORE_KEY);
+    if (!raw) return [];
+    var v = JSON.parse(raw);
+    return Array.isArray(v) ? v : [];
+  }catch(e){
+    storageOK = false;
+    return memoryFallback.slice();
+  }
+}
+function writeSaved(list){
+  memoryFallback = list.slice();
+  try{
+    localStorage.setItem(STORE_KEY, JSON.stringify(list));
+    return true;
+  }catch(e){
+    storageOK = false;
+    return false;
+  }
+}
+function isSaved(id){ return loadSaved().indexOf(id) !== -1; }
+function addSaved(id){
+  var list = loadSaved();
+  if (list.indexOf(id) !== -1) return false;   // 중복 저장 방지
+  list.push(id);
+  writeSaved(list);
+  return true;
+}
+function removeSavedId(id){
+  writeSaved(loadSaved().filter(function(x){ return x !== id; }));
+}
+
+/* =========================================================
+   발음 듣기 — Web Speech API (외부 TTS/음성 파일 없음)
+   기기에 프랑스어 음성이 없으면 안내만 하고 앱은 계속 동작합니다.
+   ========================================================= */
+var frVoice = null, voicesChecked = false, noVoiceWarned = false;
+
+function pickFrenchVoice(){
+  if (!('speechSynthesis' in window)) return null;
+  var voices = [];
+  try{ voices = window.speechSynthesis.getVoices() || []; }catch(e){ return null; }
+  if (!voices.length) return null;
+  voicesChecked = true;
+  for (var i = 0; i < voices.length; i++){
+    if (voices[i].lang && voices[i].lang.toLowerCase().indexOf('fr') === 0) return voices[i];
+  }
+  return null;
+}
+if ('speechSynthesis' in window){
+  try{
+    frVoice = pickFrenchVoice();
+    window.speechSynthesis.onvoiceschanged = function(){ frVoice = pickFrenchVoice(); };
+  }catch(e){}
+}
+function speak(text){
+  if (!('speechSynthesis' in window) || typeof SpeechSynthesisUtterance === 'undefined'){
+    showToast('이 브라우저는 발음 듣기를 지원하지 않아요');
+    return;
+  }
+  try{
+    window.speechSynthesis.cancel();
+    if (!frVoice) frVoice = pickFrenchVoice();
+    var u = new SpeechSynthesisUtterance(text);
+    u.lang = 'fr-FR';                       // 프랑스어 음성 우선
+    if (frVoice) u.voice = frVoice;
+    u.rate = 0.9;                           // 초급자를 위해 조금 느리게
+    u.onerror = function(){ showToast('발음을 재생하지 못했어요'); };
+    window.speechSynthesis.speak(u);
+    if (!frVoice && voicesChecked && !noVoiceWarned){
+      noVoiceWarned = true;
+      showToast('기기에 프랑스어 음성이 없어요. 설정 › 손쉬운 사용 › 음성 콘텐츠에서 추가할 수 있어요');
+    }
+  }catch(e){
+    showToast('발음 듣기를 사용할 수 없어요');
+  }
+}
+
+/* =========================================================
+   퀴즈 상태
+   ========================================================= */
+var currentCat = '전체';
+var order = [];          // 현재 카테고리의 문제 인덱스 목록 (순서대로)
+var pos = 0;
+var revealed = false;
+var finished = false;
+
+function buildOrder(){
+  order = [];
+  for (var i = 0; i < DATA.length; i++){
+    if (currentCat === '전체' || DATA[i].category === currentCat) order.push(i);
+  }
+  pos = 0;
+  finished = false;
+}
+function currentItem(){ return DATA[order[pos]]; }
+
+/* ---- 카테고리 칩 ---- */
+function renderCatPicker(){
+  var wrap = $('catPicker');
+  wrap.innerHTML = '';
+  ['전체'].concat(CATEGORIES).forEach(function(c){
+    var b = document.createElement('button');
+    b.className = 'pick' + (c === currentCat ? ' active' : '');
+    b.textContent = c === '전체' ? '전체 ' + DATA.length : c;
+    b.addEventListener('click', function(){
+      currentCat = c;
+      buildOrder();
+      renderCatPicker();
+      renderQuiz();
+    });
+    wrap.appendChild(b);
+  });
+}
+
+/* ---- 헤더 ---- */
+function updateHeader(){
+  var total = order.length;
+  var cur = finished ? total : (total ? pos + 1 : 0);
+  $('catChip').textContent = finished
+    ? (currentCat === '전체' ? '전체' : currentCat) + ' 완료'
+    : (total ? currentItem().category : currentCat);
+  $('progressText').textContent = cur + ' / ' + total;
+  $('progressFill').style.width = (total ? (cur / total) * 100 : 0) + '%';
+}
+
+/* ---- 퀴즈 카드 ---- */
+function renderQuiz(){
+  if (finished){
+    $('quizCard').style.display = 'none';
+    $('doneCard').style.display = 'block';
+    $('doneDesc').textContent = currentCat === '전체'
+      ? '200문장을 모두 확인했어요. 다시 처음부터 복습해 볼까요?'
+      : '「' + currentCat + '」 ' + order.length + '문장을 모두 확인했어요.';
+    updateHeader();
+    return;
+  }
+  $('quizCard').style.display = 'block';
+  $('doneCard').style.display = 'none';
+
+  var item = currentItem();
+  if (!item) return;
+
+  $('krQuestion').textContent = item.kr;
+  $('frText').textContent = item.fr;
+  $('pronText').textContent = item.pronunciation;
+  $('grammarText').textContent = item.grammar;
+
+  /* 핵심 단어 + 단어별 발음 듣기 */
+  var kwList = $('kwList');
+  kwList.innerHTML = '';
+  var kws = item.keywords || [];
+  $('kwRow').style.display = kws.length ? 'block' : 'none';
+  kws.forEach(function(k){
+    var box = document.createElement('div');
+    box.className = 'kw';
+    var main = document.createElement('div');
+    main.className = 'kw-main';
+    main.innerHTML = '<div class="kw-word">' + esc(k.word) + '</div>' +
+                     '<div class="kw-mean">뜻: ' + esc(k.meaning) + '</div>' +
+                     (k.pron ? '<div class="kw-pron">발음: ' + esc(k.pron) + '</div>' : '');
+    var b = document.createElement('button');
+    b.className = 'speak-btn small';
+    b.textContent = '🔊';
+    b.setAttribute('aria-label', k.word + ' 발음 듣기');
+    b.addEventListener('click', function(e){ e.stopPropagation(); speak(k.word); });
+    box.appendChild(main); box.appendChild(b);
+    kwList.appendChild(box);
+  });
+
+  /* 상태 초기화 — 정답·문법·발음 모두 숨김 */
+  revealed = false;
+  $('answerBox').classList.remove('show');
+  $('revealBtn').style.display = 'block';
+  $('saveBtn').textContent = isSaved(item.id) ? '저장됨 ✓' : '헷갈려요 🔖';
+
+  updateHeader();
+}
+
+function revealAnswer(){
+  if (revealed || finished) return;
+  revealed = true;
+  $('answerBox').classList.add('show');
+  $('revealBtn').style.display = 'none';
+}
+function nextQuestion(){
+  if (finished) return;
+  pos++;
+  if (pos >= order.length){ finished = true; }
+  renderQuiz();
+}
+function saveCurrent(){
+  if (finished) return;
+  var item = currentItem();
+  if (isSaved(item.id)){
+    showToast('이미 저장한 문장이에요 🔖');
+    return;
+  }
+  addSaved(item.id);
+  $('saveBtn').textContent = '저장됨 ✓';
+  showToast(storageOK ? '오답노트에 저장했어요 🔖' : '저장했어요 (이 기기에는 영구 저장이 안 될 수 있어요)');
+}
+function restart(){
+  buildOrder();
+  renderQuiz();
+  showToast('처음부터 다시 시작할게요!');
+}
+
+/* =========================================================
+   저장된 단어장
+   ========================================================= */
+function renderSaved(){
+  var ids = loadSaved();
+  var wrap = $('savedList');
+  wrap.innerHTML = '';
+  $('savedCount').textContent = ids.length ? '저장한 문장 ' + ids.length + '개' : '';
+
+  if (!ids.length){
+    var e = document.createElement('div');
+    e.className = 'empty';
+    e.textContent = '아직 저장한 문장이 없어요.\n헷갈리는 표현을 🔖 저장해보세요!';
+    wrap.appendChild(e);
+    return;
+  }
+
+  ids.slice().reverse().forEach(function(id){
+    var item = null;
+    for (var i = 0; i < DATA.length; i++){ if (DATA[i].id === id){ item = DATA[i]; break; } }
+    if (!item) return;
+
+    var box = document.createElement('div');
+    box.className = 'saved-item';
+
+    var head = document.createElement('div');
+    head.className = 'saved-head';
+    var left = document.createElement('div');
+    left.style.flex = '1';
+    left.style.minWidth = '0';
+    left.innerHTML = '<div class="saved-cat">' + esc(item.category) + '</div>' +
+                     '<div class="saved-kr">' + esc(item.kr) + '</div>';
+    var chev = document.createElement('span');
+    chev.className = 'chev'; chev.textContent = '▶';
+    head.appendChild(left); head.appendChild(chev);
+
+    var detail = document.createElement('div');
+    detail.className = 'saved-detail';
+
+    /* 프랑스어 + 듣기 버튼 */
+    var r1 = document.createElement('div');
+    r1.className = 'row';
+    r1.innerHTML = '<div class="row-label">① 프랑스어</div>';
+    var line = document.createElement('div');
+    line.className = 'fr-line';
+    var frDiv = document.createElement('div');
+    frDiv.className = 'fr-text'; frDiv.style.fontSize = '22px';
+    frDiv.textContent = item.fr;
+    var sb = document.createElement('button');
+    sb.className = 'speak-btn'; sb.textContent = '🔊';
+    sb.setAttribute('aria-label', '프랑스어 발음 듣기');
+    sb.addEventListener('click', function(e){ e.stopPropagation(); speak(item.fr); });
+    line.appendChild(frDiv); line.appendChild(sb);
+    r1.appendChild(line);
+    detail.appendChild(r1);
+
+    /* 한글 발음 · 단어 · 문법 */
+    var rest = document.createElement('div');
+    var kwHtml = '';
+    (item.keywords || []).forEach(function(k){
+      kwHtml += '<div class="kw"><div class="kw-main">' +
+        '<div class="kw-word">' + esc(k.word) + '</div>' +
+        '<div class="kw-mean">뜻: ' + esc(k.meaning) + '</div>' +
+        (k.pron ? '<div class="kw-pron">발음: ' + esc(k.pron) + '</div>' : '') +
+        '</div></div>';
+    });
+    rest.innerHTML =
+      '<div class="row"><div class="row-label">② 한글 발음</div>' +
+        '<div class="pron-text">' + esc(item.pronunciation) + '</div></div>' +
+      (kwHtml ? '<div class="row"><div class="row-label">③ 핵심 단어</div><div class="kw-list">' + kwHtml + '</div></div>' : '') +
+      '<div class="row"><div class="grammar-box"><span class="glabel">💡 핵심 문법·문형 포인트</span>' +
+        esc(item.grammar) + '</div></div>';
+    detail.appendChild(rest);
+
+    var actions = document.createElement('div');
+    actions.className = 'saved-actions';
+    var del = document.createElement('button');
+    del.className = 'btn btn-danger';
+    del.textContent = '삭제';
+    del.addEventListener('click', function(e){
+      e.stopPropagation();
+      removeSavedId(item.id);
+      showToast('삭제했어요');
+      renderSaved();
+      if (!finished && order.length && currentItem().id === item.id){
+        $('saveBtn').textContent = '헷갈려요 🔖';
+      }
+    });
+    actions.appendChild(del);
+    detail.appendChild(actions);
+
+    head.addEventListener('click', function(){
+      var open = detail.classList.contains('show');
+      detail.classList.toggle('show', !open);
+      chev.classList.toggle('open', !open);
+    });
+
+    box.appendChild(head); box.appendChild(detail);
+    wrap.appendChild(box);
+  });
+}
+
+/* =========================================================
+   탭 전환
+   ========================================================= */
+function switchTab(which){
+  var quiz = (which === 'quiz');
+  $('view-quiz').classList.toggle('active', quiz);
+  $('view-saved').classList.toggle('active', !quiz);
+  $('tabQuiz').classList.toggle('active', quiz);
+  $('tabSaved').classList.toggle('active', !quiz);
+  if (quiz){ updateHeader(); }
+  else {
+    renderSaved();
+    var n = loadSaved().length;
+    $('catChip').textContent = '저장된 단어장';
+    $('progressText').textContent = n + '개';
+    $('progressFill').style.width = (n ? 100 : 0) + '%';
+  }
+}
+
+/* =========================================================
+   이벤트 바인딩
+   ========================================================= */
+$('revealBtn').addEventListener('click', revealAnswer);
+$('nextBtn').addEventListener('click', nextQuestion);
+$('saveBtn').addEventListener('click', saveCurrent);
+$('speakBtn').addEventListener('click', function(){ if (!finished) speak(currentItem().fr); });
+$('restartBtn').addEventListener('click', restart);
+$('allCatBtn').addEventListener('click', function(){
+  currentCat = '전체';
+  buildOrder(); renderCatPicker(); renderQuiz();
+});
+$('tabQuiz').addEventListener('click', function(){ switchTab('quiz'); });
+$('tabSaved').addEventListener('click', function(){ switchTab('saved'); });
+
+/* =========================================================
+   초기화 — 첫 실행 시 1번 문제부터 순서대로
+   ========================================================= */
+buildOrder();
+renderCatPicker();
+renderQuiz();
+
+/* =========================================================
+   PWA / Service Worker
+   -----------------------------------------------------------
+   ※ 브라우저 보안 정책상 Service Worker는 HTTPS 또는 localhost
+     에서만 등록됩니다. file:// 로 직접 열면 등록되지 않지만,
+     아래 try/catch 덕분에 퀴즈 기능 자체는 그대로 동작합니다.
+   ※ 앱의 모든 데이터·로직·CSS·JS가 이 index.html 안에 있으므로
+     한 번 로드된 뒤에는 네트워크 없이도 학습을 이어갈 수 있습니다.
+   ========================================================= */
+(function(){
+  try{
+    var manifest = {
+      name: '프랑스어 여행 회화 퀴즈',
+      short_name: '프랑스어 여행',
+      start_url: './',
+      display: 'standalone',
+      background_color: '#F2F2F7',
+      theme_color: '#F2F2F7'
+    };
+    var url = URL.createObjectURL(new Blob([JSON.stringify(manifest)], {type:'application/json'}));
+    var link = document.createElement('link');
+    link.rel = 'manifest'; link.href = url;
+    document.head.appendChild(link);
+  }catch(e){ /* 무시 — 앱 동작에 영향 없음 */ }
+})();
+
+(function(){
+  if (!('serviceWorker' in navigator)) return;   // 미지원 환경에서도 퀴즈는 정상 동작
+  window.addEventListener('load', function(){
+    try{
+      navigator.serviceWorker.register('./sw.js').catch(function(err){
+        console.log('Service Worker 등록 실패 (file:// 환경이면 정상입니다):', err);
+      });
+    }catch(e){}
+  });
+})();
+</script>
+</body>
+</html>

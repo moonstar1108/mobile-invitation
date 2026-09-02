@@ -1,7 +1,7 @@
 /* 영어 회화 공부 - 오프라인 캐싱용 Service Worker
    앱 데이터/로직은 전혀 포함하지 않으며, index.html을 캐시하여
    네트워크가 없을 때도 앱이 열리도록 하는 역할만 합니다. */
-var CACHE_NAME = 'eng-conversation-cache-v1';
+var CACHE_NAME = 'eng-conversation-cache-v2';
 var PRECACHE_URLS = ['./', './index.html'];
 
 self.addEventListener('install', function (event) {

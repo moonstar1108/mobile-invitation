@@ -1,0 +1,1647 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover, user-scalable=no">
+<title>일본어 여행 회화 퀴즈</title>
+<meta name="theme-color" content="#F2F2F7">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="일본어 여행회화">
+<meta name="format-detection" content="telephone=no">
+<link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180'%3E%3Crect width='180' height='180' rx='40' fill='%23007AFF'/%3E%3Ctext x='90' y='118' font-size='96' text-anchor='middle' fill='white' font-family='sans-serif'%3E日%3C/text%3E%3C/svg%3E">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23007AFF'/%3E%3Ctext x='32' y='44' font-size='34' text-anchor='middle' fill='white' font-family='sans-serif'%3E日%3C/text%3E%3C/svg%3E">
+<style>
+:root{
+  --bg:#F2F2F7;
+  --card:#FFFFFF;
+  --text:#1C1C1E;
+  --sub:#6D6D72;
+  --blue:#007AFF;
+  --blue-dark:#0062CC;
+  --red:#FF3B30;
+  --green:#34C759;
+  --border:rgba(60,60,67,0.13);
+  --tabbar-bg:rgba(249,249,249,0.85);
+  --grammar-bg:rgba(0,122,255,0.08);
+  --chip-bg:rgba(0,122,255,0.12);
+}
+@media (prefers-color-scheme: dark){
+  :root{
+    --bg:#000000;
+    --card:#1C1C1E;
+    --text:#F2F2F7;
+    --sub:#98989D;
+    --blue:#0A84FF;
+    --blue-dark:#0A84FF;
+    --border:rgba(255,255,255,0.14);
+    --tabbar-bg:rgba(28,28,30,0.85);
+    --grammar-bg:rgba(10,132,255,0.14);
+    --chip-bg:rgba(10,132,255,0.18);
+  }
+}
+*{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
+html,body{
+  height:100%;
+  margin:0;
+  overscroll-behavior:none;
+  background:var(--bg);
+  color:var(--text);
+  font-family:-apple-system, BlinkMacSystemFont, "SF Pro Text", system-ui, "Helvetica Neue", Arial, sans-serif;
+  -webkit-font-smoothing:antialiased;
+}
+body{
+  position:fixed;
+  inset:0;
+  overflow:hidden;
+  display:flex;
+  flex-direction:column;
+}
+button{font-family:inherit;}
+#app{
+  display:flex;
+  flex-direction:column;
+  height:100%;
+  width:100%;
+}
+header.topbar{
+  flex:0 0 auto;
+  padding:calc(10px + env(safe-area-inset-top)) 18px 12px 18px;
+  background:var(--card);
+  border-bottom:1px solid var(--border);
+}
+.topbar-row{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  margin-bottom:10px;
+}
+.category-chip{
+  display:inline-block;
+  padding:5px 12px;
+  border-radius:100px;
+  background:var(--chip-bg);
+  color:var(--blue);
+  font-size:13px;
+  font-weight:600;
+}
+.progress-text{
+  font-size:13px;
+  color:var(--sub);
+  font-weight:500;
+  font-variant-numeric:tabular-nums;
+}
+.progress-track{
+  height:6px;
+  border-radius:3px;
+  background:var(--border);
+  overflow:hidden;
+}
+.progress-fill{
+  height:100%;
+  border-radius:3px;
+  background:var(--blue);
+  width:0%;
+  transition:width .35s ease;
+}
+main{
+  flex:1 1 auto;
+  overflow-y:auto;
+  -webkit-overflow-scrolling:touch;
+  overscroll-behavior-y:contain;
+  padding:20px 18px 24px 18px;
+}
+.view{display:none;}
+.view.active{display:block;}
+.card{
+  background:var(--card);
+  border-radius:20px;
+  padding:26px 22px;
+  box-shadow:0 1px 2px rgba(0,0,0,0.04), 0 8px 24px rgba(0,0,0,0.06);
+  margin-bottom:16px;
+}
+.kr-text{
+  font-size:24px;
+  font-weight:700;
+  line-height:1.4;
+  text-align:center;
+  padding:20px 4px 24px 4px;
+  min-height:56px;
+}
+.btn{
+  display:block;
+  width:100%;
+  border:none;
+  border-radius:14px;
+  padding:16px;
+  font-size:16px;
+  font-weight:600;
+  cursor:pointer;
+  transition:transform .12s ease, opacity .12s ease;
+}
+.btn:active{transform:scale(0.97); opacity:0.85;}
+.btn-primary{background:var(--blue); color:#fff;}
+.btn-secondary{background:var(--grammar-bg); color:var(--blue);}
+.btn-danger-outline{background:rgba(255,59,48,0.1); color:var(--red);}
+.btn-row{display:flex; gap:10px; margin-top:14px;}
+.btn-row .btn{flex:1;}
+.answer-block{
+  display:none;
+  margin-top:6px;
+  padding-top:20px;
+  border-top:1px solid var(--border);
+}
+.answer-block.show{display:block; animation:fadeIn .25s ease;}
+@keyframes fadeIn{from{opacity:0; transform:translateY(4px);} to{opacity:1; transform:translateY(0);}}
+.answer-row{margin-bottom:14px;}
+.answer-label{
+  font-size:12px;
+  font-weight:700;
+  color:var(--sub);
+  text-transform:uppercase;
+  letter-spacing:.03em;
+  margin-bottom:4px;
+}
+.jp-text{font-size:22px; font-weight:700; line-height:2.1;}
+.jp-text ruby{ruby-position:over;}
+.jp-text rt{font-size:11px; font-weight:600; color:var(--blue); user-select:none;}
+.kana-text{font-size:16px; color:var(--sub); margin-top:2px;}
+.pron-text{font-size:15px; color:var(--text); margin-top:2px;}
+.kanji-breakdown{
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+}
+.kanji-chip{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  background:var(--bg);
+  border:1px solid var(--border);
+  border-radius:12px;
+  padding:8px 12px;
+  font-size:12.5px;
+  line-height:1.5;
+}
+.kanji-chip .kanji-char{font-size:24px; font-weight:700; color:var(--text); flex:0 0 auto;}
+.kanji-chip .kanji-lines{display:flex; flex-direction:column; gap:2px; flex:1;}
+.kanji-chip .kanji-readings{color:var(--sub); font-weight:600;}
+.kanji-chip .kanji-readings .flag{margin-right:3px;}
+.kanji-chip .kanji-readings.jp{color:var(--blue);}
+.kanji-chip .kanji-readings.kr{color:var(--red);}
+.kanji-chip .kanji-mean{color:var(--sub); flex:0 0 auto; padding-left:6px; border-left:1px solid var(--border);}
+.segmented{
+  display:flex;
+  background:var(--border);
+  border-radius:10px;
+  padding:2px;
+  margin-bottom:12px;
+}
+.seg-btn{
+  flex:1;
+  border:none;
+  background:none;
+  padding:9px 6px;
+  border-radius:8px;
+  font-size:14px;
+  font-weight:600;
+  color:var(--text);
+  cursor:pointer;
+  transition:background .15s ease;
+}
+.seg-btn.active{background:var(--card); box-shadow:0 1px 3px rgba(0,0,0,0.14);}
+.cat-scroll{
+  display:flex;
+  gap:8px;
+  overflow-x:auto;
+  -webkit-overflow-scrolling:touch;
+  padding-bottom:12px;
+  scrollbar-width:none;
+}
+.cat-scroll::-webkit-scrollbar{display:none;}
+.cat-chip{
+  flex:0 0 auto;
+  padding:7px 14px;
+  border-radius:100px;
+  background:var(--card);
+  border:1px solid var(--border);
+  color:var(--sub);
+  font-size:13px;
+  font-weight:600;
+  cursor:pointer;
+  white-space:nowrap;
+}
+.cat-chip.active{background:var(--blue); color:#fff; border-color:var(--blue);}
+.conj-base{
+  font-size:13px;
+  font-weight:600;
+  color:var(--sub);
+  text-align:center;
+  margin-bottom:8px;
+}
+.conj-form{
+  display:block;
+  text-align:center;
+  font-size:14px;
+  font-weight:700;
+  color:var(--blue);
+  background:var(--chip-bg);
+  border-radius:100px;
+  padding:7px 14px;
+  margin:0 auto 4px auto;
+}
+.alt-box{
+  background:var(--bg);
+  border:1px dashed var(--border);
+  border-radius:12px;
+  padding:10px 12px;
+  margin-top:10px;
+}
+.alt-box .alt-label{
+  display:block;
+  font-size:11px;
+  font-weight:700;
+  color:var(--sub);
+  margin-bottom:4px;
+}
+.alt-box .alt-jp{font-size:17px; font-weight:700; line-height:1.9;}
+.alt-box .alt-pron{font-size:13px; color:var(--sub); margin-top:2px;}
+.bm-section-title{
+  font-size:13px;
+  font-weight:700;
+  color:var(--sub);
+  margin:4px 2px 10px 2px;
+}
+.grammar-box{
+  background:var(--grammar-bg);
+  border-radius:14px;
+  padding:14px 16px;
+  font-size:14px;
+  line-height:1.55;
+  color:var(--text);
+}
+.grammar-box .glabel{color:var(--blue); font-weight:700; margin-bottom:4px; display:block;}
+nav.tabbar{
+  flex:0 0 auto;
+  display:flex;
+  background:var(--tabbar-bg);
+  -webkit-backdrop-filter:blur(20px);
+  backdrop-filter:blur(20px);
+  border-top:1px solid var(--border);
+  padding:8px 0 calc(6px + env(safe-area-inset-bottom)) 0;
+}
+.tab-btn{
+  flex:1;
+  background:none;
+  border:none;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:3px;
+  padding:6px 0 2px 0;
+  color:var(--sub);
+  font-size:11px;
+  font-weight:600;
+  cursor:pointer;
+}
+.tab-btn .tab-icon{font-size:22px; line-height:1;}
+.tab-btn.active{color:var(--blue);}
+.empty-state{
+  text-align:center;
+  color:var(--sub);
+  padding:60px 20px;
+  font-size:15px;
+  line-height:1.6;
+}
+.bm-item{
+  background:var(--card);
+  border-radius:16px;
+  padding:16px 18px;
+  margin-bottom:12px;
+  box-shadow:0 1px 2px rgba(0,0,0,0.04);
+}
+.bm-head{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  cursor:pointer;
+}
+.bm-kr{font-size:16px; font-weight:600; flex:1; padding-right:10px;}
+.bm-cat{font-size:11px; color:var(--blue); font-weight:700; margin-bottom:4px;}
+.bm-chevron{color:var(--sub); font-size:14px; transition:transform .2s ease; flex:0 0 auto;}
+.bm-chevron.open{transform:rotate(90deg);}
+.bm-detail{display:none; margin-top:14px; padding-top:14px; border-top:1px solid var(--border);}
+.bm-detail.show{display:block;}
+.bm-actions{display:flex; gap:8px; margin-top:14px;}
+.bm-actions .btn{padding:11px; font-size:14px;}
+#toast{
+  position:fixed;
+  left:50%;
+  bottom:calc(90px + env(safe-area-inset-bottom));
+  transform:translateX(-50%) translateY(20px);
+  background:rgba(28,28,30,0.92);
+  color:#fff;
+  padding:12px 22px;
+  border-radius:100px;
+  font-size:14px;
+  font-weight:600;
+  opacity:0;
+  pointer-events:none;
+  transition:opacity .25s ease, transform .25s ease;
+  z-index:999;
+  white-space:nowrap;
+  -webkit-backdrop-filter:blur(10px);
+  backdrop-filter:blur(10px);
+}
+#toast.show{opacity:1; transform:translateX(-50%) translateY(0);}
+</style>
+</head>
+<body>
+<div id="app">
+  <header class="topbar">
+    <div class="topbar-row">
+      <span class="category-chip" id="categoryChip">인사</span>
+      <span class="progress-text" id="progressText">1 / 200</span>
+    </div>
+    <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+  </header>
+
+  <main>
+    <section class="view active" id="view-quiz">
+      <div class="card">
+        <div class="kr-text" id="krText"></div>
+
+        <button class="btn btn-primary" id="revealBtn">답 확인</button>
+
+        <div class="answer-block" id="answerBlock">
+          <div class="answer-row">
+            <div class="answer-label">① 일본어 원문 (단어별 읽기 포함)</div>
+            <div class="jp-text" id="jpText"></div>
+          </div>
+          <div class="answer-row">
+            <div class="answer-label">② 문장 전체 히라가나 읽기</div>
+            <div class="kana-text" id="kanaText"></div>
+          </div>
+          <div class="answer-row">
+            <div class="answer-label">③ 한글 발음</div>
+            <div class="pron-text" id="pronText"></div>
+          </div>
+          <div class="answer-row" id="kanjiRow">
+            <div class="answer-label">④ 한자 훈·음 풀이 (일본어 🇯🇵 + 한국 한자음 🇰🇷)</div>
+            <div class="kanji-breakdown" id="kanjiBreakdown"></div>
+          </div>
+          <div class="answer-row" style="margin-bottom:0;">
+            <div class="grammar-box">
+              <span class="glabel">💡 핵심 문법 포인트</span>
+              <span id="grammarText"></span>
+            </div>
+          </div>
+        </div>
+
+        <div class="btn-row" id="actionRow" style="display:none;">
+          <button class="btn btn-secondary" id="bookmarkBtn">헷갈려요 (저장)</button>
+          <button class="btn btn-primary" id="nextBtn">다음 문제</button>
+        </div>
+      </div>
+    </section>
+
+    <section class="view" id="view-conj">
+      <div class="segmented" id="conjModeSeg">
+        <button class="seg-btn active" data-mode="seq">분류별 순서</button>
+        <button class="seg-btn" data-mode="random">랜덤</button>
+      </div>
+      <div class="cat-scroll" id="conjCatRow"></div>
+
+      <div class="card">
+        <div class="conj-base" id="conjBase"></div>
+        <span class="conj-form" id="conjForm"></span>
+        <div class="kr-text" id="conjKr"></div>
+
+        <button class="btn btn-primary" id="conjRevealBtn">답 확인</button>
+
+        <div class="answer-block" id="conjAnswerBlock">
+          <div class="answer-row">
+            <div class="answer-label">① 일본어 (단어별 읽기 포함)</div>
+            <div class="jp-text" id="conjJp"></div>
+          </div>
+          <div class="answer-row">
+            <div class="answer-label">② 히라가나 읽기</div>
+            <div class="kana-text" id="conjKana"></div>
+          </div>
+          <div class="answer-row">
+            <div class="answer-label">③ 한글 발음</div>
+            <div class="pron-text" id="conjPron"></div>
+            <div class="alt-box" id="conjAltBox" style="display:none;">
+              <span class="alt-label">또 다른 표현</span>
+              <div class="alt-jp" id="conjAltJp"></div>
+              <div class="alt-pron" id="conjAltPron"></div>
+            </div>
+          </div>
+          <div class="answer-row" id="conjKanjiRow">
+            <div class="answer-label">④ 한자 훈·음 풀이 (일본어 🇯🇵 + 한국 한자음 🇰🇷)</div>
+            <div class="kanji-breakdown" id="conjKanjiBreakdown"></div>
+          </div>
+          <div class="answer-row" style="margin-bottom:0;">
+            <div class="grammar-box">
+              <span class="glabel">💡 활용 만드는 법</span>
+              <span id="conjTip"></span>
+            </div>
+          </div>
+        </div>
+
+        <div class="btn-row" id="conjActionRow" style="display:none;">
+          <button class="btn btn-secondary" id="conjBookmarkBtn">헷갈려요 (저장)</button>
+          <button class="btn btn-primary" id="conjNextBtn">다음 문제</button>
+        </div>
+      </div>
+    </section>
+
+    <section class="view" id="view-bookmark">
+      <div id="bookmarkList"></div>
+    </section>
+  </main>
+
+  <nav class="tabbar">
+    <button class="tab-btn active" id="tab-quiz" data-view="view-quiz">
+      <span class="tab-icon">📝</span><span>퀴즈 풀기</span>
+    </button>
+    <button class="tab-btn" id="tab-conj" data-view="view-conj">
+      <span class="tab-icon">🧩</span><span>문법 연습</span>
+    </button>
+    <button class="tab-btn" id="tab-bookmark" data-view="view-bookmark">
+      <span class="tab-icon">🔖</span><span>저장된 단어장</span>
+    </button>
+  </nav>
+</div>
+
+<div id="toast"></div>
+
+<script>
+/* ===================== 200 여행 회화 데이터 ===================== */
+var DATA = [
+{id:1,category:"인사",kr:"안녕하세요 (아침 인사)",jp:"おはようございます",kana:"おはようございます",pronunciation:"오하요- 고자이마스",grammar:"です/ます 정중체로 끝나는 아침 인사말입니다."},
+{id:2,category:"인사",kr:"안녕하세요 (낮 인사)",jp:"こんにちは",kana:"こんにちは",pronunciation:"곤니치와",grammar:"낮에 쓰는 고정 인사말로 활용 변화가 없습니다."},
+{id:3,category:"인사",kr:"안녕하세요 (저녁 인사)",jp:"こんばんは",kana:"こんばんは",pronunciation:"콤반와",grammar:"저녁에 쓰는 인사말, は는 [와]로 발음합니다."},
+{id:4,category:"인사",kr:"안녕히 가세요 (헤어질 때)",jp:"さようなら",kana:"さようなら",pronunciation:"사요-나라",grammar:"오래 헤어지거나 격식 있는 자리에서 쓰는 작별 인사입니다."},
+{id:5,category:"인사",kr:"감사합니다",jp:"ありがとうございます",kana:"ありがとうございます",pronunciation:"아리가토- 고자이마스",grammar:"ございます를 붙이면 더 정중한 감사 표현이 됩니다."},
+{id:6,category:"인사",kr:"죄송합니다 / 실례합니다",jp:"すみません",kana:"すみません",pronunciation:"스미마센",grammar:"사과, 부탁, 부름 등 다양한 상황에 쓰이는 만능 표현입니다."},
+{id:7,category:"인사",kr:"실례하겠습니다",jp:"失礼します",kana:"しつれいします",pronunciation:"시츠레-시마스",grammar:"자리를 뜨거나 말을 걸 때, 방에 들어갈 때 쓰는 정중 표현입니다."},
+{id:8,category:"인사",kr:"처음 뵙겠습니다",jp:"はじめまして",kana:"はじめまして",pronunciation:"하지메마시테",grammar:"첫 만남에 쓰는 인사말로, 뒤에 자기소개가 이어집니다."},
+{id:9,category:"인사",kr:"잘 부탁드립니다",jp:"よろしくお願いします",kana:"よろしくおねがいします",pronunciation:"요로시쿠 오네가이시마스",grammar:"お+동사ます형+します는 겸양을 나타내는 표현입니다."},
+{id:10,category:"인사",kr:"저는 ○○입니다",jp:"私は○○です",kana:"わたしは○○です",pronunciation:"와타시와 ○○데스",grammar:"は는 주제를 나타내는 조사로 [와]로 발음됩니다."},
+{id:11,category:"인사",kr:"네",jp:"はい",kana:"はい",pronunciation:"하이",grammar:"긍정 대답에 쓰이는 기본 표현입니다."},
+{id:12,category:"인사",kr:"아니요",jp:"いいえ",kana:"いいえ",pronunciation:"이-에",grammar:"부정 대답에 쓰이는 기본 표현입니다."},
+{id:13,category:"인사",kr:"괜찮습니다",jp:"大丈夫です",kana:"だいじょうぶです",pronunciation:"다이죠-부데스",grammar:"상태의 무사함이나 허락을 나타내는 な형용사 표현입니다."},
+{id:14,category:"인사",kr:"이해했습니다",jp:"分かりました",kana:"わかりました",pronunciation:"와카리마시타",grammar:"分かる(알다)의 과거 정중형입니다."},
+{id:15,category:"인사",kr:"잘 모르겠습니다",jp:"よく分かりません",kana:"よくわかりません",pronunciation:"요쿠 와카리마센",grammar:"ません은 ます형의 부정형으로 '~하지 않습니다'를 뜻합니다."},
+{id:16,category:"인사",kr:"영어 할 줄 아세요?",jp:"英語を話せますか",kana:"えいごをはなせますか",pronunciation:"에-고오 하나세마스카",grammar:"동사 가능형(話せる)+ますか로 능력을 묻는 의문문입니다."},
+{id:17,category:"인사",kr:"다시 한번 말씀해 주세요",jp:"もう一度お願いします",kana:"もういちどおねがいします",pronunciation:"모- 이치도 오네가이시마스",grammar:"もう一度(한 번 더)+お願いします(부탁드립니다)의 조합입니다."},
+{id:18,category:"인사",kr:"이것은 무엇입니까?",jp:"これは何ですか",kana:"これはなんですか",pronunciation:"코레와 난데스카",grammar:"지시대명사 これ+は+의문사 何로 만드는 기본 질문 패턴입니다."},
+{id:19,category:"인사",kr:"화장실은 어디입니까?",jp:"トイレはどこですか",kana:"トイレはどこですか",pronunciation:"토이레와 도코데스카",grammar:"장소를 묻는 どこ+ですか 구문입니다."},
+{id:20,category:"인사",kr:"제 이름은 ○○입니다",jp:"名前は○○と申します",kana:"なまえは○○ともうします",pronunciation:"나마에와 ○○토 모-시마스",grammar:"申します는 言います(말합니다)의 겸양어입니다."},
+{id:21,category:"인사",kr:"또 만나요",jp:"また会いましょう",kana:"またあいましょう",pronunciation:"마타 아이마쇼-",grammar:"동사ます형+ましょう는 권유·청유를 나타냅니다."},
+{id:22,category:"인사",kr:"좋은 아침 (캐주얼)",jp:"おはよう",kana:"おはよう",pronunciation:"오하요-",grammar:"です/ます가 없는 친근한 반말체 인사입니다."},
+{id:23,category:"인사",kr:"잘 자요",jp:"おやすみなさい",kana:"おやすみなさい",pronunciation:"오야스미나사이",grammar:"취침 인사로, なさい는 정중한 명령형 어미입니다."},
+{id:24,category:"인사",kr:"건배!",jp:"乾杯",kana:"かんぱい",pronunciation:"캄파이",grammar:"술자리에서 외치는 감탄 표현입니다."},
+{id:25,category:"인사",kr:"축하합니다",jp:"おめでとうございます",kana:"おめでとうございます",pronunciation:"오메데토- 고자이마스",grammar:"축하 인사의 정중한 형태입니다."},
+{id:26,category:"식당/카페",kr:"예약했습니다",jp:"予約しました",kana:"よやくしました",pronunciation:"요야쿠시마시타",grammar:"명사+します로 동작동사를 만들고, ました로 과거를 나타냅니다."},
+{id:27,category:"식당/카페",kr:"두 명입니다 (좌석 안내)",jp:"二人です",kana:"ふたりです",pronunciation:"후타리데스",grammar:"사람 수를 세는 고유 수사 ひとり·ふたり를 사용합니다."},
+{id:28,category:"식당/카페",kr:"메뉴판 좀 주세요",jp:"メニューをください",kana:"メニューをください",pronunciation:"메뉴-오 쿠다사이",grammar:"명사+を+ください는 '~을 주세요'라는 요청 표현입니다."},
+{id:29,category:"식당/카페",kr:"추천 메뉴는 무엇인가요?",jp:"おすすめは何ですか",kana:"おすすめはなんですか",pronunciation:"오스스메와 난데스카",grammar:"おすすめ(추천)+は+何ですか로 묻는 표현입니다."},
+{id:30,category:"식당/카페",kr:"이거 하나 주세요 (가리키며)",jp:"これを一つください",kana:"これをひとつください",pronunciation:"코레오 히토츠 쿠다사이",grammar:"사물을 세는 고유 수사 ひとつ·ふたつ를 사용합니다."},
+{id:31,category:"식당/카페",kr:"물 좀 주세요",jp:"お水をください",kana:"おみずをください",pronunciation:"오미즈오 쿠다사이",grammar:"お+명사는 정중함을 더하는 미화어입니다."},
+{id:32,category:"식당/카페",kr:"이 안에 무엇이 들어있나요?",jp:"これに何が入っていますか",kana:"これになにがはいっていますか",pronunciation:"코레니 나니가 하잇테이마스카",grammar:"동사て형+いる는 상태의 지속을 나타냅니다."},
+{id:33,category:"식당/카페",kr:"저는 알레르기가 있어요",jp:"アレルギーがあります",kana:"アレルギーがあります",pronunciation:"아레루기-가 아리마스",grammar:"あります는 무생물의 존재를 나타내는 동사입니다."},
+{id:34,category:"식당/카페",kr:"맵지 않게 해주세요",jp:"辛くないようにしてください",kana:"からくないようにしてください",pronunciation:"카라쿠나이 요-니 시테쿠다사이",grammar:"い형용사+くない는 부정형, ように는 '~하도록'을 뜻합니다."},
+{id:35,category:"식당/카페",kr:"고기를 빼주세요",jp:"肉を抜いてください",kana:"にくをぬいてください",pronunciation:"니쿠오 누이테 쿠다사이",grammar:"동사て형+ください는 요청·부탁을 나타내는 표현입니다."},
+{id:36,category:"식당/카페",kr:"계산서 주세요",jp:"お会計をお願いします",kana:"おかいけいをおねがいします",pronunciation:"오카이케- 오 오네가이시마스",grammar:"お願いします는 ください보다 더 정중한 부탁 표현입니다."},
+{id:37,category:"식당/카페",kr:"맛있어요",jp:"おいしいです",kana:"おいしいです",pronunciation:"오이시-데스",grammar:"い형용사+です는 형용사의 정중형입니다."},
+{id:38,category:"식당/카페",kr:"하나 더 주세요",jp:"もう一つください",kana:"もうひとつください",pronunciation:"모- 히토츠 쿠다사이",grammar:"もう+수량사는 '~더'라는 뜻을 나타냅니다."},
+{id:39,category:"식당/카페",kr:"포장해 주세요",jp:"持ち帰りでお願いします",kana:"もちかえりでおねがいします",pronunciation:"모치카에리데 오네가이시마스",grammar:"持ち帰り(테이크아웃)+で는 방법을 나타내는 조사입니다."},
+{id:40,category:"식당/카페",kr:"젓가락 주세요",jp:"お箸をください",kana:"おはしをください",pronunciation:"오하시오 쿠다사이",grammar:"箸에 미화어 お를 붙인 형태입니다."},
+{id:41,category:"식당/카페",kr:"얼음 빼주세요",jp:"氷を抜いてください",kana:"こおりをぬいてください",pronunciation:"코-리오 누이테 쿠다사이",grammar:"抜く(빼다)의 て형+ください 구조입니다."},
+{id:42,category:"식당/카페",kr:"따뜻한 커피 주세요",jp:"温かいコーヒーをください",kana:"あたたかいコーヒーをください",pronunciation:"아타타카이 코-히-오 쿠다사이",grammar:"い형용사가 명사를 수식할 때는 그대로 앞에 붙습니다."},
+{id:43,category:"식당/카페",kr:"차가운 것으로 주세요",jp:"冷たいものでお願いします",kana:"つめたいものでおねがいします",pronunciation:"츠메타이 모노데 오네가이시마스",grammar:"もの는 사물을 가리키는 형식명사입니다."},
+{id:44,category:"식당/카페",kr:"흡연석인가요, 금연석인가요?",jp:"喫煙席ですか、禁煙席ですか",kana:"きつえんせきですか、きんえんせきですか",pronunciation:"키츠엔세키데스카 킨엔세키데스카",grammar:"명사+ですか를 나열해 선택 의문문을 만듭니다."},
+{id:45,category:"식당/카페",kr:"얼마나 기다려야 하나요?",jp:"どのくらい待ちますか",kana:"どのくらいまちますか",pronunciation:"도노쿠라이 마치마스카",grammar:"どのくらい는 정도를 묻는 의문 표현입니다."},
+{id:46,category:"식당/카페",kr:"카드 결제 되나요?",jp:"カードは使えますか",kana:"カードはつかえますか",pronunciation:"카-도와 츠카에마스카",grammar:"使う(사용하다)의 가능형 使える를 사용합니다."},
+{id:47,category:"식당/카페",kr:"따로 계산해 주세요",jp:"別々にお願いします",kana:"べつべつにおねがいします",pronunciation:"베츠베츠니 오네가이시마스",grammar:"別々に는 '각각, 따로따로'라는 뜻의 부사입니다."},
+{id:48,category:"식당/카페",kr:"휴지 좀 주세요",jp:"ティッシュをください",kana:"ティッシュをください",pronunciation:"팃슈오 쿠다사이",grammar:"외래어 명사+をください 패턴입니다."},
+{id:49,category:"식당/카페",kr:"숟가락 주세요",jp:"スプーンをください",kana:"スプーンをください",pronunciation:"스푼오 쿠다사이",grammar:"도구 이름+をください 패턴입니다."},
+{id:50,category:"식당/카페",kr:"물 리필 되나요?",jp:"お水のおかわりできますか",kana:"おみずのおかわりできますか",pronunciation:"오미즈노 오카와리 데키마스카",grammar:"できる는 가능을 나타내는 동사입니다."},
+{id:51,category:"식당/카페",kr:"영수증 주세요",jp:"レシートをください",kana:"レシートをください",pronunciation:"레시-토오 쿠다사이",grammar:"영수증을 뜻하는 명사+をください 패턴입니다."},
+{id:52,category:"식당/카페",kr:"정말 맛있었어요",jp:"とてもおいしかったです",kana:"とてもおいしかったです",pronunciation:"토테모 오이시캇타데스",grammar:"い형용사 과거형은 어미 い가 かった로 바뀝니다."},
+{id:53,category:"식당/카페",kr:"술 한 잔 더 주세요",jp:"お酒をもう一杯ください",kana:"おさけをもういっぱいください",pronunciation:"오사케오 모- 잇파이 쿠다사이",grammar:"もう一杯는 '한 잔 더'라는 뜻입니다."},
+{id:54,category:"식당/카페",kr:"몇 시에 문을 닫나요?",jp:"何時に閉まりますか",kana:"なんじにしまりますか",pronunciation:"난지니 시마리마스카",grammar:"閉まる(닫히다)는 자동사입니다."},
+{id:55,category:"식당/카페",kr:"지금 영업 중인가요?",jp:"今営業中ですか",kana:"いまえいぎょうちゅうですか",pronunciation:"이마 에-교-츄-데스카",grammar:"명사+中(ちゅう)는 '~하는 중'이라는 뜻입니다."},
+{id:56,category:"식당/카페",kr:"어린이용 메뉴 있나요?",jp:"子供用のメニューはありますか",kana:"こどもようのメニューはありますか",pronunciation:"코도모요-노 메뉴-와 아리마스카",grammar:"명사+用(よう)는 '~용'이라는 의미를 더합니다."},
+{id:57,category:"식당/카페",kr:"세트 메뉴로 주세요",jp:"セットでお願いします",kana:"セットでおねがいします",pronunciation:"셋토데 오네가이시마스",grammar:"で는 선택·수단을 나타내는 조사입니다."},
+{id:58,category:"식당/카페",kr:"영어 메뉴 있나요?",jp:"英語のメニューはありますか",kana:"えいごのメニューはありますか",pronunciation:"에-고노 메뉴-와 아리마스카",grammar:"の는 명사와 명사를 연결하는 조사입니다."},
+{id:59,category:"식당/카페",kr:"나눠서 계산할 수 있나요?",jp:"割り勘できますか",kana:"わりかんできますか",pronunciation:"와리캉 데키마스카",grammar:"割り勘(더치페이)+できますか 구조입니다."},
+{id:60,category:"식당/카페",kr:"자리가 없어요",jp:"席がありません",kana:"せきがありません",pronunciation:"세키가 아리마센",grammar:"ありません은 あります의 부정형입니다."},
+{id:61,category:"식당/카페",kr:"차 한 잔 주세요",jp:"お茶をください",kana:"おちゃをください",pronunciation:"오챠오 쿠다사이",grammar:"お茶는 미화어 お가 이미 포함된 관용 표현입니다."},
+{id:62,category:"식당/카페",kr:"디저트는 무엇이 있나요?",jp:"デザートは何がありますか",kana:"デザートはなにがありますか",pronunciation:"데자-토와 나니가 아리마스카",grammar:"何が는 존재문에서 대상을 나타냅니다."},
+{id:63,category:"식당/카페",kr:"빨대 주세요",jp:"ストローをください",kana:"ストローをください",pronunciation:"스토로-오 쿠다사이",grammar:"외래어 명사+をください 패턴입니다."},
+{id:64,category:"식당/카페",kr:"이거 매운가요?",jp:"これは辛いですか",kana:"これはからいですか",pronunciation:"코레와 카라이데스카",grammar:"い형용사+ですか로 상태를 묻는 의문문입니다."},
+{id:65,category:"식당/카페",kr:"밥 추가할 수 있나요?",jp:"ご飯のおかわりできますか",kana:"ごはんのおかわりできますか",pronunciation:"고항노 오카와리 데키마스카",grammar:"おかわり는 '추가, 리필'을 뜻하는 명사입니다."},
+{id:66,category:"쇼핑/결제",kr:"이거 얼마예요?",jp:"これはいくらですか",kana:"これはいくらですか",pronunciation:"코레와 이쿠라데스카",grammar:"いくら는 가격을 묻는 의문사입니다."},
+{id:67,category:"쇼핑/결제",kr:"너무 비싸요",jp:"高すぎます",kana:"たかすぎます",pronunciation:"타카스기마스",grammar:"い형용사 어간+すぎる는 '너무 ~하다'는 뜻입니다."},
+{id:68,category:"쇼핑/결제",kr:"할인되나요?",jp:"割引できますか",kana:"わりびきできますか",pronunciation:"와리비키 데키마스카",grammar:"割引(할인)+できますか 구조입니다."},
+{id:69,category:"쇼핑/결제",kr:"면세 되나요?",jp:"免税できますか",kana:"めんぜいできますか",pronunciation:"멘제- 데키마스카",grammar:"免税(면세)+できますか 구조입니다."},
+{id:70,category:"쇼핑/결제",kr:"입어봐도 되나요?",jp:"試着してもいいですか",kana:"しちゃくしてもいいですか",pronunciation:"시챠쿠시테모 이-데스카",grammar:"동사て형+もいいですか는 허가를 구하는 표현입니다."},
+{id:71,category:"쇼핑/결제",kr:"사이즈가 어떻게 되세요?",jp:"サイズはいくつですか",kana:"サイズはいくつですか",pronunciation:"사이즈와 이쿠츠데스카",grammar:"いくつ는 수량이나 크기를 묻는 의문사입니다."},
+{id:72,category:"쇼핑/결제",kr:"다른 색 있나요?",jp:"他の色はありますか",kana:"ほかのいろはありますか",pronunciation:"호카노 이로와 아리마스카",grammar:"他の+명사는 '다른 ~'라는 뜻입니다."},
+{id:73,category:"쇼핑/결제",kr:"신용카드 되나요?",jp:"クレジットカードは使えますか",kana:"クレジットカードはつかえますか",pronunciation:"쿠레짓토카-도와 츠카에마스카",grammar:"使える는 使う의 가능형입니다."},
+{id:74,category:"쇼핑/결제",kr:"현금만 되나요?",jp:"現金のみですか",kana:"げんきんのみですか",pronunciation:"겐킨노미데스카",grammar:"のみ는 '~만'이라는 뜻의 한정 조사입니다."},
+{id:75,category:"쇼핑/결제",kr:"영수증 필요해요",jp:"レシートが必要です",kana:"レシートがひつようです",pronunciation:"레시-토가 히츠요-데스",grammar:"必要です는 '필요합니다'라는 표현입니다."},
+{id:76,category:"쇼핑/결제",kr:"선물 포장해 주세요",jp:"プレゼント用に包んでください",kana:"プレゼントようにつつんでください",pronunciation:"푸레젠토요-니 츠츤데 쿠다사이",grammar:"包む(포장하다)의 て형+ください입니다."},
+{id:77,category:"쇼핑/결제",kr:"탈의실은 어디예요?",jp:"試着室はどこですか",kana:"しちゃくしつはどこですか",pronunciation:"시챠쿠시츠와 도코데스카",grammar:"試着室(탈의실)+はどこですか 구조입니다."},
+{id:78,category:"쇼핑/결제",kr:"그냥 구경하는 거예요",jp:"見ているだけです",kana:"みているだけです",pronunciation:"미테이루다케데스",grammar:"だけ는 '~뿐, ~만'이라는 한정 표현입니다."},
+{id:79,category:"쇼핑/결제",kr:"이거 다른 색으로 있나요?",jp:"これの違う色はありますか",kana:"これのちがういろはありますか",pronunciation:"코레노 치가우 이로와 아리마스카",grammar:"違う(다르다)는 동사 형태 그대로 명사를 수식합니다."},
+{id:80,category:"쇼핑/결제",kr:"봉투 하나 주세요",jp:"袋を一つください",kana:"ふくろをひとつください",pronunciation:"후쿠로오 히토츠 쿠다사이",grammar:"袋(봉투)+を+수량사+ください 구조입니다."},
+{id:81,category:"쇼핑/결제",kr:"면세점은 어디예요?",jp:"免税店はどこですか",kana:"めんぜいてんはどこですか",pronunciation:"멘제-텐와 도코데스카",grammar:"免税店(면세점)+はどこですか 구조입니다."},
+{id:82,category:"쇼핑/결제",kr:"더 저렴한 것 있나요?",jp:"もっと安いものはありますか",kana:"もっとやすいものはありますか",pronunciation:"못토 야스이 모노와 아리마스카",grammar:"もっと는 '더욱, 좀 더'라는 뜻의 부사입니다."},
+{id:83,category:"쇼핑/결제",kr:"이거 살게요",jp:"これを買います",kana:"これをかいます",pronunciation:"코레오 카이마스",grammar:"買う(사다)의 정중형은 買います입니다."},
+{id:84,category:"쇼핑/결제",kr:"봉투는 필요 없어요",jp:"袋は要りません",kana:"ふくろはいりません",pronunciation:"후쿠로와 이리마센",grammar:"要る(필요하다)의 부정형 要りません입니다."},
+{id:85,category:"쇼핑/결제",kr:"포인트 카드 있으세요?",jp:"ポイントカードはお持ちですか",kana:"ポイントカードはおもちですか",pronunciation:"포인토카-도와 오모치데스카",grammar:"お持ちですか는 持っていますか의 존경 표현입니다."},
+{id:86,category:"쇼핑/결제",kr:"교환이나 환불 가능한가요?",jp:"交換や返品はできますか",kana:"こうかんやへんぴんはできますか",pronunciation:"코-칸야 헨핀와 데키마스카",grammar:"や는 '~이나'처럼 예시를 나열하는 조사입니다."},
+{id:87,category:"쇼핑/결제",kr:"이거 수제인가요?",jp:"これは手作りですか",kana:"これはてづくりですか",pronunciation:"코레와 테즈쿠리데스카",grammar:"手作り(수제)+ですか 구조입니다."},
+{id:88,category:"쇼핑/결제",kr:"작은 사이즈 있나요?",jp:"小さいサイズはありますか",kana:"ちいさいサイズはありますか",pronunciation:"치-사이 사이즈와 아리마스카",grammar:"小さい(작다)가 명사를 수식하는 형태입니다."},
+{id:89,category:"쇼핑/결제",kr:"큰 사이즈 있나요?",jp:"大きいサイズはありますか",kana:"おおきいサイズはありますか",pronunciation:"오-키- 사이즈와 아리마스카",grammar:"大きい(크다)가 명사를 수식하는 형태입니다."},
+{id:90,category:"쇼핑/결제",kr:"할인은 언제부터예요?",jp:"割引はいつからですか",kana:"わりびきはいつからですか",pronunciation:"와리비키와 이츠카라데스카",grammar:"から는 시작 시점을 나타내는 조사입니다."},
+{id:91,category:"쇼핑/결제",kr:"이 가게는 몇 시까지 하나요?",jp:"この店は何時までですか",kana:"このみせはなんじまでですか",pronunciation:"코노 미세와 난지마데데스카",grammar:"まで는 끝나는 시점을 나타내는 조사입니다."},
+{id:92,category:"쇼핑/결제",kr:"오늘 쉬는 날인가요?",jp:"今日は休みですか",kana:"きょうはやすみですか",pronunciation:"쿄-와 야스미데스카",grammar:"休み(휴일)+ですか 구조입니다."},
+{id:93,category:"쇼핑/결제",kr:"원화로 결제할 수 있나요?",jp:"ウォンで支払えますか",kana:"ウォンでしはらえますか",pronunciation:"원데 시하라에마스카",grammar:"支払う(지불하다)의 가능형 支払える입니다."},
+{id:94,category:"쇼핑/결제",kr:"근처에 ATM이 있나요?",jp:"近くにATMはありますか",kana:"ちかくにATMはありますか",pronunciation:"치카쿠니 에-티-엠와 아리마스카",grammar:"近くに는 '근처에'라는 장소 표현입니다."},
+{id:95,category:"쇼핑/결제",kr:"추천하는 기념품 있나요?",jp:"おすすめのお土産はありますか",kana:"おすすめのおみやげはありますか",pronunciation:"오스스메노 오미야게와 아리마스카",grammar:"お土産(기념품)는 여행에서 자주 쓰는 필수 단어입니다."},
+{id:96,category:"이동/교통",kr:"역은 어디예요?",jp:"駅はどこですか",kana:"えきはどこですか",pronunciation:"에키와 도코데스카",grammar:"駅(역)+はどこですか 구조입니다."},
+{id:97,category:"이동/교통",kr:"표 한 장 주세요",jp:"切符を一枚ください",kana:"きっぷをいちまいください",pronunciation:"킷푸오 이치마이 쿠다사이",grammar:"표를 세는 단위는 ~枚(まい)를 사용합니다."},
+{id:98,category:"이동/교통",kr:"이 열차는 ○○에 가나요?",jp:"この電車は○○に行きますか",kana:"このでんしゃは○○にいきますか",pronunciation:"코노 덴샤와 ○○니 이키마스카",grammar:"に는 방향·목적지를 나타내는 조사입니다."},
+{id:99,category:"이동/교통",kr:"환승은 어디서 하나요?",jp:"乗り換えはどこでしますか",kana:"のりかえはどこでしますか",pronunciation:"노리카에와 도코데 시마스카",grammar:"乗り換え(환승)+はどこでしますか 구조입니다."},
+{id:100,category:"이동/교통",kr:"편도인가요, 왕복인가요?",jp:"片道ですか、往復ですか",kana:"かたみちですか、おうふくですか",pronunciation:"카타미치데스카 오-후쿠데스카",grammar:"편도/왕복을 묻는 선택 의문문입니다."},
+{id:101,category:"이동/교통",kr:"교통카드 충전해 주세요",jp:"ICカードをチャージしてください",kana:"ICカードをチャージしてください",pronunciation:"아이시-카-도오 챠-지 시테쿠다사이",grammar:"チャージする는 외래어+する 동사입니다."},
+{id:102,category:"이동/교통",kr:"택시 불러주세요",jp:"タクシーを呼んでください",kana:"タクシーをよんでください",pronunciation:"타쿠시-오 욘데쿠다사이",grammar:"呼ぶ(부르다)의 て형+ください입니다."},
+{id:103,category:"이동/교통",kr:"여기까지 택시로 얼마예요?",jp:"ここまでタクシーでいくらですか",kana:"ここまでタクシーでいくらですか",pronunciation:"코코마데 타쿠시-데 이쿠라데스카",grammar:"まで는 도착 지점, で는 수단을 나타내는 조사입니다."},
+{id:104,category:"이동/교통",kr:"버스 정류장은 어디예요?",jp:"バス停はどこですか",kana:"バスていはどこですか",pronunciation:"바스테-와 도코데스카",grammar:"バス停(버스 정류장)+はどこですか 구조입니다."},
+{id:105,category:"이동/교통",kr:"여기서 내릴게요",jp:"ここで降ります",kana:"ここでおります",pronunciation:"코코데 오리마스",grammar:"降りる(내리다)의 정중형, で는 동작 장소를 나타냅니다."},
+{id:106,category:"이동/교통",kr:"이 자리 비어있나요?",jp:"この席は空いていますか",kana:"このせきはあいていますか",pronunciation:"코노 세키와 아이테이마스카",grammar:"空く(비다)의 ている형은 상태의 지속을 나타냅니다."},
+{id:107,category:"이동/교통",kr:"막차는 몇 시예요?",jp:"終電は何時ですか",kana:"しゅうでんはなんじですか",pronunciation:"슈-덴와 난지데스카",grammar:"終電(막차)+は何時ですか 구조입니다."},
+{id:108,category:"이동/교통",kr:"몇 번 플랫폼인가요?",jp:"何番線ですか",kana:"なんばんせんですか",pronunciation:"난반센데스카",grammar:"番線(번선)은 플랫폼 번호를 세는 단위입니다."},
+{id:109,category:"이동/교통",kr:"이건 급행인가요, 완행인가요?",jp:"これは急行ですか、各駅停車ですか",kana:"これはきゅうこうですか、かくえきていしゃですか",pronunciation:"코레와 큐-코-데스카 카쿠에키테-샤데스카",grammar:"급행/완행을 구분하는 열차 관련 용어입니다."},
+{id:110,category:"이동/교통",kr:"공항까지 어떻게 가나요?",jp:"空港までどうやって行きますか",kana:"くうこうまでどうやっていきますか",pronunciation:"쿠-코-마데 도-얏테 이키마스카",grammar:"どうやって는 방법을 묻는 의문 표현입니다."},
+{id:111,category:"이동/교통",kr:"이 버스는 ○○에 가나요?",jp:"このバスは○○に行きますか",kana:"このバスは○○にいきますか",pronunciation:"코노 바스와 ○○니 이키마스카",grammar:"열차 질문과 동일한 구조를 버스에 적용한 표현입니다."},
+{id:112,category:"이동/교통",kr:"코인 로커는 어디예요?",jp:"コインロッカーはどこですか",kana:"コインロッカーはどこですか",pronunciation:"코인롯카-와 도코데스카",grammar:"외래어 명사+はどこですか 구조입니다."},
+{id:113,category:"이동/교통",kr:"출구는 어느 쪽이에요?",jp:"出口はどちらですか",kana:"でぐちはどちらですか",pronunciation:"데구치와 도치라데스카",grammar:"どちら는 방향을 정중하게 묻는 표현입니다."},
+{id:114,category:"이동/교통",kr:"여기가 어디인가요?",jp:"ここはどこですか",kana:"ここはどこですか",pronunciation:"코코와 도코데스카",grammar:"길을 잃었을 때 쓰는 필수 표현입니다."},
+{id:115,category:"이동/교통",kr:"렌터카를 빌리고 싶어요",jp:"レンタカーを借りたいです",kana:"レンタカーをかりたいです",pronunciation:"렌타카-오 카리타이데스",grammar:"동사ます형+たい는 희망을 나타냅니다."},
+{id:116,category:"이동/교통",kr:"얼마나 걸리나요?",jp:"どのくらいかかりますか",kana:"どのくらいかかりますか",pronunciation:"도노쿠라이 카카리마스카",grammar:"かかる는 시간·비용이 '걸리다, 들다'라는 뜻입니다."},
+{id:117,category:"이동/교통",kr:"곧장 가세요",jp:"まっすぐ行ってください",kana:"まっすぐいってください",pronunciation:"맛스구 잇테쿠다사이",grammar:"まっすぐ(곧장)+동사て형+ください 구조입니다."},
+{id:118,category:"이동/교통",kr:"오른쪽으로 / 왼쪽으로 도세요",jp:"右に / 左に曲がってください",kana:"みぎに / ひだりにまがってください",pronunciation:"미기니 / 히다리니 마갓테 쿠다사이",grammar:"曲がる(돌다)의 て형+ください 구조입니다."},
+{id:119,category:"이동/교통",kr:"여기서 먼가요?",jp:"ここから遠いですか",kana:"ここからとおいですか",pronunciation:"코코카라 토-이데스카",grammar:"から는 출발점, 遠い는 '멀다'라는 뜻입니다."},
+{id:120,category:"이동/교통",kr:"역 출구 근처예요",jp:"駅の出口の近くです",kana:"えきのでぐちのちかくです",pronunciation:"에키노 데구치노 치카쿠데스",grammar:"近く는 '근처, 가까이'라는 뜻의 명사입니다."},
+{id:121,category:"이동/교통",kr:"지하철 노선도 주세요",jp:"地下鉄の路線図をください",kana:"ちかてつのろせんずをください",pronunciation:"치카테츠노 로센즈오 쿠다사이",grammar:"路線図(노선도)+をください 구조입니다."},
+{id:122,category:"이동/교통",kr:"○○행 표 한 장이요",jp:"○○行きの切符を一枚",kana:"○○ゆきのきっぷをいちまい",pronunciation:"○○유키노 킷푸오 이치마이",grammar:"行き(행)는 목적지를 나타내는 접미사입니다."},
+{id:123,category:"이동/교통",kr:"외국인 할인 티켓 있나요?",jp:"外国人割引チケットはありますか",kana:"がいこくじんわりびきチケットはありますか",pronunciation:"가이코쿠진 와리비키 치켓토와 아리마스카",grammar:"外国人(외국인)+割引(할인)+チケット의 명사 나열입니다."},
+{id:124,category:"이동/교통",kr:"JR패스를 사용할 수 있나요?",jp:"JRパスは使えますか",kana:"JRパスはつかえますか",pronunciation:"제이아루 파스와 츠카에마스카",grammar:"パス(패스)+は+使えますか 구조입니다."},
+{id:125,category:"이동/교통",kr:"지금 길이 많이 막히나요?",jp:"今道は混んでいますか",kana:"いまみちはこんでいますか",pronunciation:"이마 미치와 콘데이마스카",grammar:"混む(붐비다)의 ている형은 현재 상태를 나타냅니다."},
+{id:126,category:"숙소/호텔",kr:"체크인 하고 싶어요",jp:"チェックインしたいです",kana:"チェックインしたいです",pronunciation:"체쿠인 시타이데스",grammar:"する동사+たい는 '~하고 싶다'는 희망 표현입니다."},
+{id:127,category:"숙소/호텔",kr:"체크아웃은 몇 시예요?",jp:"チェックアウトは何時ですか",kana:"チェックアウトはなんじですか",pronunciation:"체쿠아우토와 난지데스카",grammar:"チェックアウト(체크아웃)+は何時ですか 구조입니다."},
+{id:128,category:"숙소/호텔",kr:"○○이름으로 예약했어요",jp:"○○の名前で予約しました",kana:"○○のなまえでよやくしました",pronunciation:"○○노 나마에데 요야쿠시마시타",grammar:"で는 수단·기준을 나타내는 조사입니다."},
+{id:129,category:"숙소/호텔",kr:"와이파이 비밀번호가 뭐예요?",jp:"ワイファイのパスワードは何ですか",kana:"ワイファイのパスワードはなんですか",pronunciation:"와이화이노 파스와-도와 난데스카",grammar:"パスワード(비밀번호)+は何ですか 구조입니다."},
+{id:130,category:"숙소/호텔",kr:"방 열쇠를 주세요",jp:"部屋の鍵をください",kana:"へやのかぎをください",pronunciation:"헤야노 카기오 쿠다사이",grammar:"部屋の鍵(방 열쇠)+をください 구조입니다."},
+{id:131,category:"숙소/호텔",kr:"에어컨이 고장났어요",jp:"エアコンが壊れています",kana:"エアコンがこわれています",pronunciation:"에아콘가 코와레테이마스",grammar:"壊れる(고장나다)의 ている형은 상태의 지속을 나타냅니다."},
+{id:132,category:"숙소/호텔",kr:"수건을 더 주세요",jp:"タオルをもっとください",kana:"タオルをもっとください",pronunciation:"타오루오 못토 쿠다사이",grammar:"もっと+명사+ください는 '더 ~주세요'라는 뜻입니다."},
+{id:133,category:"숙소/호텔",kr:"늦은 체크아웃이 가능한가요?",jp:"レイトチェックアウトはできますか",kana:"レイトチェックアウトはできますか",pronunciation:"레이토 체쿠아우토와 데키마스카",grammar:"レイト(late)+チェックアウト+できますか 구조입니다."},
+{id:134,category:"숙소/호텔",kr:"아침 식사는 몇 시부터예요?",jp:"朝ご飯は何時からですか",kana:"あさごはんはなんじからですか",pronunciation:"아사고항와 난지카라데스카",grammar:"から는 시작 시간을 나타내는 조사입니다."},
+{id:135,category:"숙소/호텔",kr:"수영장이 있나요?",jp:"プールはありますか",kana:"プールはありますか",pronunciation:"푸-루와 아리마스카",grammar:"プール(수영장)+はありますか 구조입니다."},
+{id:136,category:"숙소/호텔",kr:"체크인 전에 짐을 맡길 수 있나요?",jp:"チェックイン前に荷物を預けられますか",kana:"チェックインまえににもつをあずけられますか",pronunciation:"체쿠인 마에니 니모츠오 아즈케라레마스카",grammar:"預ける(맡기다)의 가능형 預けられる입니다."},
+{id:137,category:"숙소/호텔",kr:"전망이 좋은 방으로 주세요",jp:"眺めのいい部屋をお願いします",kana:"ながめのいいへやをおねがいします",pronunciation:"나가메노 이- 헤야오 오네가이시마스",grammar:"眺め(전망)+の+いい는 명사를 수식하는 구조입니다."},
+{id:138,category:"숙소/호텔",kr:"금연실로 주세요",jp:"禁煙室をお願いします",kana:"きんえんしつをおねがいします",pronunciation:"킨엔시츠오 오네가이시마스",grammar:"禁煙室(금연실)+をお願いします 구조입니다."},
+{id:139,category:"숙소/호텔",kr:"트윈룸으로 주세요",jp:"ツインルームをお願いします",kana:"ツインルームをおねがいします",pronunciation:"츠인루-무오 오네가이시마스",grammar:"외래어 명사+をお願いします 구조입니다."},
+{id:140,category:"숙소/호텔",kr:"조용한 방으로 주세요",jp:"静かな部屋をお願いします",kana:"しずかなへやをおねがいします",pronunciation:"시즈카나 헤야오 오네가이시마스",grammar:"な형용사가 명사를 수식할 땐 어미에 な가 붙습니다."},
+{id:141,category:"숙소/호텔",kr:"엘리베이터가 있나요?",jp:"エレベーターはありますか",kana:"エレベーターはありますか",pronunciation:"에레베-타-와 아리마스카",grammar:"エレベーター(엘리베이터)+はありますか 구조입니다."},
+{id:142,category:"숙소/호텔",kr:"다리미를 빌릴 수 있나요?",jp:"アイロンを借りられますか",kana:"アイロンをかりられますか",pronunciation:"아이론오 카리라레마스카",grammar:"借りる(빌리다)의 가능형 借りられる입니다."},
+{id:143,category:"숙소/호텔",kr:"세탁 서비스가 있나요?",jp:"ランドリーサービスはありますか",kana:"ランドリーサービスはありますか",pronunciation:"란도리- 사-비스와 아리마스카",grammar:"외래어 명사+はありますか 구조입니다."},
+{id:144,category:"숙소/호텔",kr:"옆 방이 시끄러워요",jp:"隣の部屋がうるさいです",kana:"となりのへやがうるさいです",pronunciation:"토나리노 헤야가 우루사이데스",grammar:"隣の部屋(옆방)+が+うるさい(시끄럽다) 구조입니다."},
+{id:145,category:"숙소/호텔",kr:"TV가 안 켜져요",jp:"テレビがつきません",kana:"テレビがつきません",pronunciation:"테레비가 츠키마센",grammar:"つく(켜지다)의 부정형 つきません입니다."},
+{id:146,category:"숙소/호텔",kr:"뜨거운 물이 안 나와요",jp:"お湯が出ません",kana:"おゆがでません",pronunciation:"오유가 데마센",grammar:"出る(나오다)의 부정형 出ません입니다."},
+{id:147,category:"숙소/호텔",kr:"모닝콜 부탁드려요",jp:"モーニングコールをお願いします",kana:"モーニングコールをおねがいします",pronunciation:"모-닝구코-루오 오네가이시마스",grammar:"외래어 명사+をお願いします 구조입니다."},
+{id:148,category:"숙소/호텔",kr:"공항까지 택시 좀 불러주세요",jp:"空港までタクシーを呼んでください",kana:"くうこうまでタクシーをよんでください",pronunciation:"쿠-코-마데 타쿠시-오 욘데쿠다사이",grammar:"まで(도착점)+タクシーを呼んでください 구조입니다."},
+{id:149,category:"숙소/호텔",kr:"역에서 가까운가요?",jp:"駅から近いですか",kana:"えきからちかいですか",pronunciation:"에키카라 치카이데스카",grammar:"から는 기준점, 近い는 '가깝다'라는 뜻입니다."},
+{id:150,category:"숙소/호텔",kr:"아이를 위한 엑스트라 베드가 있나요?",jp:"子供用のエキストラベッドはありますか",kana:"こどもようのエキストラベッドはありますか",pronunciation:"코도모요-노 에키스토라벳도와 아리마스카",grammar:"子供用(아이용)+の+エキストラベッド 구조입니다."},
+{id:151,category:"숙소/호텔",kr:"열쇠를 잃어버렸어요",jp:"鍵をなくしました",kana:"かぎをなくしました",pronunciation:"카기오 나쿠시마시타",grammar:"なくす(잃어버리다)의 과거 정중형입니다."},
+{id:152,category:"숙소/호텔",kr:"금고는 어떻게 사용하나요?",jp:"金庫はどうやって使いますか",kana:"きんこはどうやってつかいますか",pronunciation:"킨코와 도-얏테 츠카이마스카",grammar:"どうやって는 방법을 묻는 의문 표현입니다."},
+{id:153,category:"숙소/호텔",kr:"체크아웃 시간이 언제예요?",jp:"チェックアウトの時間はいつですか",kana:"チェックアウトのじかんはいつですか",pronunciation:"체쿠아우토노 지칸와 이츠데스카",grammar:"いつ는 시간을 묻는 의문사입니다."},
+{id:154,category:"숙소/호텔",kr:"체크아웃 후에도 짐을 맡길 수 있나요?",jp:"チェックアウトの後も荷物を預けられますか",kana:"チェックアウトのあともにもつをあずけられますか",pronunciation:"체쿠아우토노 아토모 니모츠오 아즈케라레마스카",grammar:"명사+の後も는 '~후에도'라는 뜻입니다."},
+{id:155,category:"숙소/호텔",kr:"머무는 동안 감사했습니다",jp:"滞在中ありがとうございました",kana:"たいざいちゅうありがとうございました",pronunciation:"타이자이츄- 아리가토- 고자이마시타",grammar:"滞在中(체류 중)+ありがとうございました 구조입니다."},
+{id:156,category:"긴급상황",kr:"도와주세요!",jp:"助けてください",kana:"たすけてください",pronunciation:"타스케테 쿠다사이",grammar:"助ける(돕다)의 て형+ください, 위급 시 필수 표현입니다."},
+{id:157,category:"긴급상황",kr:"경찰을 불러주세요",jp:"警察を呼んでください",kana:"けいさつをよんでください",pronunciation:"케-사츠오 욘데쿠다사이",grammar:"警察(경찰)+を呼んでください 구조입니다."},
+{id:158,category:"긴급상황",kr:"구급차를 불러주세요",jp:"救急車を呼んでください",kana:"きゅうきゅうしゃをよんでください",pronunciation:"큐-큐-샤오 욘데쿠다사이",grammar:"救急車(구급차)+を呼んでください 구조입니다."},
+{id:159,category:"긴급상황",kr:"몸이 아파요",jp:"体の具合が悪いです",kana:"からだのぐあいがわるいです",pronunciation:"카라다노 구아이가 와루이데스",grammar:"具合が悪い는 '몸 상태가 나쁘다'는 관용 표현입니다."},
+{id:160,category:"긴급상황",kr:"병원은 어디예요?",jp:"病院はどこですか",kana:"びょういんはどこですか",pronunciation:"뵤-인와 도코데스카",grammar:"病院(병원)+はどこですか 구조입니다."},
+{id:161,category:"긴급상황",kr:"여권을 잃어버렸어요",jp:"パスポートをなくしました",kana:"パスポートをなくしました",pronunciation:"파스포-토오 나쿠시마시타",grammar:"パスポート(여권)+をなくしました 구조입니다."},
+{id:162,category:"긴급상황",kr:"지갑을 잃어버렸어요",jp:"財布をなくしました",kana:"さいふをなくしました",pronunciation:"사이후오 나쿠시마시타",grammar:"財布(지갑)+をなくしました 구조입니다."},
+{id:163,category:"긴급상황",kr:"도둑맞았어요",jp:"泥棒に遭いました",kana:"どろぼうにあいました",pronunciation:"도로보-니 아이마시타",grammar:"~に遭う(당하다)는 나쁜 일을 겪었을 때 쓰는 표현입니다."},
+{id:164,category:"긴급상황",kr:"길을 잃었어요",jp:"道に迷いました",kana:"みちにまよいました",pronunciation:"미치니 마요이마시타",grammar:"道に迷う(길을 잃다)의 과거 정중형입니다."},
+{id:165,category:"긴급상황",kr:"알레르기 반응이 있어요",jp:"アレルギー反応があります",kana:"アレルギーはんのうがあります",pronunciation:"아레루기- 한노-가 아리마스",grammar:"アレルギー反応(알레르기 반응)+があります 구조입니다."},
+{id:166,category:"긴급상황",kr:"컨디션이 안 좋아요",jp:"体調が悪いです",kana:"たいちょうがわるいです",pronunciation:"타이쵸-가 와루이데스",grammar:"体調が悪い는 '몸 상태가 안 좋다'는 관용 표현입니다."},
+{id:167,category:"긴급상황",kr:"근처에 약국이 있나요?",jp:"近くに薬局はありますか",kana:"ちかくにやっきょくはありますか",pronunciation:"치카쿠니 약쿄쿠와 아리마스카",grammar:"薬局(약국)+はありますか 구조입니다."},
+{id:168,category:"긴급상황",kr:"사고가 났어요",jp:"事故に遭いました",kana:"じこにあいました",pronunciation:"지코니 아이마시타",grammar:"事故に遭う(사고를 당하다)의 과거 정중형입니다."},
+{id:169,category:"긴급상황",kr:"불이야!",jp:"火事だ!",kana:"かじだ!",pronunciation:"카지다",grammar:"火事(화재)+だ는 긴급 상황에 쓰는 짧은 외침입니다."},
+{id:170,category:"긴급상황",kr:"대사관에 연락해 주세요",jp:"大使館に連絡してください",kana:"たいしかんにれんらくしてください",pronunciation:"타이시칸니 렌라쿠시테 쿠다사이",grammar:"連絡する(연락하다)의 て형+ください입니다."},
+{id:171,category:"긴급상황",kr:"제 짐이 없어졌어요",jp:"荷物がなくなりました",kana:"にもつがなくなりました",pronunciation:"니모츠가 나쿠나리마시타",grammar:"なくなる(없어지다)는 자동사입니다."},
+{id:172,category:"긴급상황",kr:"카드를 분실해서 정지시키고 싶어요",jp:"カードを紛失したので止めたいです",kana:"カードをふんしつしたのでとめたいです",pronunciation:"카-도오 훈시츠시타노데 토메타이데스",grammar:"ので는 이유를 나타내는 접속조사입니다."},
+{id:173,category:"긴급상황",kr:"한국어를 할 줄 아는 사람 있나요?",jp:"韓国語を話せる人はいますか",kana:"かんこくごをはなせるひとはいますか",pronunciation:"캉코쿠고오 하나세루 히토와 이마스카",grammar:"話せる는 話す(말하다)의 가능형입니다."},
+{id:174,category:"긴급상황",kr:"이 앱으로 번역할게요, 이해되시나요?",jp:"このアプリで翻訳します、分かりますか",kana:"このアプリでほんやくします、わかりますか",pronunciation:"코노 아프리데 혼야쿠시마스 와카리마스카",grammar:"で는 수단을 나타내는 조사입니다."},
+{id:175,category:"긴급상황",kr:"비상구는 어디예요?",jp:"非常口はどこですか",kana:"ひじょうぐちはどこですか",pronunciation:"히죠-구치와 도코데스카",grammar:"非常口(비상구)+はどこですか 구조입니다."},
+{id:176,category:"관광/기타",kr:"관광안내소는 어디예요?",jp:"観光案内所はどこですか",kana:"かんこうあんないじょはどこですか",pronunciation:"캉코- 안나이죠와 도코데스카",grammar:"観光案内所(관광안내소)+はどこですか 구조입니다."},
+{id:177,category:"관광/기타",kr:"사진 좀 찍어주시겠어요?",jp:"写真を撮ってもらえますか",kana:"しゃしんをとってもらえますか",pronunciation:"샤신오 톳테 모라에마스카",grammar:"て형+もらえますか는 상대에게 부탁하는 정중 표현입니다."},
+{id:178,category:"관광/기타",kr:"한 장 더 찍어주세요",jp:"もう一枚撮ってください",kana:"もういちまいとってください",pronunciation:"모- 이치마이 톳테 쿠다사이",grammar:"もう一枚(한 장 더)+撮ってください 구조입니다."},
+{id:179,category:"관광/기타",kr:"몇 시에 여나요?",jp:"何時に開きますか",kana:"なんじにあきますか",pronunciation:"난지니 아키마스카",grammar:"開く(열리다)는 자동사입니다."},
+{id:180,category:"관광/기타",kr:"입장료는 얼마예요?",jp:"入場料はいくらですか",kana:"にゅうじょうりょうはいくらですか",pronunciation:"뉴-죠-료-와 이쿠라데스카",grammar:"入場料(입장료)+はいくらですか 구조입니다."},
+{id:181,category:"관광/기타",kr:"학생 할인이 있나요?",jp:"学生割引はありますか",kana:"がくせいわりびきはありますか",pronunciation:"각세- 와리비키와 아리마스카",grammar:"学生割引(학생 할인)+はありますか 구조입니다."},
+{id:182,category:"관광/기타",kr:"코인 로커는 있나요?",jp:"コインロッカーはありますか",kana:"コインロッカーはありますか",pronunciation:"코인롯카-와 아리마스카",grammar:"교통편에서 배운 명사에 존재 표현 あります를 붙인 형태입니다."},
+{id:183,category:"관광/기타",kr:"기념품 가게는 어디예요?",jp:"お土産屋はどこですか",kana:"おみやげやはどこですか",pronunciation:"오미야게야와 도코데스카",grammar:"お土産屋(기념품 가게)+はどこですか 구조입니다."},
+{id:184,category:"관광/기타",kr:"여기서 가장 좋은 전망 포인트는 어디예요?",jp:"ここで一番いい眺めはどこですか",kana:"ここでいちばんいいながめはどこですか",pronunciation:"코코데 이치반 이- 나가메와 도코데스카",grammar:"一番(가장)+い형용사는 최상급을 나타냅니다."},
+{id:185,category:"관광/기타",kr:"근처에 추천할 만한 곳이 있나요?",jp:"近くにおすすめの場所はありますか",kana:"ちかくにおすすめのばしょはありますか",pronunciation:"치카쿠니 오스스메노 바쇼와 아리마스카",grammar:"おすすめの場所(추천 장소)+はありますか 구조입니다."},
+{id:186,category:"관광/기타",kr:"축제는 언제 열려요?",jp:"お祭りはいつありますか",kana:"おまつりはいつありますか",pronunciation:"오마츠리와 이츠 아리마스카",grammar:"お祭り(축제)+はいつありますか 구조입니다."},
+{id:187,category:"관광/기타",kr:"여기서 휴대폰을 써도 되나요?",jp:"ここでスマホを使ってもいいですか",kana:"ここでスマホをつかってもいいですか",pronunciation:"코코데 스마호오 츠캇테모 이-데스카",grammar:"て형+もいいですか는 허가를 구하는 표현입니다."},
+{id:188,category:"관광/기타",kr:"여기 무료 와이파이 있나요?",jp:"ここに無料のワイファイはありますか",kana:"ここにむりょうのワイファイはありますか",pronunciation:"코코니 무료-노 와이화이와 아리마스카",grammar:"無料(무료)+の+ワイファイ 구조입니다."},
+{id:189,category:"관광/기타",kr:"우산을 빌릴 수 있나요?",jp:"傘を借りられますか",kana:"かさをかりられますか",pronunciation:"카사오 카리라레마스카",grammar:"借りる(빌리다)의 가능형 借りられる입니다."},
+{id:190,category:"관광/기타",kr:"오늘 날씨는 어때요?",jp:"今日の天気はどうですか",kana:"きょうのてんきはどうですか",pronunciation:"쿄-노 텐키와 도-데스카",grammar:"どうですか는 상태를 묻는 정중 표현입니다."},
+{id:191,category:"관광/기타",kr:"여기서 지켜야 할 규칙이 있나요?",jp:"ここで守るべきルールはありますか",kana:"ここでまもるべきルールはありますか",pronunciation:"코코데 마모루베키 루-루와 아리마스카",grammar:"동사기본형+べき는 '~해야 할'이라는 뜻입니다."},
+{id:192,category:"관광/기타",kr:"이거 만져봐도 되나요?",jp:"これを触ってもいいですか",kana:"これをさわってもいいですか",pronunciation:"코레오 사왓테모 이-데스카",grammar:"触る(만지다)의 て형+もいいですか 구조입니다."},
+{id:193,category:"관광/기타",kr:"촬영금지라는 뜻이에요?",jp:"撮影禁止という意味ですか",kana:"さつえいきんしといういみですか",pronunciation:"사츠에- 킨시토 이우 이미데스카",grammar:"という意味ですか는 '~라는 뜻인가요'라는 뜻입니다."},
+{id:194,category:"관광/기타",kr:"환전은 어디서 하나요?",jp:"両替はどこでできますか",kana:"りょうがえはどこでできますか",pronunciation:"료-가에와 도코데 데키마스카",grammar:"両替(환전)+はどこでできますか 구조입니다."},
+{id:195,category:"관광/기타",kr:"이 건물은 무엇인가요?",jp:"この建物は何ですか",kana:"このたてものはなんですか",pronunciation:"코노 타테모노와 난데스카",grammar:"この建物(이 건물)+は何ですか 구조입니다."},
+{id:196,category:"관광/기타",kr:"이거 일본어로 뭐라고 해요?",jp:"これは日本語で何と言いますか",kana:"これはにほんごでなんといいますか",pronunciation:"코레와 니혼고데 난토 이이마스카",grammar:"何と言いますか는 명칭을 묻는 표현입니다."},
+{id:197,category:"관광/기타",kr:"오늘 날씨가 좋네요",jp:"今日はいい天気ですね",kana:"きょうはいいてんきですね",pronunciation:"쿄-와 이- 텐키데스네",grammar:"문장 끝의 ね는 동의·공감을 구하는 종조사입니다."},
+{id:198,category:"관광/기타",kr:"저는 일본을 좋아해요",jp:"私は日本が好きです",kana:"わたしはにほんがすきです",pronunciation:"와타시와 니혼가 스키데스",grammar:"好きです는 な형용사로 취급되는 대표적인 표현입니다."},
+{id:199,category:"관광/기타",kr:"일본은 이번이 처음이에요",jp:"日本は今回が初めてです",kana:"にほんはこんかいがはじめてです",pronunciation:"니혼와 콘카이가 하지메테데스",grammar:"今回が初めて는 '이번이 처음'이라는 표현입니다."},
+{id:200,category:"관광/기타",kr:"여러 가지로 감사했습니다",jp:"いろいろとありがとうございました",kana:"いろいろとありがとうございました",pronunciation:"이로이로토 아리가토- 고자이마시타",grammar:"いろいろと는 '여러 가지로'라는 부사로, 작별 인사에 자주 쓰입니다."}
+];
+
+/* ===================== 한자 훈/음 사전 (214자, 일본어+한국 한자음) ===================== */
+var KANJI_INFO = {
+"一":{on:"イチ・イツ",kun:"ひと(つ)",mean:"하나",krKun:"하나",krEum:"일"},
+"丈":{on:"ジョウ",kun:"たけ",mean:"길이(大丈夫=괜찮다)",krKun:"어른",krEum:"장"},
+"下":{on:"カ・ゲ",kun:"した・さ(がる)",mean:"아래",krKun:"아래",krEum:"하"},
+"両":{on:"リョウ",kun:"-",mean:"양쪽/량(단위)",krKun:"두",krEum:"량"},
+"中":{on:"チュウ",kun:"なか",mean:"가운데/중",krKun:"가운데",krEum:"중"},
+"乗":{on:"ジョウ",kun:"の(る)",mean:"타다",krKun:"탈",krEum:"승"},
+"乾":{on:"カン",kun:"かわ(く)",mean:"마르다(乾杯=건배)",krKun:"마를",krEum:"건"},
+"予":{on:"ヨ",kun:"あらかじ(め)",mean:"미리",krKun:"미리",krEum:"여"},
+"事":{on:"ジ",kun:"こと",mean:"일",krKun:"일",krEum:"사"},
+"二":{on:"ニ",kun:"ふた(つ)",mean:"둘",krKun:"두",krEum:"이"},
+"交":{on:"コウ",kun:"ま(じる)",mean:"사귀다/교환",krKun:"사귈",krEum:"교"},
+"人":{on:"ジン・ニン",kun:"ひと",mean:"사람",krKun:"사람",krEum:"인"},
+"今":{on:"コン",kun:"いま",mean:"지금",krKun:"이제",krEum:"금"},
+"他":{on:"タ",kun:"ほか",mean:"다른",krKun:"다를",krEum:"타"},
+"休":{on:"キュウ",kun:"やす(む)",mean:"쉬다",krKun:"쉴",krEum:"휴"},
+"会":{on:"カイ",kun:"あ(う)",mean:"만나다",krKun:"모일",krEum:"회"},
+"体":{on:"タイ",kun:"からだ",mean:"몸",krKun:"몸",krEum:"체"},
+"何":{on:"カ",kun:"なに・なん",mean:"무엇",krKun:"어찌",krEum:"하"},
+"作":{on:"サク",kun:"つく(る)",mean:"만들다",krKun:"지을",krEum:"작"},
+"使":{on:"シ",kun:"つか(う)",mean:"사용하다",krKun:"부릴",krEum:"사"},
+"供":{on:"キョウ",kun:"そな(える)",mean:"제공하다(子供=아이)",krKun:"이바지할",krEum:"공"},
+"借":{on:"シャク",kun:"か(りる)",mean:"빌리다",krKun:"빌릴",krEum:"차"},
+"停":{on:"テイ",kun:"-",mean:"멈추다(停車)",krKun:"머무를",krEum:"정"},
+"傘":{on:"サン",kun:"かさ",mean:"우산",krKun:"우산",krEum:"산"},
+"光":{on:"コウ",kun:"ひかり",mean:"빛(観光=관광)",krKun:"빛",krEum:"광"},
+"免":{on:"メン",kun:"まぬか(れる)",mean:"면하다(免税)",krKun:"면할",krEum:"면"},
+"入":{on:"ニュウ",kun:"い(る)・はい(る)",mean:"들어가다",krKun:"들",krEum:"입"},
+"具":{on:"グ",kun:"-",mean:"도구",krKun:"갖출",krEum:"구"},
+"内":{on:"ナイ",kun:"うち",mean:"안",krKun:"안",krEum:"내"},
+"写":{on:"シャ",kun:"うつ(す)",mean:"베끼다/찍다(写真)",krKun:"베낄",krEum:"사"},
+"冷":{on:"レイ",kun:"つめ(たい)",mean:"차갑다",krKun:"찰",krEum:"랭"},
+"出":{on:"シュツ",kun:"で(る)・だ(す)",mean:"나가다",krKun:"날",krEum:"출"},
+"分":{on:"ブン・フン",kun:"わ(ける)",mean:"나누다/분(시간)",krKun:"나눌",krEum:"분"},
+"切":{on:"セツ",kun:"き(る)",mean:"자르다(切符=표)",krKun:"끊을",krEum:"절"},
+"初":{on:"ショ",kun:"はじ(めて)",mean:"처음",krKun:"처음",krEum:"초"},
+"別":{on:"ベツ",kun:"わか(れる)",mean:"다르다/헤어지다",krKun:"다를",krEum:"별"},
+"前":{on:"ゼン",kun:"まえ",mean:"앞",krKun:"앞",krEum:"전"},
+"割":{on:"カツ",kun:"わ(る)",mean:"나누다/할인",krKun:"벨",krEum:"할"},
+"助":{on:"ジョ",kun:"たす(ける)",mean:"돕다",krKun:"도울",krEum:"조"},
+"勘":{on:"カン",kun:"-",mean:"셈/직감(割り勘)",krKun:"헤아릴",krEum:"감"},
+"包":{on:"ホウ",kun:"つつ(む)",mean:"싸다/포장",krKun:"쌀",krEum:"포"},
+"反":{on:"ハン",kun:"そ(る)",mean:"반대",krKun:"돌이킬",krEum:"반"},
+"口":{on:"コウ",kun:"くち",mean:"입/입구",krKun:"입",krEum:"구"},
+"右":{on:"ウ",kun:"みぎ",mean:"오른쪽",krKun:"오른",krEum:"우"},
+"各":{on:"カク",kun:"おのおの",mean:"각각",krKun:"각각",krEum:"각"},
+"合":{on:"ゴウ",kun:"あ(う)",mean:"맞다/합치다",krKun:"합할",krEum:"합"},
+"名":{on:"メイ",kun:"な",mean:"이름",krKun:"이름",krEum:"명"},
+"味":{on:"ミ",kun:"あじ",mean:"맛",krKun:"맛",krEum:"미"},
+"呼":{on:"コ",kun:"よ(ぶ)",mean:"부르다",krKun:"부를",krEum:"호"},
+"品":{on:"ヒン",kun:"しな",mean:"물건",krKun:"물건",krEum:"품"},
+"喫":{on:"キツ",kun:"-",mean:"마시다/피우다(喫煙)",krKun:"마실",krEum:"끽"},
+"営":{on:"エイ",kun:"いとな(む)",mean:"영업하다",krKun:"경영할",krEum:"영"},
+"回":{on:"カイ",kun:"まわ(る)",mean:"돌다/회(횟수)",krKun:"돌아올",krEum:"회"},
+"図":{on:"ズ",kun:"はか(る)",mean:"그림/도표",krKun:"그림",krEum:"도"},
+"国":{on:"コク",kun:"くに",mean:"나라",krKun:"나라",krEum:"국"},
+"土":{on:"ド",kun:"つち",mean:"흙(お土産)",krKun:"흙",krEum:"토"},
+"在":{on:"ザイ",kun:"あ(る)",mean:"있다/재류",krKun:"있을",krEum:"재"},
+"地":{on:"チ",kun:"-",mean:"땅",krKun:"땅",krEum:"지"},
+"場":{on:"ジョウ",kun:"ば",mean:"장소",krKun:"마당",krEum:"장"},
+"壊":{on:"カイ",kun:"こわ(れる)",mean:"고장나다/부서지다",krKun:"무너질",krEum:"괴"},
+"外":{on:"ガイ",kun:"そと",mean:"밖(外国人)",krKun:"바깥",krEum:"외"},
+"大":{on:"ダイ",kun:"おお(きい)",mean:"크다",krKun:"큰",krEum:"대"},
+"天":{on:"テン",kun:"あめ",mean:"하늘(天気=날씨)",krKun:"하늘",krEum:"천"},
+"夫":{on:"フ",kun:"おっと",mean:"남편(大丈夫)",krKun:"지아비",krEum:"부"},
+"失":{on:"シツ",kun:"うしな(う)",mean:"잃다(失礼)",krKun:"잃을",krEum:"실"},
+"好":{on:"コウ",kun:"す(き)",mean:"좋아하다",krKun:"좋을",krEum:"호"},
+"子":{on:"シ",kun:"こ",mean:"아이",krKun:"아들",krEum:"자"},
+"学":{on:"ガク",kun:"まな(ぶ)",mean:"배우다(学生)",krKun:"배울",krEum:"학"},
+"守":{on:"シュ",kun:"まも(る)",mean:"지키다",krKun:"지킬",krEum:"수"},
+"安":{on:"アン",kun:"やす(い)",mean:"편안하다/싸다",krKun:"편안",krEum:"안"},
+"室":{on:"シツ",kun:"むろ",mean:"방(試着室)",krKun:"집",krEum:"실"},
+"察":{on:"サツ",kun:"-",mean:"살피다(警察)",krKun:"살필",krEum:"찰"},
+"小":{on:"ショウ",kun:"ちい(さい)",mean:"작다",krKun:"작을",krEum:"소"},
+"局":{on:"キョク",kun:"-",mean:"국/부서(薬局)",krKun:"판",krEum:"국"},
+"屋":{on:"オク",kun:"や",mean:"가게/집",krKun:"집",krEum:"옥"},
+"左":{on:"サ",kun:"ひだり",mean:"왼쪽",krKun:"왼",krEum:"좌"},
+"布":{on:"フ",kun:"ぬの",mean:"천(財布)",krKun:"베",krEum:"포"},
+"席":{on:"セキ",kun:"-",mean:"자리",krKun:"자리",krEum:"석"},
+"帰":{on:"キ",kun:"かえ(る)",mean:"돌아가다",krKun:"돌아갈",krEum:"귀"},
+"常":{on:"ジョウ",kun:"つね",mean:"항상(非常口)",krKun:"항상",krEum:"상"},
+"店":{on:"テン",kun:"みせ",mean:"가게",krKun:"가게",krEum:"점"},
+"度":{on:"ド",kun:"たび",mean:"정도/번(今度)",krKun:"법도",krEum:"도"},
+"庫":{on:"コ",kun:"-",mean:"창고(金庫)",krKun:"곳집",krEum:"고"},
+"建":{on:"ケン",kun:"た(てる)",mean:"짓다(建物)",krKun:"세울",krEum:"건"},
+"引":{on:"イン",kun:"ひ(く)",mean:"끌다(割引)",krKun:"끌",krEum:"인"},
+"影":{on:"エイ",kun:"かげ",mean:"그림자(撮影)",krKun:"그림자",krEum:"영"},
+"往":{on:"オウ",kun:"-",mean:"가다(往復)",krKun:"갈",krEum:"왕"},
+"待":{on:"タイ",kun:"ま(つ)",mean:"기다리다",krKun:"기다릴",krEum:"대"},
+"後":{on:"ゴ",kun:"あと",mean:"뒤/후",krKun:"뒤",krEum:"후"},
+"復":{on:"フク",kun:"-",mean:"회복/왕복",krKun:"회복할",krEum:"복"},
+"必":{on:"ヒツ",kun:"かなら(ず)",mean:"반드시(必要)",krKun:"반드시",krEum:"필"},
+"応":{on:"オウ",kun:"こた(える)",mean:"응하다",krKun:"응할",krEum:"응"},
+"急":{on:"キュウ",kun:"いそ(ぐ)",mean:"급하다",krKun:"급할",krEum:"급"},
+"悪":{on:"アク",kun:"わる(い)",mean:"나쁘다",krKun:"악할",krEum:"악"},
+"意":{on:"イ",kun:"-",mean:"뜻(意味)",krKun:"뜻",krEum:"의"},
+"所":{on:"ショ",kun:"ところ",mean:"장소",krKun:"바",krEum:"소"},
+"手":{on:"シュ",kun:"て",mean:"손",krKun:"손",krEum:"수"},
+"払":{on:"フツ",kun:"はら(う)",mean:"지불하다",krKun:"떨칠",krEum:"불"},
+"抜":{on:"バツ",kun:"ぬ(く)",mean:"빼다",krKun:"뺄",krEum:"발"},
+"持":{on:"ジ",kun:"も(つ)",mean:"가지다",krKun:"가질",krEum:"지"},
+"換":{on:"カン",kun:"か(える)",mean:"바꾸다(両替)",krKun:"바꿀",krEum:"환"},
+"撮":{on:"サツ",kun:"と(る)",mean:"찍다(撮影)",krKun:"찍을",krEum:"촬"},
+"支":{on:"シ",kun:"ささ(える)",mean:"지불하다/지지하다",krKun:"지탱할",krEum:"지"},
+"故":{on:"コ",kun:"ゆえ",mean:"사고/까닭(事故)",krKun:"연고",krEum:"고"},
+"救":{on:"キュウ",kun:"すく(う)",mean:"구하다(救急車)",krKun:"구원할",krEum:"구"},
+"料":{on:"リョウ",kun:"-",mean:"요금/재료",krKun:"헤아릴",krEum:"료"},
+"日":{on:"ニチ",kun:"ひ",mean:"날/해",krKun:"날",krEum:"일"},
+"時":{on:"ジ",kun:"とき",mean:"때/시",krKun:"때",krEum:"시"},
+"曲":{on:"キョク",kun:"ま(がる)",mean:"굽다(各駅停車)",krKun:"굽을",krEum:"곡"},
+"替":{on:"タイ",kun:"か(える)",mean:"바꾸다(両替)",krKun:"바꿀",krEum:"체"},
+"朝":{on:"チョウ",kun:"あさ",mean:"아침",krKun:"아침",krEum:"조"},
+"本":{on:"ホン",kun:"もと",mean:"책/근본",krKun:"근본",krEum:"본"},
+"杯":{on:"ハイ",kun:"-",mean:"잔(단위, 一杯)",krKun:"잔",krEum:"배"},
+"枚":{on:"マイ",kun:"-",mean:"장(단위, 종이류)",krKun:"낱",krEum:"매"},
+"案":{on:"アン",kun:"-",mean:"안내/계획(案内所)",krKun:"책상",krEum:"안"},
+"棒":{on:"ボウ",kun:"-",mean:"막대(泥棒=도둑)",krKun:"막대",krEum:"봉"},
+"業":{on:"ギョウ",kun:"わざ",mean:"업/일(営業)",krKun:"업",krEum:"업"},
+"止":{on:"シ",kun:"と(まる)",mean:"멈추다",krKun:"그칠",krEum:"지"},
+"気":{on:"キ",kun:"-",mean:"기운/느낌(天気)",krKun:"기운",krEum:"기"},
+"水":{on:"スイ",kun:"みず",mean:"물",krKun:"물",krEum:"수"},
+"氷":{on:"ヒョウ",kun:"こおり",mean:"얼음",krKun:"얼음",krEum:"빙"},
+"泥":{on:"デイ",kun:"どろ",mean:"진흙(泥棒=도둑)",krKun:"진흙",krEum:"니"},
+"混":{on:"コン",kun:"ま(じる)",mean:"섞이다/붐비다",krKun:"섞을",krEum:"혼"},
+"温":{on:"オン",kun:"あたた(かい)",mean:"따뜻하다",krKun:"따뜻할",krEum:"온"},
+"港":{on:"コウ",kun:"みなと",mean:"항구(空港)",krKun:"항구",krEum:"항"},
+"湯":{on:"トウ",kun:"ゆ",mean:"뜨거운 물",krKun:"끓일",krEum:"탕"},
+"滞":{on:"タイ",kun:"とどこお(る)",mean:"머무르다/체류",krKun:"막힐",krEum:"체"},
+"火":{on:"カ",kun:"ひ",mean:"불(火事=화재)",krKun:"불",krEum:"화"},
+"無":{on:"ム",kun:"な(い)",mean:"없다(無料)",krKun:"없을",krEum:"무"},
+"煙":{on:"エン",kun:"けむり",mean:"연기/담배(禁煙)",krKun:"연기",krEum:"연"},
+"片":{on:"ヘン",kun:"かた",mean:"조각/편(片道)",krKun:"조각",krEum:"편"},
+"物":{on:"ブツ",kun:"もの",mean:"물건(荷物)",krKun:"물건",krEum:"물"},
+"現":{on:"ゲン",kun:"あらわ(れる)",mean:"나타나다/현재(現金)",krKun:"나타날",krEum:"현"},
+"生":{on:"セイ",kun:"い(きる)",mean:"살다/날것(学生)",krKun:"날",krEum:"생"},
+"産":{on:"サン",kun:"う(む)",mean:"낳다/생산(お土産)",krKun:"낳을",krEum:"산"},
+"用":{on:"ヨウ",kun:"もち(いる)",mean:"사용/용도",krKun:"쓸",krEum:"용"},
+"申":{on:"シン",kun:"もう(す)",mean:"말씀드리다",krKun:"펼",krEum:"신"},
+"番":{on:"バン",kun:"-",mean:"순번(番線)",krKun:"차례",krEum:"번"},
+"病":{on:"ビョウ",kun:"やまい",mean:"병(病院)",krKun:"병",krEum:"병"},
+"真":{on:"シン",kun:"ま",mean:"참/진짜(写真)",krKun:"참",krEum:"진"},
+"眺":{on:"チョウ",kun:"なが(める)",mean:"바라보다/전망",krKun:"바라볼",krEum:"조"},
+"着":{on:"チャク",kun:"き(る)・つ(く)",mean:"입다/도착하다",krKun:"붙을",krEum:"착"},
+"礼":{on:"レイ",kun:"-",mean:"예의/감사(失礼)",krKun:"예도",krEum:"례"},
+"祭":{on:"サイ",kun:"まつ(り)",mean:"축제",krKun:"제사",krEum:"제"},
+"禁":{on:"キン",kun:"-",mean:"금하다",krKun:"금할",krEum:"금"},
+"私":{on:"シ",kun:"わたし",mean:"나",krKun:"사사",krEum:"사"},
+"税":{on:"ゼイ",kun:"-",mean:"세금(免税)",krKun:"세금",krEum:"세"},
+"空":{on:"クウ",kun:"そら",mean:"하늘/비다(空港)",krKun:"빌",krEum:"공"},
+"符":{on:"フ",kun:"-",mean:"표/부호(切符)",krKun:"부호",krEum:"부"},
+"箸":{on:"チョ",kun:"はし",mean:"젓가락",krKun:"젓가락",krEum:"저"},
+"約":{on:"ヤク",kun:"-",mean:"약속/대략(予約)",krKun:"맺을",krEum:"약"},
+"紛":{on:"フン",kun:"まぎ(れる)",mean:"헷갈리다/분실",krKun:"어지러울",krEum:"분"},
+"終":{on:"シュウ",kun:"お(わる)",mean:"끝나다(終電)",krKun:"마칠",krEum:"종"},
+"絡":{on:"ラク",kun:"から(む)",mean:"얽히다/연락",krKun:"이을",krEum:"락"},
+"線":{on:"セン",kun:"-",mean:"선(路線図)",krKun:"줄",krEum:"선"},
+"翻":{on:"ホン",kun:"ひるがえ(る)",mean:"뒤집다/번역",krKun:"날",krEum:"번"},
+"肉":{on:"ニク",kun:"-",mean:"고기",krKun:"고기",krEum:"육"},
+"色":{on:"ショク",kun:"いろ",mean:"색",krKun:"빛",krEum:"색"},
+"英":{on:"エイ",kun:"-",mean:"영국/뛰어나다(英語)",krKun:"꽃부리",krEum:"영"},
+"茶":{on:"サ・チャ",kun:"-",mean:"차(お茶)",krKun:"차",krEum:"다"},
+"荷":{on:"カ",kun:"に",mean:"짐(荷物)",krKun:"멜",krEum:"하"},
+"薬":{on:"ヤク",kun:"くすり",mean:"약(薬局)",krKun:"약",krEum:"약"},
+"行":{on:"コウ",kun:"い(く)・おこな(う)",mean:"가다/행하다",krKun:"다닐",krEum:"행"},
+"袋":{on:"タイ",kun:"ふくろ",mean:"봉투",krKun:"자루",krEum:"대"},
+"要":{on:"ヨウ",kun:"い(る)",mean:"필요하다",krKun:"요긴할",krEum:"요"},
+"見":{on:"ケン",kun:"み(る)",mean:"보다",krKun:"볼",krEum:"견"},
+"観":{on:"カン",kun:"-",mean:"보다/관광",krKun:"볼",krEum:"관"},
+"触":{on:"ショク",kun:"さわ(る)",mean:"만지다",krKun:"닿을",krEum:"촉"},
+"言":{on:"ゲン",kun:"い(う)",mean:"말하다",krKun:"말씀",krEum:"언"},
+"計":{on:"ケイ",kun:"はか(る)",mean:"계산하다(会計)",krKun:"셈",krEum:"계"},
+"訳":{on:"ヤク",kun:"わけ",mean:"번역/이유(翻訳)",krKun:"번역할",krEum:"역"},
+"試":{on:"シ",kun:"こころ(みる)",mean:"시험하다(試着)",krKun:"시험",krEum:"시"},
+"話":{on:"ワ",kun:"はな(す)",mean:"이야기하다",krKun:"말씀",krEum:"화"},
+"語":{on:"ゴ",kun:"かた(る)",mean:"말/언어",krKun:"말씀",krEum:"어"},
+"調":{on:"チョウ",kun:"しら(べる)",mean:"조사하다",krKun:"고를",krEum:"조"},
+"警":{on:"ケイ",kun:"-",mean:"경계하다(警察)",krKun:"경계할",krEum:"경"},
+"財":{on:"ザイ",kun:"-",mean:"재물(財布)",krKun:"재물",krEum:"재"},
+"買":{on:"バイ",kun:"か(う)",mean:"사다",krKun:"살",krEum:"매"},
+"路":{on:"ロ",kun:"じ",mean:"길(路線図)",krKun:"길",krEum:"로"},
+"車":{on:"シャ",kun:"くるま",mean:"차/수레",krKun:"수레",krEum:"차"},
+"辛":{on:"シン",kun:"から(い)",mean:"맵다",krKun:"매울",krEum:"신"},
+"近":{on:"キン",kun:"ちか(い)",mean:"가깝다",krKun:"가까울",krEum:"근"},
+"返":{on:"ヘン",kun:"かえ(す)",mean:"돌려주다(返品)",krKun:"돌이킬",krEum:"반"},
+"迷":{on:"メイ",kun:"まよ(う)",mean:"헤매다",krKun:"미혹할",krEum:"미"},
+"連":{on:"レン",kun:"つ(れる)",mean:"데리다/잇다(連絡)",krKun:"잇닿을",krEum:"련"},
+"道":{on:"ドウ",kun:"みち",mean:"길",krKun:"길",krEum:"도"},
+"違":{on:"イ",kun:"ちが(う)",mean:"다르다",krKun:"어긋날",krEum:"위"},
+"遠":{on:"エン",kun:"とお(い)",mean:"멀다",krKun:"멀",krEum:"원"},
+"遭":{on:"ソウ",kun:"あ(う)",mean:"만나다(불행한 일)",krKun:"만날",krEum:"조"},
+"部":{on:"ブ",kun:"-",mean:"부분/부서(部屋)",krKun:"떼",krEum:"부"},
+"酒":{on:"シュ",kun:"さけ",mean:"술",krKun:"술",krEum:"주"},
+"金":{on:"キン",kun:"かね",mean:"돈/금",krKun:"쇠",krEum:"금"},
+"鉄":{on:"テツ",kun:"-",mean:"철(地下鉄)",krKun:"쇠",krEum:"철"},
+"鍵":{on:"ケン",kun:"かぎ",mean:"열쇠",krKun:"열쇠",krEum:"건"},
+"閉":{on:"ヘイ",kun:"し(まる)",mean:"닫다",krKun:"닫을",krEum:"폐"},
+"開":{on:"カイ",kun:"あ(く)",mean:"열다",krKun:"열",krEum:"개"},
+"間":{on:"カン",kun:"あいだ",mean:"사이(時間)",krKun:"사이",krEum:"간"},
+"降":{on:"コウ",kun:"お(りる)",mean:"내리다",krKun:"내릴",krEum:"강"},
+"院":{on:"イン",kun:"-",mean:"원(기관, 病院)",krKun:"집",krEum:"원"},
+"隣":{on:"リン",kun:"となり",mean:"이웃/옆",krKun:"이웃",krEum:"린"},
+"電":{on:"デン",kun:"-",mean:"전기(電車)",krKun:"번개",krEum:"전"},
+"静":{on:"セイ",kun:"しず(か)",mean:"조용하다",krKun:"고요할",krEum:"정"},
+"非":{on:"ヒ",kun:"-",mean:"아니다(非常口)",krKun:"아닐",krEum:"비"},
+"韓":{on:"カン",kun:"-",mean:"한국",krKun:"나라이름",krEum:"한"},
+"預":{on:"ヨ",kun:"あず(ける)",mean:"맡기다",krKun:"맡길",krEum:"예"},
+"願":{on:"ガン",kun:"ねが(う)",mean:"바라다(お願い)",krKun:"원할",krEum:"원"},
+"飯":{on:"ハン",kun:"めし",mean:"밥(ご飯)",krKun:"밥",krEum:"반"},
+"館":{on:"カン",kun:"-",mean:"건물/관(大使館)",krKun:"집",krEum:"관"},
+"駅":{on:"エキ",kun:"-",mean:"역",krKun:"역",krEum:"역"},
+"高":{on:"コウ",kun:"たか(い)",mean:"높다/비싸다",krKun:"높을",krEum:"고"},
+"親":{on:"シン",kun:"おや・した(しい)",mean:"친하다/부모(親切=친절)",krKun:"친할",krEum:"친"},
+"書":{on:"ショ",kun:"か(く)",mean:"쓰다",krKun:"글",krEum:"서"},
+"食":{on:"ショク",kun:"た(べる)・く(う)",mean:"먹다",krKun:"밥/먹을",krEum:"식"},
+"来":{on:"ライ",kun:"く(る)",mean:"오다",krKun:"올",krEum:"래"}
+};
+
+/* ===================== 문법 활용 연습 데이터 (123개) ===================== */
+var CONJ_DATA = [
+{id:1,cat:"명사",base:"学生 (がくせい) 학생",form:"기본형 (~이다)",kr:"학생이다",jp:"学生だ",kana:"がくせいだ",pron:"가쿠세-다",tip:"명사 뒤에 だ를 붙이면 반말 기본형이 됩니다."},
+{id:2,cat:"명사",base:"学生 (がくせい) 학생",form:"과거형 (~이었다)",kr:"학생이었다",jp:"学生だった",kana:"がくせいだった",pron:"가쿠세-닷타",tip:"だ → だった 로 바꿔 과거를 나타냅니다."},
+{id:3,cat:"명사",base:"学生 (がくせい) 학생",form:"부정형 (~이 아니다)",kr:"학생이 아니다",jp:"学生じゃない",kana:"がくせいじゃない",pron:"가쿠세-쟈나이",tip:"だ → じゃない. 격식체는 ではない 입니다."},
+{id:4,cat:"명사",base:"学生 (がくせい) 학생",form:"과거 부정형 (~이 아니었다)",kr:"학생이 아니었다",jp:"学生じゃなかった",kana:"がくせいじゃなかった",pron:"가쿠세-쟈나캇타",tip:"じゃない 의 い 가 かった 로 바뀝니다 (い형용사와 같은 방식)."},
+{id:5,cat:"명사",base:"学生 (がくせい) 학생",form:"연결형 (~이고, ~이라서)",kr:"학생이고 / 학생이라서",jp:"学生で",kana:"がくせいで",pron:"가쿠세-데",tip:"だ → で. 뒤 문장으로 이어줍니다."},
+{id:6,cat:"명사",base:"学生 (がくせい) 학생",form:"원인 (~이기 때문에)",kr:"학생이기 때문에",jp:"学生だから",kana:"がくせいだから",pron:"가쿠세-다카라",tip:"기본형 だ + から 로 이유를 나타냅니다."},
+{id:7,cat:"명사",base:"学生 (がくせい) 학생",form:"가정형 (~이라면)",kr:"학생이라면",jp:"学生なら",kana:"がくせいなら",pron:"가쿠세-나라",tip:"명사 + なら. だ 를 빼고 なら 를 붙입니다."},
+{id:8,cat:"명사",base:"学生 (がくせい) 학생",form:"추측 (~이겠지)",kr:"학생이겠지",jp:"学生だろう",kana:"がくせいだろう",pron:"가쿠세-다로-",tip:"だ → だろう. 정중하게는 でしょう 를 씁니다."},
+{id:9,cat:"명사",base:"学生 (がくせい) 학생",form:"정중형 (~입니다)",kr:"학생입니다",jp:"学生です",kana:"がくせいです",pron:"가쿠세-데스",tip:"だ → です 로 바꾸면 정중체가 됩니다."},
+{id:10,cat:"명사",base:"学生 (がくせい) 학생",form:"의문형 (~입니까?)",kr:"학생입니까?",jp:"学生ですか",kana:"がくせいですか",pron:"가쿠세-데스카",tip:"です + か. 끝을 올려 읽습니다."},
+{id:11,cat:"명사",base:"学生 (がくせい) 학생",form:"과거 정중형 (~이었습니다)",kr:"학생이었습니다",jp:"学生でした",kana:"がくせいでした",pron:"가쿠세-데시타",tip:"です → でした."},
+{id:12,cat:"명사",base:"学生 (がくせい) 학생",form:"과거 의문형 (~이었습니까?)",kr:"학생이었습니까?",jp:"学生でしたか",kana:"がくせいでしたか",pron:"가쿠세-데시타카",tip:"でした + か."},
+{id:13,cat:"명사",base:"学生 (がくせい) 학생",form:"부정 정중형 (~이 아닙니다)",kr:"학생이 아닙니다",jp:"学生じゃないです",kana:"がくせいじゃないです",pron:"가쿠세-쟈나이데스",tip:"회화체는 じゃないです, 격식체는 ではありません 입니다.",altJp:"学生ではありません",altKana:"がくせいではありません",altPron:"가쿠세-데와 아리마센"},
+{id:14,cat:"명사",base:"学生 (がくせい) 학생",form:"과거 부정 정중형 (~이 아니었습니다)",kr:"학생이 아니었습니다",jp:"学生じゃなかったです",kana:"がくせいじゃなかったです",pron:"가쿠세-쟈나캇타데스",tip:"⚠️ ~ないでした 는 틀린 표현! ~なかったです 가 올바릅니다.",altJp:"学生ではありませんでした",altKana:"がくせいではありませんでした",altPron:"가쿠세-데와 아리마센데시타"},
+{id:15,cat:"い형용사",base:"高い (たかい) 비싸다/높다",form:"기본형 (~하다)",kr:"비싸다",jp:"高い",kana:"たかい",pron:"타카이",tip:"어미가 い 로 끝나는 형용사의 기본형입니다."},
+{id:16,cat:"い형용사",base:"高い (たかい) 비싸다/높다",form:"과거형 (~했다)",kr:"비쌌다",jp:"高かった",kana:"たかかった",pron:"타카캇타",tip:"어미 い → かった."},
+{id:17,cat:"い형용사",base:"高い (たかい) 비싸다/높다",form:"부정형 (~하지 않다)",kr:"비싸지 않다",jp:"高くない",kana:"たかくない",pron:"타카쿠나이",tip:"어미 い → くない."},
+{id:18,cat:"い형용사",base:"高い (たかい) 비싸다/높다",form:"과거 부정형 (~하지 않았다)",kr:"비싸지 않았다",jp:"高くなかった",kana:"たかくなかった",pron:"타카쿠나캇타",tip:"くない 의 い → かった."},
+{id:19,cat:"い형용사",base:"高い (たかい) 비싸다/높다",form:"연결형 (~하고, ~해서)",kr:"비싸고 / 비싸서",jp:"高くて",kana:"たかくて",pron:"타카쿠테",tip:"어미 い → くて."},
+{id:20,cat:"い형용사",base:"高い (たかい) 비싸다/높다",form:"부사형 (~하게)",kr:"비싸게 / 높게",jp:"高く",kana:"たかく",pron:"타카쿠",tip:"어미 い → く. (な형용사는 に 를 씁니다)"},
+{id:21,cat:"い형용사",base:"高い (たかい) 비싸다/높다",form:"가정형 (~하다면)",kr:"비싸다면",jp:"高ければ",kana:"たかければ",pron:"타카케레바",tip:"어미 い → ければ."},
+{id:22,cat:"い형용사",base:"高い (たかい) 비싸다/높다",form:"추측 (~하겠죠)",kr:"비싸겠죠",jp:"高いでしょう",kana:"たかいでしょう",pron:"타카이데쇼-",tip:"기본형 + でしょう."},
+{id:23,cat:"い형용사",base:"高い (たかい) 비싸다/높다",form:"명사 수식 (~한 + 명사)",kr:"비싼 책",jp:"高い本",kana:"たかいほん",pron:"타카이 혼",tip:"い형용사는 기본형 그대로 명사를 수식합니다."},
+{id:24,cat:"い형용사",base:"高い (たかい) 비싸다/높다",form:"부정 수식 (~하지 않은 + 명사)",kr:"비싸지 않은 책",jp:"高くない本",kana:"たかくないほん",pron:"타카쿠나이 혼",tip:"부정형 くない 뒤에 바로 명사를 붙입니다."},
+{id:25,cat:"い형용사",base:"高い (たかい) 비싸다/높다",form:"원인 (~하기 때문에)",kr:"비싸기 때문에",jp:"高いから",kana:"たかいから",pron:"타카이카라",tip:"기본형 + から."},
+{id:26,cat:"い형용사",base:"高い (たかい) 비싸다/높다",form:"정중형 (~합니다)",kr:"비쌉니다",jp:"高いです",kana:"たかいです",pron:"타카이데스",tip:"기본형 + です. (だ 를 붙이지 않습니다)"},
+{id:27,cat:"い형용사",base:"高い (たかい) 비싸다/높다",form:"과거 정중형 (~했습니다)",kr:"비쌌습니다",jp:"高かったです",kana:"たかかったです",pron:"타카캇타데스",tip:"과거형 かった + です."},
+{id:28,cat:"い형용사",base:"高い (たかい) 비싸다/높다",form:"부정 정중형 (~하지 않습니다)",kr:"비싸지 않습니다",jp:"高くないです",kana:"たかくないです",pron:"타카쿠나이데스",tip:"회화체는 くないです, 격식체는 くありません 입니다.",altJp:"高くありません",altKana:"たかくありません",altPron:"타카쿠 아리마센"},
+{id:29,cat:"い형용사",base:"高い (たかい) 비싸다/높다",form:"과거 부정 정중형 (~하지 않았습니다)",kr:"비싸지 않았습니다",jp:"高くなかったです",kana:"たかくなかったです",pron:"타카쿠나캇타데스",tip:"⚠️ ~くないでした 는 틀립니다. ~くなかったです 가 맞습니다.",altJp:"高くありませんでした",altKana:"たかくありませんでした",altPron:"타카쿠 아리마센데시타"},
+{id:30,cat:"い형용사",base:"いい (좋다) — 불규칙",form:"과거형 (~했다)",kr:"좋았다",jp:"よかった",kana:"よかった",pron:"요캇타",tip:"いい 는 활용할 때 よい 로 바뀝니다. いかった 는 틀립니다."},
+{id:31,cat:"い형용사",base:"いい (좋다) — 불규칙",form:"부정형 (~하지 않다)",kr:"좋지 않다",jp:"よくない",kana:"よくない",pron:"요쿠나이",tip:"いくない 가 아니라 よくない 입니다."},
+{id:32,cat:"い형용사",base:"いい (좋다) — 불규칙",form:"연결형 (~하고, ~해서)",kr:"좋고 / 좋아서",jp:"よくて",kana:"よくて",pron:"요쿠테",tip:"いくて 가 아니라 よくて 입니다."},
+{id:33,cat:"な형용사",base:"親切だ (しんせつだ) 친절하다",form:"기본형 (~하다)",kr:"친절하다",jp:"親切だ",kana:"しんせつだ",pron:"신세츠다",tip:"어미가 だ 로 끝나는 형용사의 기본형입니다."},
+{id:34,cat:"な형용사",base:"親切だ (しんせつだ) 친절하다",form:"과거형 (~했다)",kr:"친절했다",jp:"親切だった",kana:"しんせつだった",pron:"신세츠닷타",tip:"だ → だった. (명사와 같은 방식)"},
+{id:35,cat:"な형용사",base:"親切だ (しんせつだ) 친절하다",form:"부정형 (~하지 않다)",kr:"친절하지 않다",jp:"親切じゃない",kana:"しんせつじゃない",pron:"신세츠쟈나이",tip:"だ → じゃない."},
+{id:36,cat:"な형용사",base:"親切だ (しんせつだ) 친절하다",form:"과거 부정형 (~하지 않았다)",kr:"친절하지 않았다",jp:"親切じゃなかった",kana:"しんせつじゃなかった",pron:"신세츠쟈나캇타",tip:"じゃない 의 い → かった."},
+{id:37,cat:"な형용사",base:"親切だ (しんせつだ) 친절하다",form:"연결형 (~하고, ~해서)",kr:"친절하고 / 친절해서",jp:"親切で",kana:"しんせつで",pron:"신세츠데",tip:"だ → で. (い형용사의 くて 와 대응)"},
+{id:38,cat:"な형용사",base:"親切だ (しんせつだ) 친절하다",form:"부사형 (~하게)",kr:"친절하게",jp:"親切に",kana:"しんせつに",pron:"신세츠니",tip:"だ → に. い형용사는 く, な형용사는 に 입니다."},
+{id:39,cat:"な형용사",base:"親切だ (しんせつだ) 친절하다",form:"가정형 (~하다면)",kr:"친절하다면",jp:"親切なら",kana:"しんせつなら",pron:"신세츠나라",tip:"だ → なら."},
+{id:40,cat:"な형용사",base:"親切だ (しんせつだ) 친절하다",form:"추측 (~하겠죠)",kr:"친절하겠죠",jp:"親切でしょう",kana:"しんせつでしょう",pron:"신세츠데쇼-",tip:"어간 + でしょう."},
+{id:41,cat:"な형용사",base:"親切だ (しんせつだ) 친절하다",form:"명사 수식 (~한 + 명사)",kr:"친절한 사람",jp:"親切な人",kana:"しんせつなひと",pron:"신세츠나 히토",tip:"な형용사는 명사 앞에서 어미가 な 로 바뀝니다. 이름의 유래입니다."},
+{id:42,cat:"な형용사",base:"親切だ (しんせつだ) 친절하다",form:"부정 수식 (~하지 않은 + 명사)",kr:"친절하지 않은 사람",jp:"親切じゃない人",kana:"しんせつじゃないひと",pron:"신세츠쟈나이 히토",tip:"부정형 じゃない 뒤에 바로 명사를 붙입니다."},
+{id:43,cat:"な형용사",base:"親切だ (しんせつだ) 친절하다",form:"원인 (~하기 때문에)",kr:"친절하기 때문에",jp:"親切だから",kana:"しんせつだから",pron:"신세츠다카라",tip:"기본형 だ + から."},
+{id:44,cat:"な형용사",base:"親切だ (しんせつだ) 친절하다",form:"정중형 (~합니다)",kr:"친절합니다",jp:"親切です",kana:"しんせつです",pron:"신세츠데스",tip:"だ → です."},
+{id:45,cat:"な형용사",base:"親切だ (しんせつだ) 친절하다",form:"과거 정중형 (~했습니다)",kr:"친절했습니다",jp:"親切でした",kana:"しんせつでした",pron:"신세츠데시타",tip:"です → でした. (い형용사의 かったです 와 다릅니다)"},
+{id:46,cat:"な형용사",base:"親切だ (しんせつだ) 친절하다",form:"부정 정중형 (~하지 않습니다)",kr:"친절하지 않습니다",jp:"親切じゃないです",kana:"しんせつじゃないです",pron:"신세츠쟈나이데스",tip:"회화체는 じゃないです, 격식체는 ではありません 입니다.",altJp:"親切ではありません",altKana:"しんせつではありません",altPron:"신세츠데와 아리마센"},
+{id:47,cat:"な형용사",base:"親切だ (しんせつだ) 친절하다",form:"과거 부정 정중형 (~하지 않았습니다)",kr:"친절하지 않았습니다",jp:"親切じゃなかったです",kana:"しんせつじゃなかったです",pron:"신세츠쟈나캇타데스",tip:"⚠️ ~じゃないでした 는 틀립니다. ~じゃなかったです 가 맞습니다.",altJp:"親切ではありませんでした",altKana:"しんせつではありませんでした",altPron:"신세츠데와 아리마센데시타"},
+{id:48,cat:"동사 1그룹",base:"書く (かく) 쓰다",form:"기본형 (~하다)",kr:"쓰다",jp:"書く",kana:"かく",pron:"카쿠",tip:"u단으로 끝나는 1그룹(5단) 동사의 기본형입니다."},
+{id:49,cat:"동사 1그룹",base:"書く (かく) 쓰다",form:"정중형 (~합니다)",kr:"씁니다",jp:"書きます",kana:"かきます",pron:"카키마스",tip:"어미 u단 → i단 + ます. く → き + ます."},
+{id:50,cat:"동사 1그룹",base:"書く (かく) 쓰다",form:"과거형 (~했다)",kr:"썼다",jp:"書いた",kana:"かいた",pron:"카이타",tip:"く 로 끝나는 1그룹은 いた 로 음편이 일어납니다."},
+{id:51,cat:"동사 1그룹",base:"書く (かく) 쓰다",form:"과거 정중형 (~했습니다)",kr:"썼습니다",jp:"書きました",kana:"かきました",pron:"카키마시타",tip:"ます → ました."},
+{id:52,cat:"동사 1그룹",base:"書く (かく) 쓰다",form:"부정형 (~ 안 하다)",kr:"안 쓴다",jp:"書かない",kana:"かかない",pron:"카카나이",tip:"어미 u단 → a단 + ない. く → か + ない."},
+{id:53,cat:"동사 1그룹",base:"書く (かく) 쓰다",form:"부정 정중형 (~ 안 합니다)",kr:"안 씁니다",jp:"書きません",kana:"かきません",pron:"카키마센",tip:"ます → ません. 회화체로는 書かないです 도 씁니다.",altJp:"書かないです",altKana:"かかないです",altPron:"카카나이데스"},
+{id:54,cat:"동사 1그룹",base:"書く (かく) 쓰다",form:"과거 부정형 (~ 안 했다)",kr:"안 썼다",jp:"書かなかった",kana:"かかなかった",pron:"카카나캇타",tip:"ない 의 い → かった."},
+{id:55,cat:"동사 1그룹",base:"書く (かく) 쓰다",form:"과거 부정 정중형 (~ 안 했습니다)",kr:"안 썼습니다",jp:"書きませんでした",kana:"かきませんでした",pron:"카키마센데시타",tip:"ません + でした. 회화체는 書かなかったです.",altJp:"書かなかったです",altKana:"かかなかったです",altPron:"카카나캇타데스"},
+{id:56,cat:"동사 1그룹",base:"書く (かく) 쓰다",form:"연결형 (~하고, ~해서 / て형)",kr:"쓰고 / 써서",jp:"書いて",kana:"かいて",pron:"카이테",tip:"く 로 끝나는 1그룹은 いて 로 음편이 일어납니다."},
+{id:57,cat:"동사 1그룹",base:"書く (かく) 쓰다",form:"연용형 (~하기)",kr:"쓰기",jp:"書き",kana:"かき",pron:"카키",tip:"ます 를 뗀 형태로, 명사처럼 쓰입니다."},
+{id:58,cat:"동사 1그룹",base:"書く (かく) 쓰다",form:"가정형 (~한다면)",kr:"쓴다면",jp:"書けば",kana:"かけば",pron:"카케바",tip:"어미 u단 → e단 + ば. く → け + ば."},
+{id:59,cat:"동사 1그룹",base:"書く (かく) 쓰다",form:"추측 (~하겠죠)",kr:"쓰겠죠",jp:"書くでしょう",kana:"かくでしょう",pron:"카쿠데쇼-",tip:"기본형 + でしょう. 반말은 書くだろう.",altJp:"書くだろう",altKana:"かくだろう",altPron:"카쿠다로-"},
+{id:60,cat:"동사 1그룹",base:"書く (かく) 쓰다",form:"명사 수식 (~할 + 명사)",kr:"쓸 책",jp:"書く本",kana:"かくほん",pron:"카쿠 혼",tip:"동사 기본형이 그대로 명사를 수식합니다."},
+{id:61,cat:"동사 1그룹",base:"書く (かく) 쓰다",form:"부정 수식 (~ 안 하는 + 명사)",kr:"안 쓰는 사람",jp:"書かない人",kana:"かかないひと",pron:"카카나이 히토",tip:"부정형 ない 뒤에 바로 명사를 붙입니다."},
+{id:62,cat:"동사 2그룹",base:"食べる (たべる) 먹다",form:"기본형 (~하다)",kr:"먹다",jp:"食べる",kana:"たべる",pron:"타베루",tip:"iる / eる 로 끝나는 2그룹(1단) 동사의 기본형입니다."},
+{id:63,cat:"동사 2그룹",base:"食べる (たべる) 먹다",form:"정중형 (~합니다)",kr:"먹습니다",jp:"食べます",kana:"たべます",pron:"타베마스",tip:"る 를 떼고 ます. 1그룹보다 규칙이 단순합니다."},
+{id:64,cat:"동사 2그룹",base:"食べる (たべる) 먹다",form:"과거형 (~했다)",kr:"먹었다",jp:"食べた",kana:"たべた",pron:"타베타",tip:"る 를 떼고 た."},
+{id:65,cat:"동사 2그룹",base:"食べる (たべる) 먹다",form:"과거 정중형 (~했습니다)",kr:"먹었습니다",jp:"食べました",kana:"たべました",pron:"타베마시타",tip:"ます → ました."},
+{id:66,cat:"동사 2그룹",base:"食べる (たべる) 먹다",form:"부정형 (~ 안 하다)",kr:"안 먹는다",jp:"食べない",kana:"たべない",pron:"타베나이",tip:"る 를 떼고 ない."},
+{id:67,cat:"동사 2그룹",base:"食べる (たべる) 먹다",form:"부정 정중형 (~ 안 합니다)",kr:"안 먹습니다",jp:"食べません",kana:"たべません",pron:"타베마센",tip:"ます → ません. 회화체로는 食べないです 도 씁니다.",altJp:"食べないです",altKana:"たべないです",altPron:"타베나이데스"},
+{id:68,cat:"동사 2그룹",base:"食べる (たべる) 먹다",form:"과거 부정형 (~ 안 했다)",kr:"안 먹었다",jp:"食べなかった",kana:"たべなかった",pron:"타베나캇타",tip:"ない 의 い → かった."},
+{id:69,cat:"동사 2그룹",base:"食べる (たべる) 먹다",form:"과거 부정 정중형 (~ 안 했습니다)",kr:"안 먹었습니다",jp:"食べませんでした",kana:"たべませんでした",pron:"타베마센데시타",tip:"ません + でした. 회화체는 食べなかったです.",altJp:"食べなかったです",altKana:"たべなかったです",altPron:"타베나캇타데스"},
+{id:70,cat:"동사 2그룹",base:"食べる (たべる) 먹다",form:"연결형 (~하고, ~해서 / て형)",kr:"먹고 / 먹어서",jp:"食べて",kana:"たべて",pron:"타베테",tip:"る 를 떼고 て. 음편이 없어 간단합니다."},
+{id:71,cat:"동사 2그룹",base:"食べる (たべる) 먹다",form:"연용형 (~하기)",kr:"먹기",jp:"食べ",kana:"たべ",pron:"타베",tip:"る 를 뗀 형태로, 명사처럼 쓰입니다."},
+{id:72,cat:"동사 2그룹",base:"食べる (たべる) 먹다",form:"가정형 (~한다면)",kr:"먹는다면",jp:"食べれば",kana:"たべれば",pron:"타베레바",tip:"る 를 떼고 れば."},
+{id:73,cat:"동사 2그룹",base:"食べる (たべる) 먹다",form:"추측 (~하겠죠)",kr:"먹겠죠",jp:"食べるでしょう",kana:"たべるでしょう",pron:"타베루데쇼-",tip:"기본형 + でしょう. 반말은 食べるだろう.",altJp:"食べるだろう",altKana:"たべるだろう",altPron:"타베루다로-"},
+{id:74,cat:"동사 2그룹",base:"食べる (たべる) 먹다",form:"명사 수식 (~할 + 명사)",kr:"먹을 것",jp:"食べる物",kana:"たべるもの",pron:"타베루 모노",tip:"동사 기본형이 그대로 명사를 수식합니다."},
+{id:75,cat:"동사 2그룹",base:"食べる (たべる) 먹다",form:"부정 수식 (~ 안 하는 + 명사)",kr:"안 먹는 사람",jp:"食べない人",kana:"たべないひと",pron:"타베나이 히토",tip:"부정형 ない 뒤에 바로 명사를 붙입니다."},
+{id:76,cat:"가능형",base:"書ける (かける) 쓸 수 있다",form:"가능 기본형 (~할 수 있다)",kr:"쓸 수 있다",jp:"書ける",kana:"かける",pron:"카케루",tip:"1그룹: 어미 u단 → e단 + る. く → け + る."},
+{id:77,cat:"가능형",base:"書ける (かける) 쓸 수 있다",form:"가능 정중형 (~할 수 있습니다)",kr:"쓸 수 있습니다",jp:"書けます",kana:"かけます",pron:"카케마스",tip:"가능형은 2그룹처럼 활용합니다. る → ます."},
+{id:78,cat:"가능형",base:"書ける (かける) 쓸 수 있다",form:"가능 부정형 (~할 수 없다)",kr:"쓸 수 없다",jp:"書けない",kana:"かけない",pron:"카케나이",tip:"る → ない."},
+{id:79,cat:"가능형",base:"書ける (かける) 쓸 수 있다",form:"가능 부정 정중형 (~할 수 없습니다)",kr:"쓸 수 없습니다",jp:"書けないです",kana:"かけないです",pron:"카케나이데스",tip:"書けません 도 같은 뜻입니다.",altJp:"書けません",altKana:"かけません",altPron:"카케마센"},
+{id:80,cat:"가능형",base:"書ける (かける) 쓸 수 있다",form:"가능 과거형 (~할 수 있었다)",kr:"쓸 수 있었다",jp:"書けた",kana:"かけた",pron:"카케타",tip:"る → た."},
+{id:81,cat:"가능형",base:"書ける (かける) 쓸 수 있다",form:"가능 과거 정중형 (~할 수 있었습니다)",kr:"쓸 수 있었습니다",jp:"書けました",kana:"かけました",pron:"카케마시타",tip:"ます → ました."},
+{id:82,cat:"가능형",base:"書ける (かける) 쓸 수 있다",form:"가능 과거 부정형 (~할 수 없었다)",kr:"쓸 수 없었다",jp:"書けなかった",kana:"かけなかった",pron:"카케나캇타",tip:"ない 의 い → かった."},
+{id:83,cat:"가능형",base:"書ける (かける) 쓸 수 있다",form:"가능 과거 부정 정중형 (~할 수 없었습니다)",kr:"쓸 수 없었습니다",jp:"書けなかったです",kana:"かけなかったです",pron:"카케나캇타데스",tip:"書けませんでした 도 같은 뜻입니다.",altJp:"書けませんでした",altKana:"かけませんでした",altPron:"카케마센데시타"},
+{id:84,cat:"가능형",base:"食べられる (たべられる) 먹을 수 있다",form:"가능 기본형 (~할 수 있다)",kr:"먹을 수 있다",jp:"食べられる",kana:"たべられる",pron:"타베라레루",tip:"2그룹: る 를 떼고 られる."},
+{id:85,cat:"가능형",base:"食べられる (たべられる) 먹을 수 있다",form:"가능 정중형 (~할 수 있습니다)",kr:"먹을 수 있습니다",jp:"食べられます",kana:"たべられます",pron:"타베라레마스",tip:"られる → られます."},
+{id:86,cat:"가능형",base:"食べられる (たべられる) 먹을 수 있다",form:"가능 부정형 (~할 수 없다)",kr:"먹을 수 없다",jp:"食べられない",kana:"たべられない",pron:"타베라레나이",tip:"られる → られない."},
+{id:87,cat:"가능형",base:"食べられる (たべられる) 먹을 수 있다",form:"가능 부정 정중형 (~할 수 없습니다)",kr:"먹을 수 없습니다",jp:"食べられないです",kana:"たべられないです",pron:"타베라레나이데스",tip:"食べられません 도 같은 뜻입니다.",altJp:"食べられません",altKana:"たべられません",altPron:"타베라레마센"},
+{id:88,cat:"가능형",base:"食べられる (たべられる) 먹을 수 있다",form:"가능 과거형 (~할 수 있었다)",kr:"먹을 수 있었다",jp:"食べられた",kana:"たべられた",pron:"타베라레타",tip:"られる → られた."},
+{id:89,cat:"가능형",base:"食べられる (たべられる) 먹을 수 있다",form:"가능 과거 정중형 (~할 수 있었습니다)",kr:"먹을 수 있었습니다",jp:"食べられました",kana:"たべられました",pron:"타베라레마시타",tip:"ます → ました."},
+{id:90,cat:"가능형",base:"食べられる (たべられる) 먹을 수 있다",form:"가능 과거 부정형 (~할 수 없었다)",kr:"먹을 수 없었다",jp:"食べられなかった",kana:"たべられなかった",pron:"타베라레나캇타",tip:"ない 의 い → かった."},
+{id:91,cat:"가능형",base:"食べられる (たべられる) 먹을 수 있다",form:"가능 과거 부정 정중형 (~할 수 없었습니다)",kr:"먹을 수 없었습니다",jp:"食べられなかったです",kana:"たべられなかったです",pron:"타베라레나캇타데스",tip:"食べられませんでした 도 같은 뜻입니다.",altJp:"食べられませんでした",altKana:"たべられませんでした",altPron:"타베라레마센데시타"},
+{id:92,cat:"희망형",base:"書きたい (かきたい) 쓰고 싶다",form:"희망 기본형 (~하고 싶다)",kr:"쓰고 싶다",jp:"書きたい",kana:"かきたい",pron:"카키타이",tip:"ます형 어간(書き) + たい. 이후 い형용사처럼 활용합니다."},
+{id:93,cat:"희망형",base:"書きたい (かきたい) 쓰고 싶다",form:"희망 정중형 (~하고 싶습니다)",kr:"쓰고 싶습니다",jp:"書きたいです",kana:"かきたいです",pron:"카키타이데스",tip:"たい + です."},
+{id:94,cat:"희망형",base:"書きたい (かきたい) 쓰고 싶다",form:"희망 부정형 (~하고 싶지 않다)",kr:"쓰고 싶지 않다",jp:"書きたくない",kana:"かきたくない",pron:"카키타쿠나이",tip:"たい 의 い → くない."},
+{id:95,cat:"희망형",base:"書きたい (かきたい) 쓰고 싶다",form:"희망 부정 정중형 (~하고 싶지 않습니다)",kr:"쓰고 싶지 않습니다",jp:"書きたくないです",kana:"かきたくないです",pron:"카키타쿠나이데스",tip:"たくない + です."},
+{id:96,cat:"희망형",base:"書きたい (かきたい) 쓰고 싶다",form:"희망 과거형 (~하고 싶었다)",kr:"쓰고 싶었다",jp:"書きたかった",kana:"かきたかった",pron:"카키타캇타",tip:"たい 의 い → かった."},
+{id:97,cat:"희망형",base:"書きたい (かきたい) 쓰고 싶다",form:"희망 과거 정중형 (~하고 싶었습니다)",kr:"쓰고 싶었습니다",jp:"書きたかったです",kana:"かきたかったです",pron:"카키타캇타데스",tip:"たかった + です."},
+{id:98,cat:"희망형",base:"書きたい (かきたい) 쓰고 싶다",form:"희망 과거 부정형 (~하고 싶지 않았다)",kr:"쓰고 싶지 않았다",jp:"書きたくなかった",kana:"かきたくなかった",pron:"카키타쿠나캇타",tip:"たくない 의 い → かった."},
+{id:99,cat:"희망형",base:"書きたい (かきたい) 쓰고 싶다",form:"희망 과거 부정 정중형 (~하고 싶지 않았습니다)",kr:"쓰고 싶지 않았습니다",jp:"書きたくなかったです",kana:"かきたくなかったです",pron:"카키타쿠나캇타데스",tip:"たくなかった + です."},
+{id:100,cat:"희망형",base:"食べたい (たべたい) 먹고 싶다",form:"희망 기본형 (~하고 싶다)",kr:"먹고 싶다",jp:"食べたい",kana:"たべたい",pron:"타베타이",tip:"ます형 어간(食べ) + たい."},
+{id:101,cat:"희망형",base:"食べたい (たべたい) 먹고 싶다",form:"희망 정중형 (~하고 싶습니다)",kr:"먹고 싶습니다",jp:"食べたいです",kana:"たべたいです",pron:"타베타이데스",tip:"たい + です."},
+{id:102,cat:"희망형",base:"食べたい (たべたい) 먹고 싶다",form:"희망 부정형 (~하고 싶지 않다)",kr:"먹고 싶지 않다",jp:"食べたくない",kana:"たべたくない",pron:"타베타쿠나이",tip:"たい 의 い → くない."},
+{id:103,cat:"희망형",base:"食べたい (たべたい) 먹고 싶다",form:"희망 부정 정중형 (~하고 싶지 않습니다)",kr:"먹고 싶지 않습니다",jp:"食べたくないです",kana:"たべたくないです",pron:"타베타쿠나이데스",tip:"たくない + です."},
+{id:104,cat:"희망형",base:"食べたい (たべたい) 먹고 싶다",form:"희망 과거형 (~하고 싶었다)",kr:"먹고 싶었다",jp:"食べたかった",kana:"たべたかった",pron:"타베타캇타",tip:"たい 의 い → かった."},
+{id:105,cat:"희망형",base:"食べたい (たべたい) 먹고 싶다",form:"희망 과거 정중형 (~하고 싶었습니다)",kr:"먹고 싶었습니다",jp:"食べたかったです",kana:"たべたかったです",pron:"타베타캇타데스",tip:"たかった + です."},
+{id:106,cat:"희망형",base:"食べたい (たべたい) 먹고 싶다",form:"희망 과거 부정형 (~하고 싶지 않았다)",kr:"먹고 싶지 않았다",jp:"食べたくなかった",kana:"たべたくなかった",pron:"타베타쿠나캇타",tip:"たくない 의 い → かった."},
+{id:107,cat:"희망형",base:"食べたい (たべたい) 먹고 싶다",form:"희망 과거 부정 정중형 (~하고 싶지 않았습니다)",kr:"먹고 싶지 않았습니다",jp:"食べたくなかったです",kana:"たべたくなかったです",pron:"타베타쿠나캇타데스",tip:"たくなかった + です."},
+{id:108,cat:"가능+희망",base:"書ける + たい",form:"과거 부정 가능 희망 (반말)",kr:"쓸 수 있고 싶지 않았다",jp:"書けたくなかった",kana:"かけたくなかった",pron:"카케타쿠나캇타",tip:"⚠️ 실제 일본어에서는 거의 쓰지 않는 조합입니다. 가능형은 '상태'를 나타내서 의지를 뜻하는 たい 와 잘 붙지 않습니다. 자연스러운 표현은 書きたくなかった(쓰고 싶지 않았다) 입니다. 요청하신 형태 그대로 실어둡니다."},
+{id:109,cat:"가능+희망",base:"書ける + たい",form:"과거 부정 가능 희망 (정중)",kr:"쓸 수 있고 싶지 않았습니다",jp:"書けたくなかったです",kana:"かけたくなかったです",pron:"카케타쿠나캇타데스",tip:"⚠️ 실제 일본어에서는 거의 쓰지 않는 조합입니다. 가능형은 '상태'를 나타내서 의지를 뜻하는 たい 와 잘 붙지 않습니다. 자연스러운 표현은 書きたくなかったです 입니다. 요청하신 형태 그대로 실어둡니다."},
+{id:110,cat:"가능+희망",base:"食べられる + たい",form:"과거 부정 가능 희망 (반말)",kr:"먹을 수 있고 싶지 않았다",jp:"食べられたくなかった",kana:"たべられたくなかった",pron:"타베라레타쿠나캇타",tip:"⚠️ 실제 일본어에서는 거의 쓰지 않는 조합입니다. 가능형은 '상태'를 나타내서 의지를 뜻하는 たい 와 잘 붙지 않습니다. 자연스러운 표현은 食べたくなかった(먹고 싶지 않았다) 입니다. 요청하신 형태 그대로 실어둡니다."},
+{id:111,cat:"가능+희망",base:"食べられる + たい",form:"과거 부정 가능 희망 (정중)",kr:"먹을 수 있고 싶지 않았습니다",jp:"食べられたくなかったです",kana:"たべられたくなかったです",pron:"타베라레타쿠나캇타데스",tip:"⚠️ 실제 일본어에서는 거의 쓰지 않는 조합입니다. 가능형은 '상태'를 나타내서 의지를 뜻하는 たい 와 잘 붙지 않습니다. 자연스러운 표현은 食べたくなかったです 입니다. 요청하신 형태 그대로 실어둡니다."},
+{id:112,cat:"3그룹 불규칙",base:"する (하다)",form:"정중형 (~합니다)",kr:"합니다",jp:"します",kana:"します",pron:"시마스",tip:"する → します."},
+{id:113,cat:"3그룹 불규칙",base:"する (하다)",form:"부정형 (~ 안 하다)",kr:"안 한다",jp:"しない",kana:"しない",pron:"시나이",tip:"する → しない."},
+{id:114,cat:"3그룹 불규칙",base:"する (하다)",form:"과거형 (~했다)",kr:"했다",jp:"した",kana:"した",pron:"시타",tip:"する → した."},
+{id:115,cat:"3그룹 불규칙",base:"する (하다)",form:"연결형 (~하고, ~해서)",kr:"하고 / 해서",jp:"して",kana:"して",pron:"시테",tip:"する → して."},
+{id:116,cat:"3그룹 불규칙",base:"する (하다)",form:"가능형 (~할 수 있다)",kr:"할 수 있다",jp:"できる",kana:"できる",pron:"데키루",tip:"する 의 가능형은 완전 불규칙으로 できる 입니다. されいる 같은 형태는 없습니다."},
+{id:117,cat:"3그룹 불규칙",base:"する (하다)",form:"희망형 (~하고 싶다)",kr:"하고 싶다",jp:"したい",kana:"したい",pron:"시타이",tip:"ます형 어간 し + たい."},
+{id:118,cat:"3그룹 불규칙",base:"来る (くる) 오다",form:"정중형 (~합니다)",kr:"옵니다",jp:"来ます",kana:"きます",pron:"키마스",tip:"来 의 읽기가 き 로 바뀝니다."},
+{id:119,cat:"3그룹 불규칙",base:"来る (くる) 오다",form:"부정형 (~ 안 하다)",kr:"안 온다",jp:"来ない",kana:"こない",pron:"코나이",tip:"来 의 읽기가 こ 로 바뀝니다. 한자는 같지만 읽기가 달라 주의!"},
+{id:120,cat:"3그룹 불규칙",base:"来る (くる) 오다",form:"과거형 (~했다)",kr:"왔다",jp:"来た",kana:"きた",pron:"키타",tip:"来 의 읽기가 き 로 바뀝니다."},
+{id:121,cat:"3그룹 불규칙",base:"来る (くる) 오다",form:"연결형 (~하고, ~해서)",kr:"오고 / 와서",jp:"来て",kana:"きて",pron:"키테",tip:"来 의 읽기가 き 로 바뀝니다."},
+{id:122,cat:"3그룹 불규칙",base:"来る (くる) 오다",form:"가능형 (~할 수 있다)",kr:"올 수 있다",jp:"来られる",kana:"こられる",pron:"코라레루",tip:"来 의 읽기가 こ 로 바뀝니다."},
+{id:123,cat:"3그룹 불규칙",base:"来る (くる) 오다",form:"희망형 (~하고 싶다)",kr:"오고 싶다",jp:"来たい",kana:"きたい",pron:"키타이",tip:"ます형 어간 き + たい."}
+];
+
+var CONJ_CATS = ["명사","い형용사","な형용사","동사 1그룹","동사 2그룹","가능형","희망형","가능+희망","3그룹 불규칙"];
+
+/* ===================== 후리가나(단어별 읽기) & 한자 훈·음 분해 =====================
+   jp(한자+가나 원문)와 kana(문장 전체 히라가나 읽기)를 비교해서,
+   한자 덩어리마다 정확한 읽기를 자동으로 역산합니다.
+   (가나/기호 부분은 두 필드에 동일하게 남아있으므로 그 사이 구간이 한자의 읽기가 됩니다) */
+function isKanjiChar(ch){
+  return /[一-龯々]/.test(ch);
+}
+function tokenizeJp(jp){
+  var tokens = [];
+  var cur = '';
+  var curKind = null;
+  for (var i = 0; i < jp.length; i++){
+    var ch = jp[i];
+    var kind = isKanjiChar(ch) ? 'kanji' : 'other';
+    if (kind !== curKind){
+      if (cur) tokens.push({kind: curKind, text: cur});
+      cur = ch; curKind = kind;
+    } else {
+      cur += ch;
+    }
+  }
+  if (cur) tokens.push({kind: curKind, text: cur});
+  return tokens;
+}
+function buildFuriganaSegments(jp, kana){
+  var tokens = tokenizeJp(jp);
+  var kanaPos = 0;
+  var segments = [];
+  for (var i = 0; i < tokens.length; i++){
+    var tok = tokens[i];
+    if (tok.kind === 'other'){
+      var idx = kana.indexOf(tok.text, kanaPos);
+      if (idx === -1) return null;
+      segments.push({kind:'other', text: tok.text});
+      kanaPos = idx + tok.text.length;
+    } else {
+      var nextOtherIdx = -1;
+      for (var j = i + 1; j < tokens.length; j++){
+        if (tokens[j].kind === 'other'){ nextOtherIdx = j; break; }
+      }
+      var readingEnd;
+      if (nextOtherIdx === -1){
+        readingEnd = kana.length;
+      } else {
+        var nidx = kana.indexOf(tokens[nextOtherIdx].text, kanaPos);
+        if (nidx === -1) return null;
+        readingEnd = nidx;
+      }
+      segments.push({kind:'kanji', text: tok.text, reading: kana.slice(kanaPos, readingEnd)});
+      kanaPos = readingEnd;
+    }
+  }
+  return segments;
+}
+function furiganaHtml(jp, kana){
+  var segs = buildFuriganaSegments(jp, kana);
+  if (!segs) return escapeHtml(jp);
+  return segs.map(function(s){
+    if (s.kind === 'kanji'){
+      return '<ruby>' + escapeHtml(s.text) + '<rt>' + escapeHtml(s.reading) + '</rt></ruby>';
+    }
+    return escapeHtml(s.text);
+  }).join('');
+}
+function uniqueKanjiChars(jp){
+  var seen = {};
+  var list = [];
+  for (var i = 0; i < jp.length; i++){
+    var ch = jp[i];
+    if (isKanjiChar(ch) && ch !== '々' && !seen[ch]){
+      seen[ch] = true;
+      list.push(ch);
+    }
+  }
+  return list;
+}
+function kanjiBreakdownHtml(jp){
+  var chars = uniqueKanjiChars(jp);
+  var html = '';
+  for (var i = 0; i < chars.length; i++){
+    var info = KANJI_INFO[chars[i]];
+    if (!info) continue;
+    html += '<div class="kanji-chip"><span class="kanji-char">' + chars[i] + '</span>' +
+      '<span class="kanji-lines">' +
+        '<span class="kanji-readings jp"><span class="flag">🇯🇵</span>훈 ' + escapeHtml(info.kun) + ' · 음 ' + escapeHtml(info.on) + '</span>' +
+        '<span class="kanji-readings kr"><span class="flag">🇰🇷</span>훈 ' + escapeHtml(info.krKun) + ' · 음 ' + escapeHtml(info.krEum) + '</span>' +
+      '</span>' +
+      '<span class="kanji-mean">' + escapeHtml(info.mean) + '</span></div>';
+  }
+  return html;
+}
+
+/* ===================== 상태 관리 ===================== */
+var STORAGE_KEY = 'jpTravelQuizBookmarks_v1';
+var order = [];
+var pos = 0;
+var revealed = false;
+
+function shuffle(arr){
+  for (var i = arr.length - 1; i > 0; i--){
+    var j = Math.floor(Math.random() * (i + 1));
+    var tmp = arr[i]; arr[i] = arr[j]; arr[j] = tmp;
+  }
+  return arr;
+}
+function buildOrder(){
+  var idx = [];
+  for (var i = 0; i < DATA.length; i++) idx.push(i);
+  return shuffle(idx);
+}
+function loadBookmarks(){
+  try{
+    var raw = localStorage.getItem(STORAGE_KEY);
+    return raw ? JSON.parse(raw) : [];
+  }catch(e){ return []; }
+}
+function saveBookmarks(list){
+  try{ localStorage.setItem(STORAGE_KEY, JSON.stringify(list)); }catch(e){}
+}
+function isBookmarked(id){
+  return loadBookmarks().indexOf(id) !== -1;
+}
+function addBookmark(id){
+  var list = loadBookmarks();
+  if (list.indexOf(id) === -1){
+    list.push(id);
+    saveBookmarks(list);
+  }
+}
+function removeBookmark(id){
+  var list = loadBookmarks().filter(function(x){ return x !== id; });
+  saveBookmarks(list);
+}
+
+/* ===================== 문법 활용 연습 상태 ===================== */
+var CONJ_STORAGE_KEY = 'jpConjBookmarks_v1';
+var CONJ_PREF_KEY = 'jpConjPref_v1';
+var conjMode = 'seq';          // 'seq' = 분류별 순서, 'random' = 랜덤
+var conjCat = CONJ_CATS[0];
+var conjOrder = [];
+var conjPos = 0;
+var conjRevealed = false;
+
+function loadConjPref(){
+  try{
+    var raw = localStorage.getItem(CONJ_PREF_KEY);
+    if (!raw) return;
+    var p = JSON.parse(raw);
+    if (p.mode === 'seq' || p.mode === 'random') conjMode = p.mode;
+    if (CONJ_CATS.indexOf(p.cat) !== -1) conjCat = p.cat;
+  }catch(e){}
+}
+function saveConjPref(){
+  try{
+    localStorage.setItem(CONJ_PREF_KEY, JSON.stringify({mode: conjMode, cat: conjCat}));
+  }catch(e){}
+}
+function loadConjBookmarks(){
+  try{
+    var raw = localStorage.getItem(CONJ_STORAGE_KEY);
+    return raw ? JSON.parse(raw) : [];
+  }catch(e){ return []; }
+}
+function saveConjBookmarks(list){
+  try{ localStorage.setItem(CONJ_STORAGE_KEY, JSON.stringify(list)); }catch(e){}
+}
+function isConjBookmarked(id){
+  return loadConjBookmarks().indexOf(id) !== -1;
+}
+function toggleConjBookmark(id){
+  var list = loadConjBookmarks();
+  var i = list.indexOf(id);
+  if (i === -1){ list.push(id); saveConjBookmarks(list); return true; }
+  list.splice(i, 1); saveConjBookmarks(list); return false;
+}
+function removeConjBookmark(id){
+  saveConjBookmarks(loadConjBookmarks().filter(function(x){ return x !== id; }));
+}
+
+/* ===================== DOM 참조 ===================== */
+var categoryChip = document.getElementById('categoryChip');
+var progressText = document.getElementById('progressText');
+var progressFill = document.getElementById('progressFill');
+var krText = document.getElementById('krText');
+var revealBtn = document.getElementById('revealBtn');
+var answerBlock = document.getElementById('answerBlock');
+var jpText = document.getElementById('jpText');
+var kanaText = document.getElementById('kanaText');
+var pronText = document.getElementById('pronText');
+var kanjiRow = document.getElementById('kanjiRow');
+var kanjiBreakdown = document.getElementById('kanjiBreakdown');
+var grammarText = document.getElementById('grammarText');
+var actionRow = document.getElementById('actionRow');
+var bookmarkBtn = document.getElementById('bookmarkBtn');
+var nextBtn = document.getElementById('nextBtn');
+var bookmarkList = document.getElementById('bookmarkList');
+var toastEl = document.getElementById('toast');
+var tabQuiz = document.getElementById('tab-quiz');
+var tabConj = document.getElementById('tab-conj');
+var tabBookmark = document.getElementById('tab-bookmark');
+var viewQuiz = document.getElementById('view-quiz');
+var viewConj = document.getElementById('view-conj');
+var viewBookmark = document.getElementById('view-bookmark');
+
+var conjModeSeg = document.getElementById('conjModeSeg');
+var conjCatRow = document.getElementById('conjCatRow');
+var conjBaseEl = document.getElementById('conjBase');
+var conjFormEl = document.getElementById('conjForm');
+var conjKrEl = document.getElementById('conjKr');
+var conjRevealBtn = document.getElementById('conjRevealBtn');
+var conjAnswerBlock = document.getElementById('conjAnswerBlock');
+var conjJpEl = document.getElementById('conjJp');
+var conjKanaEl = document.getElementById('conjKana');
+var conjPronEl = document.getElementById('conjPron');
+var conjAltBox = document.getElementById('conjAltBox');
+var conjAltJpEl = document.getElementById('conjAltJp');
+var conjAltPronEl = document.getElementById('conjAltPron');
+var conjKanjiRow = document.getElementById('conjKanjiRow');
+var conjKanjiBreakdown = document.getElementById('conjKanjiBreakdown');
+var conjTipEl = document.getElementById('conjTip');
+var conjActionRow = document.getElementById('conjActionRow');
+var conjBookmarkBtn = document.getElementById('conjBookmarkBtn');
+var conjNextBtn = document.getElementById('conjNextBtn');
+
+/* ===================== 퀴즈 로직 ===================== */
+function currentItem(){
+  return DATA[order[pos]];
+}
+function renderQuiz(){
+  var item = currentItem();
+  updateHeader();
+  krText.textContent = item.kr;
+  jpText.innerHTML = furiganaHtml(item.jp, item.kana);
+  kanaText.textContent = item.kana;
+  pronText.textContent = item.pronunciation;
+  var kbHtml = kanjiBreakdownHtml(item.jp);
+  kanjiBreakdown.innerHTML = kbHtml;
+  kanjiRow.style.display = kbHtml ? 'block' : 'none';
+  grammarText.textContent = item.grammar;
+
+  revealed = false;
+  answerBlock.classList.remove('show');
+  revealBtn.style.display = 'block';
+  actionRow.style.display = 'none';
+  bookmarkBtn.textContent = isBookmarked(item.id) ? '저장됨 ✓' : '헷갈려요 (저장)';
+}
+function revealAnswer(){
+  if (revealed) return;
+  revealed = true;
+  answerBlock.classList.add('show');
+  revealBtn.style.display = 'none';
+  actionRow.style.display = 'flex';
+}
+function nextQuestion(){
+  pos++;
+  if (pos >= order.length){
+    order = buildOrder();
+    pos = 0;
+    showToast('모든 문제를 완료했어요! 다시 시작합니다 🎉');
+  }
+  renderQuiz();
+}
+function toggleBookmarkCurrent(){
+  var item = currentItem();
+  if (isBookmarked(item.id)){
+    removeBookmark(item.id);
+    bookmarkBtn.textContent = '헷갈려요 (저장)';
+    showToast('단어장에서 삭제했습니다');
+  } else {
+    addBookmark(item.id);
+    bookmarkBtn.textContent = '저장됨 ✓';
+    showToast('오답노트에 저장했습니다 🔖');
+  }
+}
+
+/* ===================== 헤더 (뷰별 표시) ===================== */
+var activeView = 'view-quiz';
+function updateHeader(){
+  var chip, cur, total;
+  if (activeView === 'view-conj'){
+    chip = (conjMode === 'random') ? '🎲 랜덤' : conjCat;
+    cur = conjOrder.length ? conjPos + 1 : 0;
+    total = conjOrder.length;
+  } else if (activeView === 'view-bookmark'){
+    chip = '저장된 항목';
+    cur = loadBookmarks().length + loadConjBookmarks().length;
+    total = cur;
+  } else {
+    chip = currentItem().category;
+    cur = pos + 1;
+    total = DATA.length;
+  }
+  categoryChip.textContent = chip;
+  progressText.textContent = cur + ' / ' + total;
+  progressFill.style.width = (total ? (cur / total) * 100 : 0) + '%';
+}
+
+/* ===================== 문법 활용 연습 로직 ===================== */
+function rebuildConjOrder(){
+  var idxs = [];
+  for (var i = 0; i < CONJ_DATA.length; i++){
+    if (conjMode === 'random' || CONJ_DATA[i].cat === conjCat) idxs.push(i);
+  }
+  if (conjMode === 'random') shuffle(idxs);
+  conjOrder = idxs;
+  conjPos = 0;
+}
+function currentConjItem(){
+  return CONJ_DATA[conjOrder[conjPos]];
+}
+function renderConjCats(){
+  conjCatRow.style.display = (conjMode === 'random') ? 'none' : 'flex';
+  if (conjMode === 'random') return;
+  conjCatRow.innerHTML = '';
+  CONJ_CATS.forEach(function(cat){
+    var chip = document.createElement('button');
+    chip.className = 'cat-chip' + (cat === conjCat ? ' active' : '');
+    chip.textContent = cat;
+    chip.addEventListener('click', function(){
+      conjCat = cat;
+      saveConjPref();
+      rebuildConjOrder();
+      renderConjCats();
+      renderConj();
+    });
+    conjCatRow.appendChild(chip);
+  });
+}
+function renderConj(){
+  var item = currentConjItem();
+  if (!item) return;
+  updateHeader();
+
+  conjBaseEl.textContent = item.base;
+  conjFormEl.textContent = item.form;
+  conjKrEl.textContent = item.kr;
+
+  conjJpEl.innerHTML = furiganaHtml(item.jp, item.kana);
+  conjKanaEl.textContent = item.kana;
+  conjPronEl.textContent = item.pron;
+
+  if (item.altJp){
+    conjAltBox.style.display = 'block';
+    conjAltJpEl.innerHTML = furiganaHtml(item.altJp, item.altKana);
+    conjAltPronEl.textContent = item.altKana + '  ·  ' + item.altPron;
+  } else {
+    conjAltBox.style.display = 'none';
+  }
+
+  var kb = kanjiBreakdownHtml(item.jp + (item.altJp || ''));
+  conjKanjiBreakdown.innerHTML = kb;
+  conjKanjiRow.style.display = kb ? 'block' : 'none';
+
+  conjTipEl.textContent = item.tip;
+
+  conjRevealed = false;
+  conjAnswerBlock.classList.remove('show');
+  conjRevealBtn.style.display = 'block';
+  conjActionRow.style.display = 'none';
+  conjBookmarkBtn.textContent = isConjBookmarked(item.id) ? '저장됨 ✓' : '헷갈려요 (저장)';
+}
+function revealConj(){
+  if (conjRevealed) return;
+  conjRevealed = true;
+  conjAnswerBlock.classList.add('show');
+  conjRevealBtn.style.display = 'none';
+  conjActionRow.style.display = 'flex';
+}
+function nextConj(){
+  conjPos++;
+  if (conjPos >= conjOrder.length){
+    if (conjMode === 'random'){
+      rebuildConjOrder();
+      showToast('한 바퀴 끝! 새로 섞어서 다시 시작합니다 🎲');
+    } else {
+      conjPos = 0;
+      showToast('「' + conjCat + '」 활용을 모두 마쳤어요! 🎉');
+    }
+  }
+  renderConj();
+}
+function toggleConjBookmarkCurrent(){
+  var item = currentConjItem();
+  var added = toggleConjBookmark(item.id);
+  conjBookmarkBtn.textContent = added ? '저장됨 ✓' : '헷갈려요 (저장)';
+  showToast(added ? '오답노트에 저장했습니다 🔖' : '단어장에서 삭제했습니다');
+}
+function setConjMode(mode){
+  conjMode = mode;
+  saveConjPref();
+  Array.prototype.forEach.call(conjModeSeg.children, function(b){
+    b.classList.toggle('active', b.getAttribute('data-mode') === mode);
+  });
+  rebuildConjOrder();
+  renderConjCats();
+  renderConj();
+}
+
+/* ===================== 토스트 ===================== */
+var toastTimer = null;
+function showToast(msg){
+  toastEl.textContent = msg;
+  toastEl.classList.add('show');
+  if (toastTimer) clearTimeout(toastTimer);
+  toastTimer = setTimeout(function(){
+    toastEl.classList.remove('show');
+  }, 1800);
+}
+
+/* ===================== 북마크 뷰 ===================== */
+function makeBookmarkItem(catLabel, krLabel, detailHtml, onDelete){
+  var box = document.createElement('div');
+  box.className = 'bm-item';
+
+  var head = document.createElement('div');
+  head.className = 'bm-head';
+
+  var left = document.createElement('div');
+  left.style.flex = '1';
+  var catEl = document.createElement('div');
+  catEl.className = 'bm-cat';
+  catEl.textContent = catLabel;
+  var krEl = document.createElement('div');
+  krEl.className = 'bm-kr';
+  krEl.textContent = krLabel;
+  left.appendChild(catEl);
+  left.appendChild(krEl);
+
+  var chevron = document.createElement('span');
+  chevron.className = 'bm-chevron';
+  chevron.textContent = '\u25B6';
+
+  head.appendChild(left);
+  head.appendChild(chevron);
+
+  var detail = document.createElement('div');
+  detail.className = 'bm-detail';
+  detail.innerHTML = detailHtml;
+
+  var actions = document.createElement('div');
+  actions.className = 'bm-actions';
+  var delBtn = document.createElement('button');
+  delBtn.className = 'btn btn-danger-outline';
+  delBtn.textContent = '\uC0AD\uC81C';
+  delBtn.addEventListener('click', function(e){
+    e.stopPropagation();
+    onDelete();
+    showToast('\uC0AD\uC81C\uD588\uC2B5\uB2C8\uB2E4');
+    renderBookmarkView();
+  });
+  actions.appendChild(delBtn);
+  detail.appendChild(actions);
+
+  head.addEventListener('click', function(){
+    var isOpen = detail.classList.contains('show');
+    detail.classList.toggle('show', !isOpen);
+    chevron.classList.toggle('open', !isOpen);
+  });
+
+  box.appendChild(head);
+  box.appendChild(detail);
+  return box;
+}
+function phraseDetailHtml(item){
+  return '<div class="answer-row"><div class="answer-label">\u2460 \uC77C\uBCF8\uC5B4 \uC6D0\uBB38 (\uB2E8\uC5B4\uBCC4 \uC77D\uAE30 \uD3EC\uD568)</div><div class="jp-text">' + furiganaHtml(item.jp, item.kana) + '</div></div>' +
+    '<div class="answer-row"><div class="answer-label">\u2461 \uBB38\uC7A5 \uC804\uCCB4 \uD788\uB77C\uAC00\uB098 \uC77D\uAE30</div><div class="kana-text">' + escapeHtml(item.kana) + '</div></div>' +
+    '<div class="answer-row"><div class="answer-label">\u2462 \uD55C\uAE00 \uBC1C\uC74C</div><div class="pron-text">' + escapeHtml(item.pronunciation) + '</div></div>' +
+    (kanjiBreakdownHtml(item.jp) ? '<div class="answer-row"><div class="answer-label">\u2463 \uD55C\uC790 \uD6C8\u00B7\uC74C \uD480\uC774 (\uC77C\uBCF8\uC5B4 \uD83C\uDDEF\uD83C\uDDF5 + \uD55C\uAD6D \uD55C\uC790\uC74C \uD83C\uDDF0\uD83C\uDDF7)</div><div class="kanji-breakdown">' + kanjiBreakdownHtml(item.jp) + '</div></div>' : '') +
+    '<div class="answer-row" style="margin-bottom:0;"><div class="grammar-box"><span class="glabel">\uD83D\uDCA1 \uD575\uC2EC \uBB38\uBC95 \uD3EC\uC778\uD2B8</span>' + escapeHtml(item.grammar) + '</div></div>';
+}
+function conjDetailHtml(item){
+  var kb = kanjiBreakdownHtml(item.jp + (item.altJp || ''));
+  return '<div class="answer-row"><div class="answer-label">\uAE30\uBCF8\uD615</div><div class="pron-text">' + escapeHtml(item.base) + '</div></div>' +
+    '<div class="answer-row"><div class="answer-label">\u2460 \uC77C\uBCF8\uC5B4 (\uB2E8\uC5B4\uBCC4 \uC77D\uAE30 \uD3EC\uD568)</div><div class="jp-text">' + furiganaHtml(item.jp, item.kana) + '</div></div>' +
+    '<div class="answer-row"><div class="answer-label">\u2461 \uD788\uB77C\uAC00\uB098 \uC77D\uAE30</div><div class="kana-text">' + escapeHtml(item.kana) + '</div></div>' +
+    '<div class="answer-row"><div class="answer-label">\u2462 \uD55C\uAE00 \uBC1C\uC74C</div><div class="pron-text">' + escapeHtml(item.pron) + '</div>' +
+      (item.altJp ? '<div class="alt-box"><span class="alt-label">\uB610 \uB2E4\uB978 \uD45C\uD604</span><div class="alt-jp">' + furiganaHtml(item.altJp, item.altKana) + '</div><div class="alt-pron">' + escapeHtml(item.altKana) + '  \u00B7  ' + escapeHtml(item.altPron) + '</div></div>' : '') +
+    '</div>' +
+    (kb ? '<div class="answer-row"><div class="answer-label">\u2463 \uD55C\uC790 \uD6C8\u00B7\uC74C \uD480\uC774 (\uC77C\uBCF8\uC5B4 \uD83C\uDDEF\uD83C\uDDF5 + \uD55C\uAD6D \uD55C\uC790\uC74C \uD83C\uDDF0\uD83C\uDDF7)</div><div class="kanji-breakdown">' + kb + '</div></div>' : '') +
+    '<div class="answer-row" style="margin-bottom:0;"><div class="grammar-box"><span class="glabel">\uD83D\uDCA1 \uD65C\uC6A9 \uB9CC\uB4DC\uB294 \uBC95</span>' + escapeHtml(item.tip) + '</div></div>';
+}
+function renderBookmarkView(){
+  var ids = loadBookmarks();
+  var conjIds = loadConjBookmarks();
+  bookmarkList.innerHTML = '';
+
+  if (ids.length === 0 && conjIds.length === 0){
+    var empty = document.createElement('div');
+    empty.className = 'empty-state';
+    empty.textContent = '\uC544\uC9C1 \uC800\uC7A5\uB41C \uD56D\uBAA9\uC774 \uC5C6\uC5B4\uC694.\n\uD034\uC988\uB098 \uBB38\uBC95 \uC5F0\uC2B5\uC5D0\uC11C [\uD5F7\uAC08\uB824\uC694] \uBC84\uD2BC\uC744 \uB20C\uB7EC \uC800\uC7A5\uD574\uBCF4\uC138\uC694.';
+    empty.style.whiteSpace = 'pre-line';
+    bookmarkList.appendChild(empty);
+    return;
+  }
+
+  if (ids.length){
+    var t1 = document.createElement('div');
+    t1.className = 'bm-section-title';
+    t1.textContent = '\uD83D\uDCAC \uC5EC\uD589 \uD68C\uD654 (' + ids.length + ')';
+    bookmarkList.appendChild(t1);
+    ids.slice().reverse().forEach(function(id){
+      var item = DATA.filter(function(d){ return d.id === id; })[0];
+      if (!item) return;
+      bookmarkList.appendChild(makeBookmarkItem(
+        item.category, item.kr, phraseDetailHtml(item),
+        function(){ removeBookmark(item.id); }
+      ));
+    });
+  }
+
+  if (conjIds.length){
+    var t2 = document.createElement('div');
+    t2.className = 'bm-section-title';
+    t2.style.marginTop = ids.length ? '18px' : '4px';
+    t2.textContent = '\uD83E\uDDE9 \uBB38\uBC95 \uD65C\uC6A9 (' + conjIds.length + ')';
+    bookmarkList.appendChild(t2);
+    conjIds.slice().reverse().forEach(function(id){
+      var item = CONJ_DATA.filter(function(d){ return d.id === id; })[0];
+      if (!item) return;
+      bookmarkList.appendChild(makeBookmarkItem(
+        item.cat + ' \u00B7 ' + item.form, item.kr, conjDetailHtml(item),
+        function(){ removeConjBookmark(item.id); }
+      ));
+    });
+  }
+}
+function escapeHtml(str){
+  return String(str)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;');
+}
+
+/* ===================== 탭 전환 ===================== */
+function switchTab(viewId){
+  activeView = viewId;
+  [viewQuiz, viewConj, viewBookmark].forEach(function(v){ v.classList.remove('active'); });
+  document.getElementById(viewId).classList.add('active');
+  [tabQuiz, tabConj, tabBookmark].forEach(function(t){ t.classList.remove('active'); });
+
+  if (viewId === 'view-quiz'){
+    tabQuiz.classList.add('active');
+  } else if (viewId === 'view-conj'){
+    tabConj.classList.add('active');
+  } else {
+    tabBookmark.classList.add('active');
+    renderBookmarkView();
+  }
+  updateHeader();
+}
+
+/* ===================== 이벤트 바인딩 ===================== */
+revealBtn.addEventListener('click', revealAnswer);
+nextBtn.addEventListener('click', nextQuestion);
+bookmarkBtn.addEventListener('click', toggleBookmarkCurrent);
+
+conjRevealBtn.addEventListener('click', revealConj);
+conjNextBtn.addEventListener('click', nextConj);
+conjBookmarkBtn.addEventListener('click', toggleConjBookmarkCurrent);
+Array.prototype.forEach.call(conjModeSeg.children, function(b){
+  b.addEventListener('click', function(){ setConjMode(b.getAttribute('data-mode')); });
+});
+
+tabQuiz.addEventListener('click', function(){ switchTab('view-quiz'); });
+tabConj.addEventListener('click', function(){ switchTab('view-conj'); });
+tabBookmark.addEventListener('click', function(){ switchTab('view-bookmark'); });
+
+/* ===================== 초기화 ===================== */
+order = buildOrder();
+renderQuiz();
+
+loadConjPref();
+Array.prototype.forEach.call(conjModeSeg.children, function(b){
+  b.classList.toggle('active', b.getAttribute('data-mode') === conjMode);
+});
+rebuildConjOrder();
+renderConjCats();
+renderConj();
+updateHeader();
+
+/* ===================== PWA: Manifest (Blob 기반, 오프라인 단일 파일) ===================== */
+(function(){
+  try{
+    var manifest = {
+      name: '일본어 여행 회화 퀴즈',
+      short_name: '일본어여행퀴즈',
+      start_url: './',
+      display: 'standalone',
+      background_color: '#F2F2F7',
+      theme_color: '#F2F2F7'
+    };
+    var manifestBlob = new Blob([JSON.stringify(manifest)], {type:'application/json'});
+    var manifestUrl = URL.createObjectURL(manifestBlob);
+    var link = document.createElement('link');
+    link.rel = 'manifest';
+    link.href = manifestUrl;
+    document.head.appendChild(link);
+  }catch(e){}
+})();
+
+/* ===================== PWA: Service Worker 등록 (완전 오프라인 지원) =====================
+   참고: 브라우저 스펙상 Service Worker는 blob:/data: URL로는 등록할 수 없고
+   반드시 실제 same-origin 스크립트 파일(sw.js)이어야 동작합니다.
+   앱의 모든 데이터·로직·스타일은 index.html 한 파일에 있으며,
+   sw.js는 앱 콘텐츠가 전혀 없는 순수 캐싱 보일러플레이트(약 15줄)입니다. */
+(function(){
+  if (!('serviceWorker' in navigator)) return;
+  window.addEventListener('load', function(){
+    navigator.serviceWorker.register('./sw.js').catch(function(err){
+      console.log('Service Worker 등록 실패:', err);
+    });
+  });
+})();
+</script>
+</body>
+</html>
